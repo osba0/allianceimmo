@@ -1,9 +1,10 @@
 <template>
     <div class="register-page">
-        <div class="register-box">
+        <img src="/assets/images/logo-login.png" width="250" class="logo-login mb-3">
+        <div class="register-box rounded">
             <div class="card">
                 <div class="card-body register-card-body">
-                    <p class="login-box-msg">Welcome Back</p>
+                    <p class="login-box-msg">CONNEXION</p>
 
                     <errors :success="success" :failure="failure" :message="message" :loading="loading" />
                     <form method="post" ref="form">
@@ -18,7 +19,7 @@
                         <p class="small text-danger mb-3" v-html="errors.email"></p>
 
                         <div class="input-group">
-                            <input type="password" class="form-control" v-model="password" placeholder="Password" required>
+                            <input type="password" class="form-control" v-model="password" placeholder="Mot de passe" required>
                             <div class="input-group-append">
                                 <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
@@ -29,14 +30,14 @@
 
                         <div class="row">
                             <div class="col-12">
-                                <button type="button" class="btn btn-primary btn-block" @click="validate($event)">Login</button>
+                                <button type="button" class="btn btn-primary btn-block text-uppercase" @click="validate($event)">Se connecter</button>
                             </div>
                             <!-- /.col -->
                         </div>
                     </form>
 
-                    <a href="/register" class="text-center">Don't have an account?</a> <br/>
-                    <a href="/password/reset" class="text-center">Forgot your password?</a>
+                    <!--a href="/register" class="text-center">Don't have an account?</a> <br/>
+                    <a href="/password/reset" class="text-center">Forgot your password?</a-->
                 </div>
                 <!-- /.form-box -->
             </div><!-- /.card -->
@@ -90,7 +91,7 @@ export default {
             .then(res => {
                 this.loading = false
                 this.success = true
-                this.message = "Successfully Logged in."
+                this.message = "Connexion réussie."
                 this.failure = false
 
                 setTimeout(() => {

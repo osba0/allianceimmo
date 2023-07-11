@@ -1,8 +1,6 @@
 <template>
     <div>
-        <Navbar :user="user" />
-
-        <Sidebar :user="user" />
+        
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <slot name="breadcrumbs"></slot>
@@ -18,12 +16,11 @@
 
 <script>
 import Navbar from './global/Navbar'
-import Sidebar from './global/Sidebar'
 import Footer from './global/Footer'
 export default {
     name: "Container",
-    props: ['user', 'breadcrumbs', 'domain'],
-    components: { Footer, Sidebar, Navbar },
+    props: ['user', 'breadcrumbs', 'domain', 'current_route'],
+    components: { Footer,  Navbar}, 
     mounted() {
         // Load Js Files
         const jquery = document.createElement("script");

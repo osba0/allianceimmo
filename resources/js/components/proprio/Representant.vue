@@ -7,7 +7,7 @@
                 <label class="border border-lg py-2 px-3 mb-0 mr-2 bg-white">Propriétaire: <span class="text-info text-uppercase">{{ current_proprio.nom }} {{ current_proprio.prenom }}</span></label> 
                 <label class="border border-lg py-2 px-3 mb-0 mr-2 bg-white">Adresse: <span class="text-info text-uppercase">{{ current_proprio.adresse }}</span></label> 
             </div>
-            <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#addNewRepre" v-on:click="newModalRep" ><i class="fa fa-plus-square"></i> Ajouter un représentant</button>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addNewRepre" v-on:click="newModalRep" ><i class="fa fa-plus"></i> Ajouter un représentant</button>
         </div>
              
         <div class="table-responsive">

@@ -10,7 +10,7 @@
                     <option value="20">20</option>
                 </select>
             </div>
-            <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus-square"></i> Nouveau Locataire</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus-square"></i> Nouveau Locataire</button>
         </div>
         <div class="table-responsive">
             <table class="table table-hover table-striped">

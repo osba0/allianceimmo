@@ -7,7 +7,7 @@
                 <label class="border border-lg py-2 px-3 mb-0 mr-2 bg-white">Propriétaire: <span class="text-info text-uppercase">{{ current_bien.proprio_nom }} {{ current_bien.proprio_prenom }}</span></label> 
                 <label class="border border-lg py-2 px-3 mb-0 mr-2 bg-white">Adresse: <span class="text-info text-uppercase">{{ current_bien.adresse }}</span></label> 
             </div>
-            <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#addNewLocal" v-on:click="newModalLocal" ><i class="fa fa-plus-square"></i> Ajouter un nouveau local</button>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addNewLocal" v-on:click="newModalLocal" ><i class="fa fa-plus"></i> Ajouter un nouveau local</button>
         </div>
              
         <div class="table-responsive">

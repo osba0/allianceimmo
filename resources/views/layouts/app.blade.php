@@ -6,7 +6,8 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    
+     <link rel="icon" type="image/png" href="{{ url('/assets/images/logo-login.png') }}">
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 
@@ -50,11 +51,11 @@
 
             </a-->
 
-            <a href="/" class="brand-link py-2">
-                <img src="/assets/images/logo-login.png" class="logo_nav"/>
+            <a href="/" class="brand-link text-center py-2">
+                <img src="{{ url('/assets/images/logo-login.png') }}" class="logo_nav"/>
                 <div class="pl-2 text-center">
                     <span class="logo-abreviation d-none h2 mb-0 text-center font-weight-bold">ABI</span>
-                    <span class="brand-text h2 font-weight-bold text-uppercase">{{ config('app.name', 'Laravel') }}.net</span>
+                    <span class="brand-text h3 font-weight-bold text-uppercase">{{ config('app.name', 'Laravel') }}.net</span>
                  </div>
 
             </a>
@@ -186,7 +187,7 @@
         <nav class="main-header navbar fixed-top navbar-expand navbar-white navbar-light">
          
         <div class="d-flex align-items-center justify-content-center">
-            <img src="/assets/images/logo_ab_immo_rounded_1.png" height="50" class="mr-2">
+            <img src="{{ url('/assets/images/logo_ab_immo_rounded_1.png') }}" height="50" class="mr-2">
             <span class="brand-text h3 mb-0">ALLIANCE BAZICS IMMO</span>
             <solde-top-barre></solde-top-barre>
             

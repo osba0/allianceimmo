@@ -11,7 +11,7 @@
                         <option value="20">20</option>
                     </select>
                 </div>
-                <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus-square"></i> Ajouter un Immeuble</button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus-square"></i> Ajouter un Immeuble</button>
             </div>
              
             <div class="table-responsive">

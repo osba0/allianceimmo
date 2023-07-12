@@ -11,7 +11,7 @@
 
 
        
-        <span class="text-info h2 mb-0 font-weight-bold">
+        <span class="text-info h4 mb-0 font-weight-bold">
             <template v-if="visible">
                 {{ solde }}
             </template>
@@ -19,7 +19,7 @@
                 -------------
              </template>
         </span>
-        <button v-if="visible" title="Actualiser le solde" class="text-primary h2 mb-0 ml-3 mr-2 rounded-circle bg-white"><i class="fas fa-sync-alt"></i></button>  
+        <button v-if="visible" title="Actualiser le solde" class="text-primary h4 mb-0 ml-3 mr-2 rounded-circle bg-white"><i class="fas fa-sync-alt"></i></button>  
     </div>
 </template>
 

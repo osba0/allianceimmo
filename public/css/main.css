@@ -4,6 +4,9 @@
   background-size: contain !important;*/
   position: relative;
 }
+.main-header{
+  border-bottom: 0 !important;
+}
 .register-page:before{
  /* content: '';
   width: 100%;

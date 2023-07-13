@@ -15,10 +15,9 @@
               <thead class="bg-white">
                 <tr>
                     <th>Identifiant</th>
-                    <th>Type Local</th>
-                    <th>Type de Location</th>
-                    <th title="Prix du Loyer Hors Charge">Prix du Loyer HC</th>
-                    <th>Montant des Charges</th>
+                    <th class="text-nowrap">Type Local</th>
+                    <th class="text-nowrap" ttle="Type Local">Type de Local</th>
+                    <th class="text-nowrap" title="Prix du Loyer Hors Charge">Prix Loyer</th>
                     <th>Détails</th>
                     <th>Photo</th>
                     <th class="text-right">Action</th>
@@ -41,8 +40,7 @@
                     <td>
                         <span class="text-danger text-uppercase font-weight-bold">{{lo.type_location}}</span>
                     </td>
-                    <td class="font-weight-bold text-dark">{{lo.prix_loyer}}</td>
-                    <td class="font-weight-bold text-dark">{{lo.montant_charge}}</td>
+                    <td class="font-weight-bold text-dark">{{lo.prix_loyer}} FCFA</td>
                     <td clss="align-middle">
                         <ul class="ml-0 pl-0">
                             <li>Superficie: {{lo.superficie}}</li>

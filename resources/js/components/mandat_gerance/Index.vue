@@ -10,7 +10,7 @@
                     <option value="20">20</option>
                 </select>
             </div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus-square"></i> Nouveau Mandat de Gérance</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Mandat de Gérance</button>
         </div>
         <div class="table-responsive">
             <table class="table table-hover table-striped">
@@ -360,7 +360,7 @@ export default {
                     // Generer le mandant avec le bon ID et l'enregistrer
                     this.generateMandatWithIDCreated(response.data.id_mandat);
 
-                    this.getMandats();
+                    
 
                 }else{
                      Vue.swal.fire(
@@ -550,13 +550,15 @@ export default {
            this.form.pays = iso2; 
         },
         getBienByProprio(id){
-            this.form.bien = '';
+             this.form.bien = '';
              axios.get("/gerance/getbien/"+id.toString()).then(responses => {
                 if(responses.data.code=='0'){
+
                     this.biens = responses.data.data;
-                    this.biens.map(function (x){
-                      return x.item_bien = x.bien_nom+' '+x.bien_adresse + ' ' + x.bien_ville + ' (' +x.bien_id +')';;
+                    this.biens.map(function (x){ 
+                        return x.item_bien = x.bien_nom+' '+x.bien_adresse + ' ' + x.bien_ville + ' (' +x.bien_id +')';
                     });  
+
                 }
                 
               
@@ -599,6 +601,11 @@ export default {
             EventBus.$emit('GENERATED_MANDAT_DE_GERANCE', { 
                 mandat: this.form
             });
+            var thiss = this;
+            setTimeout(function(){
+                thiss.getMandats(); 
+            }, 500)
+
         },
         fileMandatGenerate(file_generate, namefile){
             const data = new FormData();

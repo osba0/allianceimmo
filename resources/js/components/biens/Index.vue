@@ -20,10 +20,10 @@
                     <tr>
                         <th>Identifiant</th>
                         <th>Propriétaire</th>
-                        <th>Nom Immeuble</th>
+                        <th>Immeuble</th>
                         <th>Ville</th>
                         <th>Pays</th>
-                        <th>Etage</th>
+                        <th title="Nombre d'étage">Etage</th>
                         <th>Superficie m<sup>2</sup></th>
                         <th>Photo</th>
                         <th class="text-right">Action</th>
@@ -53,10 +53,10 @@
                                  <button type="button" class="btn btn-success font-weight-bold position-relative" @click="setUpLocal(bien)">
                                   Local <span class="badge border border-success badge-light position-absolute total-right-corner">{{bien.totalLocal}}</span>
                                 </button>
-                                <div>
-                                    <button class="btn btn-primary" @click="view(bien)" data-toggle="modal" data-target="#moreInfo" v-on:click="newModal"><i class="fa fa-eye"></i></button>
-                                    <button class="btn btn-info" data-toggle="modal" data-target="#addNew"  v-on:click="edit(bien)"><i class="fa fa-edit"></i></button>
-                                    <button class="btn btn-danger" @click="deleteBien(bien)"><i class="fa fa-trash"></i></button>
+                                <div class="d-flex">
+                                    <button class="btn btn-primary ml-1" @click="view(bien)" data-toggle="modal" data-target="#moreInfo" v-on:click="newModal"><i class="fa fa-eye"></i></button>
+                                    <button class="btn btn-info ml-1" data-toggle="modal" data-target="#addNew"  v-on:click="edit(bien)"><i class="fa fa-edit"></i></button>
+                                    <button class="btn btn-danger ml-1" @click="deleteBien(bien)"><i class="fa fa-trash"></i></button>
                                 </div>
                             </div>
                            

@@ -10,7 +10,7 @@
                     <option value="20">20</option>
                 </select>
             </div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus-square"></i> Nouveau Contrat de Bail</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Contrat de Bail</button>
         </div>
         <div class="table-responsive">
             <table class="table table-hover table-striped">
@@ -19,7 +19,7 @@
                     <th>Identifiant</th>
                     <th>Bailleur</th>
                     <th>Locataire</th>
-                    <th>Type Bail</th>
+                    <th class="text-nowrap">Type Bail</th>
                     <th>Durée</th>
                     <th>Date Expiration</th>
                     <th class="text-right">Action</th>

@@ -10,17 +10,16 @@
                     <option value="20">20</option>
                 </select>
             </div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus-square"></i> Nouveau Locataire</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Locataire</button>
         </div>
         <div class="table-responsive">
             <table class="table table-hover table-striped">
               <thead class="bg-white">
                 <tr>
                     <th>Identifiant</th>
-                    <th>Nom & Prénom</th>
+                    <th>Locataire</th>
                     <th>Email</th>
                     <th>Téléphone</th>
-                    <th>Adresse</th>
                     <th>Piéce</th>
                     <th class="nowrap">Photo piéce</th>
                     <th class="text-right">Action</th>
@@ -45,12 +44,11 @@
                     </td>
                     <td class="align-middle">{{locataire.email}}</td>
                     <td class="align-middle">
-                        <div class="nowrap">{{locataire.ind1}} {{locataire.tel1}}</div>
+                        <div class="nowrap">{{locataire.ind1}}{{locataire.tel1}}</div>
                     </td>
-                    <td class="align-middle">{{locataire.adresse}}</td>
-                    <td class="align-middle"><label class="badge badge-info">{{locataire.type_piece}}</label>&nbsp;{{locataire.num_piece}}</td>
+                    <td class="align-middle"><label class="badge badge-info">{{locataire.type_piece}}</label></td>
                     <td class="align-middle">
-                        <span v-for="photo in locataire.photo_piece" class="mr-2 cursor-pointer">
+                        <span v-for="photo in locataire.photo_piece" class="mr-2 cursor-pointer mb-1">
                             <img :src="'/assets/locataires/'+photo" height="38" data-toggle="modal" data-target="#carouselPhoto" @click="setKyc(locataire)"/>
                         </span>
                         <h1 v-if="locataire.photo_piece.length==0"><i class="fa fa-camera-retro" aria-hidden="true"></i></h1>

@@ -86,7 +86,7 @@
                     <li>
                         <div class="menu-group">
                             <span  class="title-wrapper">
-                                <span class="{{ in_array(Request::route()->getName(), ['proprio', 'biens', 'locataire', 'gerance', 'bail'])? 'active':''}}">Administration</span>
+                                <span class="{{ in_array(Request::route()->getName(), ['proprio', 'biens', 'locataire', 'gerance', 'bail', 'rapport', 'personnel'])? 'active':''}}">Administration</span>
                             </span>
                         </div>
                     </li>
@@ -121,13 +121,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{{ route('rapport')}}" class="nav-link {{Request::route()->getName()=='rapport'? 'active':''}}">
                             <i class="nav-icon fas fa-share-alt"></i>
                             <p>Rapports</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{{ route('personnel')}}" class="nav-link {{Request::route()->getName()=='personnel'? 'active':''}}">
                             <i class="nav-icon fas fa-users"></i>
                             <p>Personnels</p>
                         </a>
@@ -160,18 +160,18 @@
                      <li>
                         <div class="menu-group">
                             <span  class="title-wrapper">
-                                <span>Configurations</span>
+                                <span class="{{ in_array(Request::route()->getName(), ['preference', 'compte'])? 'active':''}}">Configurations</span>
                             </span>
                         </div>
                     </li>
                       <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{{ route('preference') }}" class="nav-link {{Request::route()->getName()=='preference'? 'active':''}}">
                             <i class="nav-icon fas fa-cogs"></i>
                             <p>Préférences</p>
                         </a>
                     </li>
                      <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{{ route('compte') }}" class="nav-link  {{Request::route()->getName()=='compte'? 'active':''}}">
                             <i class="nav-icon fas fa-address-card"></i>
                             <p>Mon Compte</p>
                         </a>

@@ -18,13 +18,11 @@
                   <thead class="bg-white">
                     <tr>
                         <th>Identifiant</th>
-                        <th>Nom & Prénom</th>
+                        <th>Propriétaire</th>
                         <th>Email</th>
                         <th>Téléphone</th>
-                        <th>Adresse</th>
-                        <th>Piéce</th>
+                        <th>Type Piéce</th>
                         <th>Photo piéce</th>
-                        <th>Compte bancaire</th>
                         <th class="text-right">Action</th>
                     </tr>
                     <tr>
@@ -39,23 +37,22 @@
                         <td class="align-middle">{{pro.nom}} {{pro.prenom}}</td>
                         <td class="align-middle">{{pro.email}}</td>
                         <td class="align-middle"> 
-                            <div>{{pro.ind1}} {{pro.tel1}}</div>
-                            <div>{{pro.ind2}} {{pro.tel2}}</div>
+                            <div>{{pro.ind2}}{{pro.tel2}}</div>
                         </td>
-                        <td class="align-middle">{{pro.adresse}}</td>
-                        <td class="align-middle"><label class="badge badge-info">{{pro.type_piece}}</label>&nbsp;{{pro.num_piece}}</td>
+                        <td class="align-middle"><label class="badge badge-info">{{pro.type_piece}}</label></td>
                         <td class="align-middle">
                             <span v-for="photo in pro.kyc" class="mr-2 cursor-pointer">
                                 <img :src="'/assets/kyc/'+photo" height="30" data-toggle="modal" data-target="#carouselPhoto" @click="setKyc(pro)"/>
                             </span>
                         </td>
-                        <td class="align-middle">{{pro.compte_bancaire}}</td>
                         <td class="text-right align-middle">
-                            <button type="button" title="Représentants" class="btn btn-sm border-2 border-info font-weight-bold position-relative mr-2 hover-info" @click="setUpRepresentant(pro)"><i class="fa fa-users"></i> <span class="badge badge-info badge-light position-absolute total-right-corner">{{ pro.nbreRespre }}</span>
-                            </button>
-                            <button title="Plus de détails" class="btn btn-sm border-2 btn-primary" @click="view(pro)" data-toggle="modal" data-target="#moreInfo" v-on:click="newModal"><i class="fa fa-eye"></i></button>
-                            <button title="Modifier" class="btn btn-sm btn-info border-2 " data-toggle="modal" data-target="#addNew"  v-on:click="edit(pro)"><i class="fa fa-edit"></i></button>
-                            <button title="Supprimer" class="btn btn-sm btn-danger border-2" @click="deleteProprio(pro)"><i class="fa fa-trash"></i></button>
+                            <div class="d-inline-flex">
+                                <button type="button" title="Représentants" class="btn btn-sm border-2 border-info font-weight-bold position-relative mr-2 hover-info" @click="setUpRepresentant(pro)"><i class="fa fa-users"></i> <span class="badge badge-info badge-light position-absolute total-right-corner">{{ pro.nbreRespre }}</span>
+                                </button>
+                                <button title="Plus de détails" class="btn btn-sm border-2 btn-primary ml-1" @click="view(pro)" data-toggle="modal" data-target="#moreInfo" v-on:click="newModal"><i class="fa fa-eye"></i></button>
+                                <button title="Modifier" class="btn btn-sm btn-info border-2 ml-1" data-toggle="modal" data-target="#addNew"  v-on:click="edit(pro)"><i class="fa fa-edit"></i></button>
+                                <button title="Supprimer" class="btn btn-sm btn-danger border-2 ml-1" @click="deleteProprio(pro)"><i class="fa fa-trash"></i></button>
+                            </div>
                         </td>
                     </tr>
                   </tbody>

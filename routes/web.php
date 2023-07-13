@@ -11,6 +11,11 @@ use App\Http\Controllers\MandatGeranceController;
 use App\Http\Controllers\BailController;
 use App\Http\Controllers\OperationsController;
 use App\Http\Controllers\RepresentantController;
+use App\Http\Controllers\RapportController;
+use App\Http\Controllers\PersonnelController;
+use App\Http\Controllers\PreferenceController;
+use App\Http\Controllers\CompteController;
+
 
 use Illuminate\Support\Facades\Route;
 
@@ -102,6 +107,18 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/representant/listing', [RepresentantController::class, 'listing']); 
     Route::post('/representant/modify/{id}', [RepresentantController::class, 'edit']); 
     Route::delete('/representant/delete/{id}', [RepresentantController::class, 'destroy']);
+
+    // Rapport
+    Route::get('/rapport/index', [RapportController::class, 'index'])->name('rapport');  
+
+    // Personnel
+    Route::get('/personnel/index', [PersonnelController::class, 'index'])->name('personnel');  
+
+    // Preferences
+    Route::get('/preference/index', [PreferenceController::class, 'index'])->name('preference');  
+
+    // Comptes
+    Route::get('/compte/index', [CompteController::class, 'index'])->name('compte'); 
 });
 
 Route::fallback(function () {

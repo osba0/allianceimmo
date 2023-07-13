@@ -15,7 +15,7 @@
               <thead class="bg-white">
                 <tr>
                     <th>Identifiant</th>
-                    <th>Nom & Prénom</th>
+                    <th>Représentant</th>
                     <th>Email</th>
                     <th>Téléphone</th>
                     <th>Piéce</th>
@@ -44,7 +44,7 @@
                         {{repre.ind}} {{repre.tel}}
                     </td>
                     <td class="align-middle">
-                        {{repre.type_piece}} {{repre.num_piece}}
+                        <label class="badge badge-info">{{repre.type_piece}}</label> {{repre.num_piece}}
                     </td>
                     <td class="text-right">
                         <div class="w-100 d-flex justify-content-end">

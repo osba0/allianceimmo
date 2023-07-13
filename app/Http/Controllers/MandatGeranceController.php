@@ -191,13 +191,19 @@ class MandatGeranceController extends Controller
 
     public function getBienByProprio($id){
         $id_bien_exist = DB::table('mandat_gerances')->select('mandat_gerances.*')->where('proprio', '=', $id)->get()->toArray();
+        $data = [];
 
+        $listBiens = Biens::where("bien_proprio", $id);
 
         foreach ($id_bien_exist as $id_bien) {
             $data[] = $id_bien->bien;
         }
+
+        if(sizeof($data) > 0){
+            $listBiens = $listBiens->whereNotIn('bien_id', $data);
+        }
        
-        $listBiens = Biens::where("bien_proprio", $id)->whereNotIn('bien_id', $data)->get();
+        $listBiens = $listBiens->get();
         if($listBiens){
             return response([
                 "code" => 0,

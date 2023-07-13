@@ -12,7 +12,7 @@
                     </select>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus-square"></i> Nouvelle Charge / Frais</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouvelle Charge / Frais</button>
         </div>
         <div class="table-responsive">
             <table class="table table-hover table-striped">

@@ -400,11 +400,11 @@ export default {
             data.append('duree', this.form.duree);
             data.append('date_debut', this.form.date_debut);
             data.append('date_fin', this.form.date_fin);
-            data.append('montant_ht', this.form.montant_ht);
-            data.append('caution_mnt_ht', this.form.caution_mnt_ht);   
+            data.append('montant_ht', this.supprimer_espace_mnt(this.form.montant_ht));
+            data.append('caution_mnt_ht', this.supprimer_espace_mnt(this.form.caution_mnt_ht));   
             data.append('depot_garantie', this.form.depot_garantie); 
             data.append('garant', this.form.garant);    
-            data.append('frais_retard', this.form.frais_retard);      
+            data.append('frais_retard', this.supprimer_espace_mnt(this.form.frais_retard));      
 
             let action = "create";
 

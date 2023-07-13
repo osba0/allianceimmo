@@ -61,8 +61,6 @@ class GenerationLoyer extends Command
         foreach($bails_en_cours as $bail){
             $fromDate = Carbon::parse($bail["bail_date_debut"]);
             $fromDateFormat = $fromDate->format('Y-m');
-
-            var_dump($fromDateFormat);
             // Nbre de mois 
             $months = $toDate->diffInMonths($fromDateFormat);
             if($months > 0){

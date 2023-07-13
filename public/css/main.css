@@ -4,6 +4,12 @@
   background-size: contain !important;*/
   position: relative;
 }
+img{
+  max-width: 100%;
+}
+  .layout-fixed .wrapper .sidebar {
+    height: calc(100vh - (12rem + 1px)) !important;
+  }
 .main-header{
   border-bottom: 0 !important;
 }

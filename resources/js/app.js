@@ -53,9 +53,14 @@ Vue.filter('formatDateFR', function(value) {
 
 Vue.mixin({
   methods: {
-    format_date_FR(value){
-         if (value) {
-           return moment(String(value)).format('DD/MM/YYYY')
+    supprimer_espace_mnt(value){
+        if (value) {
+            return value.replaceAll(" ", "");  
+        }
+    },
+    format_date_FR(dte){
+         if (dte) {
+           return moment(String(dte)).format('DD/MM/YYYY')
           }
       },
     currentDateTime() {

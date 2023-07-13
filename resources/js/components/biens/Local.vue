@@ -296,8 +296,8 @@ export default {
             data.append('bien_id', this.current_bien.identifiant);
             data.append('type_local', this.formLocal.type_local);
             data.append('type_location', this.formLocal.type_location);
-            data.append('montant_charge', this.formLocal.montant_charge);
-            data.append('prix_loyer', this.formLocal.prix_loyer);
+            data.append('montant_charge', this.supprimer_espace_mnt(this.formLocal.montant_charge));
+            data.append('prix_loyer', this.supprimer_espace_mnt(this.formLocal.prix_loyer));
             data.append('superficie', this.formLocal.superficie);
             data.append('nombre_piece', this.formLocal.nombre_piece);
             data.append('salle_bain', this.formLocal.salle_bain);

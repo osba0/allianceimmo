@@ -137,8 +137,13 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12 ">
-                                <label>Local</label>
-                                <textarea class="form-control mb-3"></textarea>
+                                <label>Local</label> 
+                                <ul class="p-0 d-flex list-unstyled" v-if="infoLocataire.local.length > 0">
+                                    <li v-for="(local, index) in infoLocataire.local" class="border-left pl-2 mr-2"> 
+                                    {{ local.local_type_local }} <br/>
+                                    {{ local.local_type_location }}
+                                    </li>
+                                </ul>
                             </div>
                         </div>
 
@@ -263,7 +268,7 @@ export default {
                 date_au: '',
                 charge: '',
                 loyer_hors_charge: '',
-                local: '',
+                local: [],
                 echeance: '',
                 loyer: 'Loyer mai 2023',
                 fichier: null,

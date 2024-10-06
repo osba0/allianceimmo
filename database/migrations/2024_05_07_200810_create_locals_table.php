@@ -26,12 +26,13 @@ class CreateLocalsTable extends Migration
             $table->string('local_salle_bain')->nullable();
             $table->string('local_description')->nullable();
             $table->string('local_annee_construction')->nullable();
-            $table->boolean('local_disponible'); // new 11/07/2024
+            $table->boolean('local_disponible'); // ajouté le 11/07/2024
             $table->text('local_photos')->nullable();
             $table->string('user');
             $table->timestamps();
 
-            $table->foreign('bien_id')->references('bien_id')->on('biens');
+            // Clé étrangère bien définie ici
+            $table->foreign('bien_id')->references('bien_id')->on('biens')->onDelete('cascade');
         });
     }
 

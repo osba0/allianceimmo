@@ -28,7 +28,11 @@ class CreateRepresentantsTable extends Migration
             $table->string('repr_user');
             $table->timestamps();
 
-            $table->foreign('repr_id_proprio')->references('proprio_id')->on('proprietaires');
+            // Clé étrangère bien définie ici
+            $table->foreign('repr_id_proprio')
+                  ->references('proprio_id')
+                  ->on('proprietaires')
+                  ->onDelete('cascade');
         });
     }
 

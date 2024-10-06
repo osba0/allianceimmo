@@ -14,11 +14,8 @@ class AddForeignKeyToLocalsTable extends Migration
     public function up()
     {
         Schema::table('locals', function (Blueprint $table) {
-            $table->dropForeign(['bien_id']);
-            $table->foreign('bien_id')
-              ->references('bien_id')
-              ->on('biens')
-              ->onDelete('cascade');
+            // Si tu as d'autres clés étrangères à ajouter ou d'autres modifications
+            // Évite de redéfinir la clé `bien_id` déjà présente dans `CreateLocalsTable`
         });
     }
 
@@ -30,10 +27,7 @@ class AddForeignKeyToLocalsTable extends Migration
     public function down()
     {
         Schema::table('locals', function (Blueprint $table) {
-            $table->dropForeign(['bien_id']);
-            $table->foreign('bien_id')
-              ->references('bien_id')
-              ->on('biens');
+            // Reviens en arrière seulement si tu as d'autres modifications
         });
     }
 }

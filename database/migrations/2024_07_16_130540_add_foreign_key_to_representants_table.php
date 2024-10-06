@@ -14,11 +14,8 @@ class AddForeignKeyToRepresentantsTable extends Migration
     public function up()
     {
         Schema::table('representants', function (Blueprint $table) {
-            $table->dropForeign(['repr_id_proprio']);
-            $table->foreign('repr_id_proprio')
-              ->references('proprio_id')
-              ->on('proprietaires')
-              ->onDelete('cascade');
+            // Évite de redéfinir la clé `repr_id_proprio` déjà présente dans `CreateRepresentantsTable`
+            // S'il y a d'autres modifications, tu peux les inclure ici
         });
     }
 
@@ -30,12 +27,7 @@ class AddForeignKeyToRepresentantsTable extends Migration
     public function down()
     {
         Schema::table('representants', function (Blueprint $table) {
-            Schema::table('biens', function (Blueprint $table) {
-                $table->dropForeign(['repr_id_proprio']);
-                $table->foreign('repr_id_proprio')
-                  ->references('proprio_id')
-                  ->on('proprietaires');
-            });
+            // Seulement si d'autres modifications doivent être annulées
         });
     }
 }

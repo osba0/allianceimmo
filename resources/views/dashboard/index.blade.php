@@ -71,62 +71,13 @@
                                             </label>
                                         </td>
                                         <td class="align-middle">{{ $operation->oper_sens=='CREDIT'? $operation->bail_proprio : $operation->charge_id_proprio}}</td>
-                                        <td class="align-middle">Paimement Loyer</td>
-                                        <td class="align-middle">{{ $operation->oper_montant }}</td>
+                                        <td class="align-middle">{{ $operation->getType($operation->oper_type) }}</td>
+                                        <td class="align-middle">{{ number_format($operation->oper_montant, 0, ',', ' ')  }}</td>
                                         <td class="align-middle">{{ $operation->created_at }}</td>
                                         <td class="align-middle">{{ $operation->oper_user }}</td>
                                     </tr>
                                     @endforeach
-                                    <!--tr class="table-success1">
-                                        <td class="align-middle">
-                                            <label class="badge badge-success mb-0 w-100 py-1 px-2">CREDIT</label>
-                                        </td> 
-                                        <td class="align-middle">Diallo Mamadou</td> 
-                                        <td class="align-middle">Paimement Loyer</td> 
-                                        <td class="align-middle">627 500</td>
-                                        <td class="align-middle">09/07/2023 22:15:45</td> 
-                                        <td class="align-middle">osba</td>
-                                    </tr>
-                                    <tr class="table-danger1">
-                                        <td class="align-middle">
-                                            <label class="badge badge-danger mb-0 w-100 py-1 px-2">DEBIT</label>
-                                        </td> 
-                                        <td class="align-middle">Diallo Mamadou</td> 
-                                        <td class="align-middle">Eau</td> 
-                                        <td class="align-middle">5 000</td>  
-                                        <td class="align-middle">05/07/2023 23:25:32</td><td class="align-middle">osba</td> 
-                                        
-                                    </tr>
-                                     <tr class="table-success1">
-                                        <td class="align-middle">
-                                            <label class="badge badge-success mb-0 w-100 py-1 px-2">CREDIT</label>
-                                        </td> 
-                                        <td class="align-middle">Diallo Mamadou</td> 
-                                        <td class="align-middle">Paimement Loyer</td> 
-                                        <td class="align-middle">627 500</td>
-                                        <td class="align-middle">09/07/2023 22:15:45</td> 
-                                        <td class="align-middle">osba</td>
-                                    </tr>
-                                    <tr class="table-danger1">
-                                        <td class="align-middle">
-                                            <label class="badge badge-danger mb-0 w-100 py-1 px-2">DEBIT</label>
-                                        </td> 
-                                        <td class="align-middle">Diallo Mamadou</td> 
-                                        <td class="align-middle">Eau</td> 
-                                        <td class="align-middle">5 000</td>  
-                                        <td class="align-middle">05/07/2023 23:25:32</td><td class="align-middle">osba</td> 
-                                        
-                                    </tr>
-                                    <tr class="table-success1">
-                                        <td class="align-middle">
-                                            <label class="badge badge-success mb-0 w-100 py-1 px-2">CREDIT</label>
-                                        </td> 
-                                        <td class="align-middle">Diallo Mamadou</td> 
-                                        <td class="align-middle">Paimement Loyer</td> 
-                                        <td class="align-middle">627 500</td>
-                                        <td class="align-middle">09/07/2023 22:15:45</td> 
-                                        <td class="align-middle">osba</td>
-                                    </tr-->
+
                                 </tbody>
                             </table>
                         </div>

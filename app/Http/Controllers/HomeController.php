@@ -77,12 +77,14 @@ class HomeController extends Controller
     $months = [];
     $credits = [];
     $debits = [];
+    $solde = []; // Nouveau tableau pour stocker le solde
 
-    // Initialiser les mois avec 0 pour les crédits et débits
+    // Initialiser les mois avec 0 pour les crédits, débits, et soldes
     foreach ($monthsList as $monthName) {
         $months[] = $monthName;
         $credits[] = 0;
         $debits[] = 0;
+        $solde[] = 0; // Initialiser chaque mois avec un solde de 0
     }
 
     // Remplir les données récupérées
@@ -92,13 +94,18 @@ class HomeController extends Controller
         if ($monthIndex !== false) {
             $credits[$monthIndex] = $item->total_credits;
             $debits[$monthIndex] = $item->total_debits;
+            // Calculer le solde pour chaque mois (Crédit - Débit)
+            $solde[$monthIndex] = $item->total_credits - $item->total_debits;
         }
     }
+
+    //return response() -> json(["months"=> ["August 2024","September 2024","October 2024"],"credits"=> [0,100000,210000],"debits"=> [0,25000,55000],"solde"=> [0,50000,155000]]);
 
     return response()->json([
         'months' => $months,
         'credits' => $credits,
         'debits' => $debits,
+        'solde' => $solde, // Ajouter les soldes au retour de la réponse
     ]);
 }
 }

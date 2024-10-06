@@ -35,6 +35,11 @@ export default {
             data: [],
             backgroundColor: 'rgba(255, 99, 132, 0.6)',
           },
+          {
+            label: 'Solde',
+            data: [],
+            backgroundColor: 'rgba(0, 123, 83, 0.6)',
+          },
         ],
       },
       chartOptions: {
@@ -72,11 +77,18 @@ export default {
         const months = response.data.months;
         const credits = response.data.credits;
         const debits = response.data.debits;
+        const soldes = response.data.solde;
+
 
         // Mettre à jour chartData
         this.chartData = {
           labels: months,
           datasets: [
+             {
+              label: 'Solde',
+              data: soldes,
+              backgroundColor: 'rgba(0, 123, 83, 0.6)',
+            },
             {
               label: 'Crédits',
               data: credits,
@@ -87,6 +99,7 @@ export default {
               data: debits,
               backgroundColor: 'rgba(255, 99, 132, 0.6)',
             },
+
           ],
         };
       } catch (error) {

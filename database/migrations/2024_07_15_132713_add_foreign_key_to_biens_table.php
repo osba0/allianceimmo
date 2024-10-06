@@ -14,11 +14,7 @@ class AddForeignKeyToBiensTable extends Migration
     public function up()
     {
         Schema::table('biens', function (Blueprint $table) {
-            $table->dropForeign(['bien_proprio']);
-            $table->foreign('bien_proprio')
-              ->references('proprio_id')
-              ->on('proprietaires')
-              ->onDelete('cascade');
+            // Seulement si des modifications autres que la clé étrangère doivent être apportées
         });
     }
 
@@ -30,10 +26,7 @@ class AddForeignKeyToBiensTable extends Migration
     public function down()
     {
         Schema::table('biens', function (Blueprint $table) {
-            $table->dropForeign(['bien_proprio']);
-            $table->foreign('bien_proprio')
-              ->references('proprio_id')
-              ->on('proprietaires');
+            // Seulement si des modifications autres que la clé étrangère doivent être annulées
         });
     }
 }

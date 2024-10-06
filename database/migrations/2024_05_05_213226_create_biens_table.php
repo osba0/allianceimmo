@@ -30,6 +30,8 @@ class CreateBiensTable extends Migration
             $table->text('bien_local')->nullable(); // ID des local
             $table->string('user');
             $table->timestamps();
+
+            $table->foreign('bien_proprio')->references('proprio_id')->on('proprietaires');
         });
     }
 

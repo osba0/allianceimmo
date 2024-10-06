@@ -26,7 +26,7 @@ class LocalsResource extends JsonResource
             "nombre_piece"       => $this->local_nombre_piece,
             "salle_bain"         => $this->local_salle_bain,
             "description"        => $this->local_description,
-            "annee_construction" => Carbon::parse($this->local_annee_construction)->format('d/m/Y'),
+            "annee_construction" => $this->local_annee_construction,
             "annee_cons_natif"   => $this->local_annee_construction,
             "photo"              =>  (isset($this->local_photos ) && !is_null($this->local_photos ) && $this->local_photos !='')? is_array($this->local_photos )?$this->local_photos : json_decode($this->local_photos ) : json_decode("[]"),
             "date_creation"      => Carbon::parse($this->created_at)->format('d/m/Y H:i:s'),

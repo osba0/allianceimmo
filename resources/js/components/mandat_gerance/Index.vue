@@ -10,7 +10,7 @@
                     <option value="20">20</option>
                 </select>
             </div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Mandat de Gérance</button>
+            <button v-if="hasPermission('Mandat.Ajouter')" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Mandat de Gérance</button>
         </div>
         <div class="table-responsive">
             <table class="table table-hover table-striped">
@@ -26,12 +26,15 @@
                     <th class="text-right">Action</th>
                 </tr>
                 <tr>
-                    <th colspan="9" class="position-relative p-0">
+                    <th colspan="8" class="position-relative p-0">
                         <div class="loader-line" :class="[isLoadingTab?'d-block':'d-none']"></div>
                     </th>
                 </tr>
               </thead>
               <tbody>
+                <template v-if="!mandats.data || !mandats.data.length">
+                    <tr><td colspan="8" class="bg-white text-center" v-if="checking">Aucun résultat!</td></tr>
+                </template>
                 <tr v-for="mandat in mandats.data" :key="mandat.identifiant">
                     <td class="align-middle">
                         <h5 class="m-0">
@@ -83,7 +86,7 @@
                               
                         </button>
                         <span v-else><i class="fa fa-camera-retro" aria-hidden="true"></i></span>
-                        <button class="btn btn-danger" @click="deleteProprio(mandat)"><i class="fa fa-trash"></i></button>
+                        <button v-if="hasPermission('Mandat.Supprimer')" class="btn btn-danger" @click="deleteMandat(mandat)"><i class="fa fa-trash"></i></button>
                     </td>
                 </tr>
               </tbody>
@@ -260,6 +263,7 @@ export default {
         return {
             editmode: false,
             mandats : {},
+            checking: false,
             form: {
                 id : '',
                 proprio : '',
@@ -386,10 +390,12 @@ export default {
         },
         getMandats(page=1){
             this.isLoadingTab = true;
+            this.checking = false;
             axios.get("/gerance/listing?paginate="+ this.paginate+'&page=' + page).then(responses => {
                 console.log(responses);
                 this.mandats = responses.data;
                 this.isLoadingTab = false;
+                this.checking = true;
             }).catch(errors => { 
                 this.isLoadingTab = true;
             // react on errors.
@@ -509,7 +515,7 @@ export default {
               }
             })
         },
-        deleteProprio(proprio){
+        deleteMandat(mandat){
             Vue.swal.fire({
               title:"Suppression Mandat de Gérance ",
               text: "Attention!!! cette opération est irréversible.",
@@ -521,7 +527,7 @@ export default {
             }).then((result) => {
             if (result.isConfirmed) {
     
-                axios.delete('/proprio/delete/'+proprio.identifiant).then(response => {
+                axios.delete('/gerance/delete/'+mandat.identifiant).then(response => {
                     console.log(response);
                     if(response.data.code==0){
                          Vue.swal.fire(

@@ -90,48 +90,61 @@
                             </span>
                         </div>
                     </li>
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.Proprietaire'))
                     <li class="nav-item">
                         <a href="/proprio/list" class="nav-link {{Request::route()->getName()=='proprio'? 'active':''}}">
                             <i class="nav-icon fas fa-key"></i>
                             <p>Propriétaires</p>
                         </a>
                     </li>
+                    @endif
+
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.Bien'))
                      <li class="nav-item">
                         <a href="/bien/index" class="nav-link  {{Request::route()->getName()=='biens'? 'active':''}}">
                             <i class="nav-icon fas fa-building"></i>
                             <p>Bien / Immeuble</p>
                         </a>
                     </li>
+                    @endif
+
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.Locataire'))
                      <li class="nav-item">
                         <a href="/locat/list" class="nav-link {{Request::route()->getName()=='locataire'? 'active':''}}">
                             <i class="nav-icon fas fa-male"></i>
                             <p>Locataires</p>
                         </a>
                     </li>
+                    @endif
+
+
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.Mandat'))
                      <li class="nav-item">
                         <a href="/gerance/index" class="nav-link {{Request::route()->getName()=='gerance'? 'active':''}}">
                             <i class="nav-icon fas fa-balance-scale"></i>
                             <p>Mandat de Gérance</p>
                         </a>
                     </li>
+                    @endif
+
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.Bail'))
                     <li class="nav-item">
                         <a href="/bail/index" class="nav-link {{Request::route()->getName()=='bail'? 'active':''}}">
                             <i class="nav-icon fas fa-gavel"></i>
                             <p>Bail</p>
                         </a>
                     </li>
+                    @endif
+
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.Rapport'))
                     <li class="nav-item">
                         <a href="{{ route('rapport')}}" class="nav-link {{Request::route()->getName()=='rapport'? 'active':''}}">
                             <i class="nav-icon fas fa-share-alt"></i>
                             <p>Rapports</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ route('personnel')}}" class="nav-link {{Request::route()->getName()=='personnel'? 'active':''}}">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>Personnels</p>
-                        </a>
-                    </li>
+                    @endif
+
                      <li>
                         <div class="menu-group">
                             <span  class="title-wrapper">
@@ -139,24 +152,31 @@
                             </span>
                         </div>
                     </li>
+
+                     @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.Operations'))
                      <li class="nav-item">
                         <a href="{{ route('operationList') }}" class="nav-link {{Request::route()->getName()=='operationList'? 'active':''}}">
                             <i class="nav-icon fas fa-list"></i>
                             <p>Liste des Opérations</p>
                         </a>
                     </li>
+                    @endif
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.LoyerPaiement'))
                      <li class="nav-item">
                         <a href="{{ route('operation') }}" class="nav-link {{Request::route()->getName()=='operation'? 'active':''}}">
                             <i class="nav-icon fas fa-random"></i>
                             <p>Loyers & Paiement</p>
                         </a>
                     </li>
+                    @endif
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.ChargeFrais'))
                      <li class="nav-item">
                         <a href="{{ route('charges') }}" class="nav-link {{Request::route()->getName()=='charges'? 'active':''}}">
                             <i class="nav-icon fas fa-bolt"></i>
                             <p>Charge & Frais</p>
                         </a>
                     </li>
+                    @endif
                      <li>
                         <div class="menu-group">
                             <span  class="title-wrapper">
@@ -164,18 +184,38 @@
                             </span>
                         </div>
                     </li>
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.GestionAgence'))
                       <li class="nav-item">
+                        <a href="{{ route('entites') }}" class="nav-link {{Request::route()->getName()=='entites'? 'active':''}}">
+                            <i class="nav-icon fas fa-list"></i>
+                            <p>Gestion Agence</p>
+                        </a>
+                    </li>
+                    @endif
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.Preferences'))
+                    <li class="nav-item">
                         <a href="{{ route('preference') }}" class="nav-link {{Request::route()->getName()=='preference'? 'active':''}}">
                             <i class="nav-icon fas fa-cogs"></i>
                             <p>Préférences</p>
                         </a>
                     </li>
+                    @endif
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.MonCompte'))
                      <li class="nav-item">
                         <a href="{{ route('compte') }}" class="nav-link  {{Request::route()->getName()=='compte'? 'active':''}}">
                             <i class="nav-icon fas fa-address-card"></i>
                             <p>Mon Compte</p>
                         </a>
                     </li>
+                    @endif
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.GestionUtilisateur'))
+                    <li class="nav-item">
+                        <a href="{{ route('gutilisateurs')}}" class="nav-link {{Request::route()->getName()=='gutilisateurs'? 'active':''}}">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>Gestion Utilisateurs</p>
+                        </a>
+                    </li>
+                    @endif
                    
                    
                 </ul>
@@ -189,7 +229,9 @@
         <div class="d-flex align-items-center justify-content-center">
             <img src="{{ url('/assets/images/logo_ab_immo_rounded_1.png') }}" height="50" class="mr-2">
             <span class="brand-text h3 mb-0">ALLIANCE BAZICS IMMO</span>
+            @if(auth()->user()->hasRole('root') || auth()->user()->can('AfficherSolde.Oui'))
             <solde-top-barre></solde-top-barre>
+            @endif
             
         </div>
         <!-- Left navbar links -->
@@ -223,7 +265,7 @@
             </div>
             <span class="badge badge-primary">Profil</span> 
             <span class="mx-1 text-white">:</span>
-            <span class="badge badge-info mr-2">ADMIN</span>
+            <span class="badge badge-info mr-2">{{ auth()->user()->roles->pluck('name')[0]  }}</span>
             <div class="image"><img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" height="40" alt="User Image" class="img-circle elevation-2"></div>
             <div class="dropdown mr-3">
               <button class="border-0 bg-transparent btn btn-default dropdown-toggle text-white" type="button" data-toggle="dropdown" aria-expanded="false">
@@ -262,6 +304,9 @@
             </template>
         </Container>
     </div>
-    
+    <script>
+        window.userPermissions = @json(Auth::user()->getAllPermissions()->pluck('name'));
+        window.userRoles = @json(Auth::user()->roles->pluck('name'));
+    </script>
 </body>
 </html>

@@ -21,7 +21,13 @@ class Local extends Model
         'local_salle_bain',
         'local_description',
         'local_annee_construction',
+        'local_disponible',
         'local_photos',
         'user'
     ];
+
+    public function bien()
+    {
+        return $this->belongsTo(Bien::class, 'bien_id');
+    }
 }

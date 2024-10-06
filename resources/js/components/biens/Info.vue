@@ -14,7 +14,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Propriétare</label>
+                                <label>Propriétaire</label>
                                 <span class="bg-light h4 px-2 d-block">{{ info.proprio }}</span>
                             </div>
                         </div>

@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Http\ViewComposers\WebsiteComposer;
 use Illuminate\Pagination\Paginator;
+use App\Models\Proprietaires;
+use App\Observers\ProprietaireObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,5 +29,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Use bootstrap on the Pagination
         Paginator::useBootstrap();
+
+        Proprietaires::observe(ProprietaireObserver::class);
     }
 }

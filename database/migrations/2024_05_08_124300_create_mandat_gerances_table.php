@@ -28,6 +28,7 @@ class CreateMandatGerancesTable extends Migration
             $table->date('mandat_date_debut'); 
             $table->date('mandat_date_fin'); 
             $table->string('mandat_user'); 
+            $table->boolean('mandat_etat')->default(1);
             $table->text('mandat_fichiers')->nullable(); 
             $table->string('mandat_reserve_1')->nullable();  
             $table->string('mandat_reserve_2')->nullable(); 

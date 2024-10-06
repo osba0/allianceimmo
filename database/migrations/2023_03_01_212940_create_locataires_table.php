@@ -46,6 +46,7 @@ class CreateLocatairesTable extends Migration
             $table->string('locat_type_piece')->nullable();
             $table->string('locat_date_expiration')->nullable(); 
             $table->double('locat_avoir')->default(0); 
+            $table->boolean('locat_etat')->default(1);
             $table->string('locat_user');
             $table->timestamps();
         });

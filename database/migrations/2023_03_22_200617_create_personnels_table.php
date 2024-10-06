@@ -13,10 +13,10 @@ class CreatePersonnelsTable extends Migration
      */
     public function up()
     {
-        Schema::create('personnels', function (Blueprint $table) {
+       Schema::create('personnels', function (Blueprint $table) {
             $table->id();
-            $table->string('pers_id')->unique(); 
-            $table->string('pers_user_id')->constrained(); 
+            $table->string('pers_id')->unique();
+            $table->unsignedBigInteger('pers_user_id'); // Utilisation d'un entier non signé pour les clés étrangères
             $table->string('pers_nom');
             $table->string('pers_prenom');
             $table->string('pers_email');
@@ -29,6 +29,9 @@ class CreatePersonnelsTable extends Migration
             $table->string('pers_pays')->nullable();
             $table->string('user');
             $table->timestamps();
+
+            // Ajout de la clé étrangère
+            $table->foreign('pers_user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

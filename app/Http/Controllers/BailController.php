@@ -37,10 +37,14 @@ class BailController extends Controller
         $listProprio = Proprietaires::get();
         
         // Get locataire
-        $listLocataire = Locataires::get();
+        $locatairesSansBail  =  DB::table('locataires')
+        ->leftJoin('bails', 'locataires.locat_id', '=', 'bails.bail_locataire')
+        ->whereNull('bails.bail_locataire')
+        ->select('locataires.*')
+        ->get();
 
 
-        $data = ['proprietaires' => $listProprio, 'listLocataire' => $listLocataire];
+        $data = ['proprietaires' => $listProprio, 'listLocataire' => $locatairesSansBail];
 
         return view('bail/index', $data);
     }
@@ -97,11 +101,17 @@ class BailController extends Controller
             $q = new Bail;
 
             $bail_id = Helper::IDGenerator(new Bail, 'bail_id',config('constants.ID_LENGTH'), config('constants.PREFIX_BAIL'));
-      
+
+            $localIds = json_decode(request('local')); // Récupérer les local_id depuis la requête
+            // rendre indispo le local
+
+            DB::table('locals')->whereIn('local_id', $localIds) // Filtrer les locaux par les IDs récupérés
+            ->update(['local_disponible' => false]);
+
             $q->bail_id = $bail_id;
             $q->bail_proprio = request('proprio');
             $q->bail_bien = request('bien');
-            $q->bail_local = json_decode(request('local'));
+            $q->bail_local = $localIds;
             $q->bail_type = request('type_bail');
             $q->bail_etat = 1; // true
             $q->bail_locataire = request('locataire');
@@ -116,6 +126,8 @@ class BailController extends Controller
             $q->bail_garant = request('depot_garantie');
 
             $q->save();
+
+
 
         }catch(\Exceptions $e){
               return response([
@@ -155,41 +167,10 @@ class BailController extends Controller
         return BailResource::collection($bails);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 
     public function getLocalByBien($id_bien, $id_proprio){
+        $user = Auth::user();
+
         // Info Agence 
         $mandat = MandatGerance::where("bien", $id_bien)->where("proprio", $id_proprio)->first();
 
@@ -201,11 +182,17 @@ class BailController extends Controller
             $infosPersonnel = Personnels::where("pers_id", $mandat['pers'])->first();
 
             // List local
-            $listLocals = Local::where("bien_id", $id_bien)->get();
+            if(request()->query('showAll')){
+
+                $listLocals = Local::where("bien_id", $id_bien)->get();
+            }else{
+                $listLocals = Local::where("bien_id", $id_bien)->where("local_disponible", true)->get();
+            }
+
 
              return response([
                 "code"        => 0,
-                "locaaux"     => $listLocals,
+                "locaux"     => $listLocals,
                 "agence"      => $infosAgence,
                 "responsable" => $infosPersonnel
             ]); 

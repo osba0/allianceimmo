@@ -63,6 +63,10 @@ class Helper
 
     }
 
+    public static function deleteFile($path, $file){
+        File::delete($path.$file);
+    }
+
     function changeDateFormate($date,$date_format){
 
         return \Carbon\Carbon::createFromFormat('Y-m-d', $date)->format($date_format);

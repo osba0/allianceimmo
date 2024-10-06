@@ -13,12 +13,27 @@ img{
 .main-header{
   border-bottom: 0 !important;
 }
+.required{
+  color:red;
+}
+
+.shadow-danger{
+  box-shadow: 0px 0px 1px #dc3545;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+}
 .register-page:before{
  /* content: '';
   width: 100%;
   height: 100%;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.7); */
+}
+.align-items-baseline{
+  align-items: baseline
 }
 .logo-login{
   border-radius: 8px;
@@ -125,17 +140,103 @@ body .content-wrapper {
   background: #eee;
   padding: 1.75rem 1.312rem;
   padding-bottom: 60px;
-  margin-top: 67px; /*Header top is fixed*/
+  margin-top: 45px; /*Header top is fixed*/
+}
+.white-space{
+  white-space: nowrap;
+}
+.permissionUl{
+  list-style: none;
+  padding-left: 15px;
+  margin: 0;
+  margin-bottom: 15px;
+}
+.permissionUl li{
+  cursor: pointer;
+  margin-bottom: 3px;
+}
+.btnAdd{
+  background: #4d81bb;
+  border: 2px solid #4d81bb;
+  color: white;
+  border-radius: 5px;
+}
+.titreH2{
+  font-size: 25px;
+  font-weight: bold;
+  color: #4d81bb;
+  margin-bottom: 10px
+}
+.titreH3{
+  font-size: 20px;
+  font-weight: bold;
+  color: #cec47f;
+}
+.totalStatistic{
+  font-size: 45px;
+  line-height: 1;
+  color: #958e70;
+  font-weight: bold;
+}
+.boxState{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.boxState i{
+  font-size: 60px;
+  color: #c4c4c485;
+}
+.iconState{
+  width: 25%;
+  text-align: center;
+}
+.boxes{
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
 }
 
+.box{
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgb(214 219 226 / 50%), 0 1px 2px rgb(214 219 226 / 50%);
+  transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  transform: translateZ(0) scale(1.0);
+  height: auto;
+}
+.box1{
+  grid-column: span 2;
+  grid-row: span 3;
+}
+.box5{
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.box h2{
+  font-size: 18px;
+  font-weight: bold;
+  color: #4d81bb;
+}
+
+.lastOperation,
+.lastOperation label{
+  font-size: 13px !important;
+}
+
+.lastOperation thead th,
+.lastOperation tbody td{
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
 
 .main-footer{
-
-    position: fixed;
-    bottom: 0;
-    width: calc(100% - 250px);
-    border-left: 5px solid #3490dc;
-    padding: 5px 15px;
+  position: fixed;
+  bottom: 0;
+  width: calc(100% - 250px);
+  border-left: 5px solid #3490dc;
+  padding: 5px 15px;
 
 }
 .progress .progress-bar{
@@ -190,7 +291,7 @@ table.table-striped td, .table.table-striped  th {
 .title-wrapper span {
   background: #d1c48ea3;
   padding: 2px 10px;
-  font-size: 1.7rem;
+  font-size: 1.3rem;
   margin-left: 16px;
   border-radius: 5px;
   color: #fff;
@@ -297,6 +398,20 @@ table.table-striped td, .table.table-striped  th {
     font-size: 16px !important;
 }
 
+.form-control{
+  height: calc(1.8rem + 0px) !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+.vue-country-select {
+  height: 1.7rem !important;
+}
+.form-group {
+  margin-bottom: 0.5rem !important;
+}
+.form-group  label{
+  margin-bottom: 0.2rem !important;
+}
 .fullscreenModal .modal-dialog {
     width: calc(100% - 50px);
     max-width: none;
@@ -315,6 +430,10 @@ table.table-striped td, .table.table-striped  th {
 .sidebar-collapse .fullscreenModal .modal-dialog {
     width: calc(100% - 74px);
     left: 74px;
+}
+.modal-header{
+    padding-top: 0.3em;
+    padding-bottom: 0.3em
 }
 .fullscreenModal .modal-header{
     padding-top: 0.6em;
@@ -337,6 +456,8 @@ table.table-striped td, .table.table-striped  th {
   border-radius: 0%;
   min-width: 150px;
 }
+
+
 
 /* on génère un élément :after lors du survol et du focus :*/
 
@@ -486,6 +607,19 @@ table.table-striped td, .table.table-striped  th {
 }
 .width_1_3{
   width: 33%;
+}
+.viewRapport a{
+  width: 32%;
+  padding: 50px 0;
+  text-align: center;
+  background: #dedede;
+  font-size: 30px;
+  font-weight: bold;
+  color:#fff;
+}
+.viewRapport a:hover{
+  color:#fff;
+  opacity: .8;
 }
 @keyframes loading-1 {
   0% {

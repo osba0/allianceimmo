@@ -186,7 +186,27 @@ class MandatGeranceController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $mandat =  MandatGerance::where('mandat_id',$id)->first();
+
+        // Delete all files
+        Helper::deleteFile("", $mandat["mandat_fichiers"]);
+
+        $mandat->delete();
+
+
+        if($mandat){
+            $rep = [
+                "code" => 0,
+                "message" => "OK"
+            ];
+        }else{
+            $rep = [
+                "code" => 1,
+                "message" => "KO"
+            ];
+        }
+
+        return response($rep);
     }
 
     public function getBienByProprio($id){

@@ -32,12 +32,25 @@ class Proprietaires extends Model
         'proprio_numero_piece',
         'proprio_type_piece',
         'proprio_indicatif_1',
-        'proprio_indicatif_2'
+        'proprio_indicatif_2',
+        'proprio_etat',
+        'agence_id',
+        'filiale_id'
     ];
 
 
     public function mandats()
     {
       return $this->hasMany(MandatGerance::class, 'proprio');
+    }
+
+    public function biens()
+    {
+        return $this->hasMany(Biens::class, 'bien_proprio');
+    }
+
+    public function representants()
+    {
+        return $this->hasMany(Representant::class, 'repr_id_proprio');
     }
 }

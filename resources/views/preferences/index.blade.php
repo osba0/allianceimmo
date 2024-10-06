@@ -13,13 +13,22 @@
 
 <div class="container-fluide">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                   A venir
+                    <role-manager></role-manager>
+                    <permission-manager></permission-manager>
+
                 </div>
             </div>
         </div>
+         <div class="col-md-6">
+             <div class="card">
+                <div class="card-body">
+                    <role-permission-assigner></role-permission-assigner>
+                 </div>
+             </div>
+         </div>
     </div>
 </div>
 @endsection

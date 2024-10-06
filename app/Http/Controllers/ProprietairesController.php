@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Proprietaires;
+use App\Models\MandatGerance;
 
 use App\Helpers\Helper;
 
@@ -21,6 +22,17 @@ class ProprietairesController extends Controller
     public function __construct()
     {
         $this->middleware('auth'); //If user is not logged in then he can't access this page
+
+        // Vérifie les permissions
+        $permissions = [
+            'store' => 'AjouterProprietaire',
+            'edit' => 'ModifierProprietaire',
+            'destroy' => 'SupprimerProprietaire',
+        ];
+
+        foreach ($permissions as $method => $permission) {
+            $this->middleware("permissionOrRoot:$permission")->only($method);
+        }
     }
     /**
      * Display a listing of the resource.
@@ -96,6 +108,9 @@ class ProprietairesController extends Controller
             $q->proprio_numero_piece=request('num_piece');
             $q->proprio_date_expiration=request('date_expiration');
             $q->proprio_kyc=json_encode($files);
+            $q->agence_id = $user->agence_id;
+            $q->filiale_id = $user->filiale_id;
+
 
             $q->save();
 
@@ -223,7 +238,14 @@ class ProprietairesController extends Controller
         // Delete all files
         Helper::deleteFiles(config('constants.PATH_PROPRIO'), $proprio["proprio_kyc"]);
 
-        $rem = $proprio->delete();
+        // Supprimer les mandats associés
+        $mandats = MandatGerance::where('proprio',$id)->first();
+
+        if($mandats) $mandats->delete();
+
+        $rem = Proprietaires::where('proprio_id',$id)->first();
+
+        $rem->delete();
 
         if($rem){
             $rep = [

@@ -164,6 +164,7 @@
                                             <div class="d-flex align-items-center">
                                                 <input v-model="form.duree" type="number"
                                                 class="form-control">
+                                                 <span  v-if="isSubmitted && !$v.form.duree.validSelectionNombre" class="error-message">{{ errorMessageDuree() }}</span>
                                                 <span class="px-2">An(s)</span>
                                             </div>
                                         </div>
@@ -269,7 +270,7 @@ import 'vue2-datepicker/index.css';
 import modalCarousel from '../../components/modal/carousel.vue';
 import modalDocument from '../../components/modal/document.vue';
 import { EventBus } from "../../event-bus"; 
-import { required, email, minLength, between } from 'vuelidate/lib/validators';
+import { required, email, minLength, between, minValue } from 'vuelidate/lib/validators';
 
 import ModalConfirmationBail from '../modeles/bail/Default.vue';
 
@@ -326,7 +327,7 @@ export default {
             agence:      { required },
             proprio:     { required },
             bien:        { required },
-            duree:       { required },
+            duree:       { validSelectionNombre: minValue(0) },
             local:       { required },
             locataire:   { required }
 
@@ -607,7 +608,7 @@ export default {
                 if(responses.data.code=='0'){
                     this.form.agence = responses.data.agence;
                     this.form.pers = responses.data.responsable;
-                    this.locals = responses.data.locaaux;
+                    this.locals = responses.data.locaux;
                     this.locals.map(function (x){
                       return x.item_local = x.local_type_local.toUpperCase()+' ('+x.local_type_location.toUpperCase()+')';
                     });   

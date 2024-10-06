@@ -165,8 +165,14 @@ class OperationsController extends Controller
 
         $paginate = request('paginate');  
 
+        $filtreLocataire = request('locataireFiltre');
+
         $paiement = PaiementsLoyer::leftJoin('bails', 'bails.bail_id', '=', 'paiements_loyers.paiement_bail_id')->leftJoin('proprietaires', 'bails.bail_proprio', '=', 'proprietaires.proprio_id')
-        ->select('paiements_loyers.*', 'bails.bail_proprio', 'proprietaires.proprio_nom','proprietaires.proprio_prenom','bails.bail_locataire', 'bails.bail_local', 'bails.bail_montant_ht')->groupBy('paiements_loyers.paiement_id');
+        ->select('paiements_loyers.*', 'bails.bail_proprio', 'proprietaires.proprio_nom','proprietaires.proprio_prenom','bails.bail_locataire', 'bails.bail_local', 'bails.bail_montant_ht');
+        if(!is_null($filtreLocataire)){
+            $paiement = $paiement->where("bail_locataire",$filtreLocataire);
+        }
+        $paiement = $paiement->groupBy('paiements_loyers.paiement_id');
         if(isset($paginate)){
             $paiement = $paiement->orderby("paiements_loyers.created_at", "desc")->paginate($paginate);
         }else{

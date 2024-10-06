@@ -17,7 +17,12 @@ import Bail from "./components/bail/Index";
 import Operations from "./components/operations/Index";  
 import Charges from "./components/operations/Charges";  
 import OperationsList from "./components/operations/List";  
-
+import Pie from "./components/dashboard/Pie";
+import RoleManager from './components/config/RoleManager.vue';
+import PermissionManager from './components/config/PermissionManager.vue';
+import RolePermissionAssigner from './components/config/RolePermissionAssigner.vue';
+import UserManager from './components/users/UserManager.vue';
+import AgenceList from './components/agence/Index';
 
 import moment from 'moment';
 
@@ -25,6 +30,9 @@ import moment from 'moment';
 require("./bootstrap");
 
 window.Vue = require("vue").default;
+
+Vue.prototype.$userPermissions = window.userPermissions;
+Vue.prototype.$userRoles = window.userRoles || [];
 
 import Vue from "vue";
 import { createApp } from "vue";
@@ -123,6 +131,278 @@ Vue.mixin({
     abs(a){
         if(a < 0) a=-a;
         return a; 
+    },
+    allCountriesISO2(){
+        return [
+            'AF', 'AX', 'AL', 'DZ', 'AS', 'AD', 'AO', 'AI', 'AQ', 'AG',
+            'AR', 'AM', 'AW', 'AU', 'AT', 'AZ', 'BS', 'BH', 'BD', 'BB',
+            'BY', 'BE', 'BZ', 'BJ', 'BM', 'BT', 'BO', 'BQ', 'BA', 'BW',
+            'BV', 'BR', 'IO', 'BN', 'BG', 'BF', 'BI', 'CV', 'KH', 'CM',
+            'CA', 'KY', 'CF', 'TD', 'CL', 'CN', 'CX', 'CC', 'CO', 'KM',
+            'CG', 'CD', 'CK', 'CR', 'CI', 'HR', 'CU', 'CW', 'CY', 'CZ',
+            'DK', 'DJ', 'DM', 'DO', 'EC', 'EG', 'SV', 'GQ', 'ER', 'EE',
+            'SZ', 'ET', 'FK', 'FO', 'FJ', 'FI', 'FR', 'GF', 'PF', 'TF',
+            'GA', 'GM', 'GE', 'DE', 'GH', 'GI', 'GR', 'GL', 'GD', 'GP',
+            'GU', 'GT', 'GG', 'GN', 'GW', 'GY', 'HT', 'HM', 'VA', 'HN',
+            'HK', 'HU', 'IS', 'IN', 'ID', 'IR', 'IQ', 'IE', 'IM', 'IL',
+            'IT', 'JM', 'JP', 'JE', 'JO', 'KZ', 'KE', 'KI', 'KP', 'KR',
+            'KW', 'KG', 'LA', 'LV', 'LB', 'LS', 'LR', 'LY', 'LI', 'LT',
+            'LU', 'MO', 'MG', 'MW', 'MY', 'MV', 'ML', 'MT', 'MH', 'MQ',
+            'MR', 'MU', 'YT', 'MX', 'FM', 'MD', 'MC', 'MN', 'ME', 'MS',
+            'MA', 'MZ', 'MM', 'NA', 'NR', 'NP', 'NL', 'NC', 'NZ', 'NI',
+            'NE', 'NG', 'NU', 'NF', 'MK', 'MP', 'NO', 'OM', 'PK', 'PW',
+            'PS', 'PA', 'PG', 'PY', 'PE', 'PH', 'PN', 'PL', 'PT', 'PR',
+            'QA', 'RE', 'RO', 'RU', 'RW', 'BL', 'SH', 'KN', 'LC', 'MF',
+            'PM', 'VC', 'WS', 'SM', 'ST', 'SA', 'SN', 'RS', 'SC', 'SL',
+            'SG', 'SX', 'SK', 'SI', 'SB', 'SO', 'ZA', 'GS', 'SS', 'ES',
+            'LK', 'SD', 'SR', 'SJ', 'SE', 'CH', 'SY', 'TW', 'TJ', 'TZ',
+            'TH', 'TL', 'TG', 'TK', 'TO', 'TT', 'TN', 'TR', 'TM', 'TC',
+            'TV', 'UG', 'UA', 'AE', 'GB', 'US', 'UM', 'UY', 'UZ', 'VU',
+            'VE', 'VN', 'VG', 'VI', 'WF', 'EH', 'YE', 'ZM', 'ZW',
+        ];
+    },
+    countriesAuthorizedISO2(){
+        return [
+            'SN', 'FR'
+        ];
+    },
+    getRegexForCountryTelMobile(country) {
+      // Ajoutez des regex pour d'autres pays selon les besoins
+      const regexMap = {
+        '33': /^[0-9]{10}$/, // Exemple: France avec 10 chiffres uniquement
+        '221': /^[0-9]{9}$/
+      };
+
+      return regexMap[country];
+    },
+    getRegexForCountryTelFixe(country) {
+      // Ajoutez des regex pour d'autres pays selon les besoins
+      const regexMap = {
+        '33': /^[0-9]{10}$/, // Exemple: France avec 10 chiffres uniquement
+        '221': /^[0-9]{9}$/
+      };
+
+      return regexMap[country];
+    },
+    getRegexEmail(){
+        return /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+    },
+    errorMessageTelephone(){
+        return 'Téléphone incorrect';
+    },
+    errorMessageEmail(){
+        return 'Email incorrect';
+    },
+    errorMessageEtage(){
+        return "Nombre d'étage incorrect";
+    },
+    errorMessagePiece(){
+        return "Nombre piéce incorrect";
+    },
+     errorMessageDuree(){
+        return "Durée incorrect";
+    },
+    hasPermission(permission) {
+        // Vérifier si le profil est 'root' (insensible à la casse)
+        if (this.$userRoles.map(role => role.toLowerCase()).includes('root')) {
+            return true;
+        }
+        return this.$userPermissions.includes(permission);
+    },
+    getNationale(){
+        return [
+        "Afghane",
+        "Albanaise",
+        "Algérienne",
+        "Allemande",
+        "Andorrane",
+        "Angolaise",
+        "Antiguaise-et-Barbudienne",
+        "Argentine",
+        "Arménienne",
+        "Australienne",
+        "Autrichienne",
+        "Azerbaïdjanaise",
+        "Bahamienne",
+        "Bahreinienne",
+        "Bangladaise",
+        "Barbadienne",
+        "Belge",
+        "Belizienne",
+        "Béninoise",
+        "Bhoutanaise",
+        "Biélorusse",
+        "Birmane",
+        "Bissau-Guinéenne",
+        "Bolivienne",
+        "Bosnienne",
+        "Botswanaise",
+        "Brésilienne",
+        "Britannique",
+        "Brunéienne",
+        "Bulgare",
+        "Burkinabée",
+        "Burundaise",
+        "Cambodgienne",
+        "Camerounaise",
+        "Canadienne",
+        "Cap-verdienne",
+        "Centrafricaine",
+        "Chilienne",
+        "Chinoise",
+        "Chypriote",
+        "Colombienne",
+        "Comorienne",
+        "Congolaise (Congo-Brazzaville)",
+        "Congolaise (RDC)",
+        "Cookienne",
+        "Costaricienne",
+        "Croate",
+        "Cubaine",
+        "Danoise",
+        "Djiboutienne",
+        "Dominicaine",
+        "Dominiquaise",
+        "Égyptienne",
+        "Émirienne",
+        "Équato-guinéenne",
+        "Équatorienne",
+        "Érythréenne",
+        "Espagnole",
+        "Estonienne",
+        "Éthiopienne",
+        "Fidjienne",
+        "Finlandaise",
+        "Française",
+        "Gabonaise",
+        "Gambienne",
+        "Géorgienne",
+        "Ghanéenne",
+        "Grenadienne",
+        "Guatémaltèque",
+        "Guinéenne",
+        "Guinéenne équatoriale",
+        "Guyanienne",
+        "Haïtienne",
+        "Hellénique",
+        "Hondurienne",
+        "Hongroise",
+        "Indienne",
+        "Indonésienne",
+        "Irakienne",
+        "Iranienne",
+        "Irlandaise",
+        "Islandaise",
+        "Israélienne",
+        "Italienne",
+        "Ivoirienne",
+        "Jamaïcaine",
+        "Japonaise",
+        "Jordanienne",
+        "Kazakhstanaise",
+        "Kenyane",
+        "Kirghize",
+        "Kiribatienne",
+        "Kittitienne-et-Névicienne",
+        "Koweïtienne",
+        "Laotienne",
+        "Lesothane",
+        "Lettone",
+        "Libanaise",
+        "Libérienne",
+        "Libyenne",
+        "Liechtensteinoise",
+        "Lituanienne",
+        "Luxembourgeoise",
+        "Macédonienne",
+        "Malaisienne",
+        "Malawienne",
+        "Maldivienne",
+        "Malienne",
+        "Maltaise",
+        "Marocaine",
+        "Marshallaise",
+        "Mauricienne",
+        "Mauritanienne",
+        "Mexicaine",
+        "Micronésienne",
+        "Moldave",
+        "Monegasque",
+        "Mongole",
+        "Monténégrine",
+        "Mozambicaine",
+        "Namibienne",
+        "Nauruane",
+        "Népalaise",
+        "Nicaraguayenne",
+        "Nigeriane",
+        "Nigérienne",
+        "Norvégienne",
+        "Néo-Zélandaise",
+        "Omanaise",
+        "Ougandaise",
+        "Ouzbèke",
+        "Pakistanaise",
+        "Palaosienne",
+        "Palestinienne",
+        "Panaméenne",
+        "Papouane-Néo-Guinéenne",
+        "Paraguayenne",
+        "Néerlandaise",
+        "Péruvienne",
+        "Philippine",
+        "Polonaise",
+        "Portugaise",
+        "Qatarienne",
+        "Roumaine",
+        "Russe",
+        "Rwandaise",
+        "Saint-Lucienne",
+        "Saint-Marinaise",
+        "Saint-Vincentaise-et-Grenadine",
+        "Salomonaise",
+        "Salvadorienne",
+        "Samoane",
+        "Santoméenne",
+        "Saoudienne",
+        "Sénégalaise",
+        "Serbe",
+        "Seychelloise",
+        "Sierra-Léonaise",
+        "Singapourienne",
+        "Slovaque",
+        "Slovène",
+        "Somalienne",
+        "Soudanaise",
+        "Sri-Lankaise",
+        "Sud-Africaine",
+        "Sud-Soudanaise",
+        "Suédoise",
+        "Suisse",
+        "Surinamaise",
+        "Swazie",
+        "Syrienne",
+        "Tadjike",
+        "Tanzanienne",
+        "Tchadienne",
+        "Tchèque",
+        "Thaïlandaise",
+        "Togolaise",
+        "Tonguienne",
+        "Trinidadienne",
+        "Tunisienne",
+        "Turkmène",
+        "Turque",
+        "Tuvaluane",
+        "Ukrainienne",
+        "Uruguayenne",
+        "Vanuatuane",
+        "Vénézuélienne",
+        "Vietnamienne",
+        "Yéménite",
+        "Zambienne",
+        "Zimbabwéenne"
+      ];
     },
     numberToLetter( nombre ){
         var i, j, n, quotient, reste, nb ;
@@ -270,6 +550,12 @@ const app = new Vue({
         Bail,
         Operations,
         Charges,
-        OperationsList
+        OperationsList,
+        Pie,
+        RoleManager,
+        PermissionManager,
+        RolePermissionAssigner,
+        UserManager,
+        AgenceList
     }
 });

@@ -10,6 +10,28 @@
                     <option value="20">20</option>
                 </select>
             </div>
+            <div class="custom-select">
+                <input
+                  type="text"
+                  v-model="searchQuery"
+                  placeholder="Rechercher un locataire..."
+                  @click="toggleDropdown"
+                  @focus="showDropdown = true"
+                  @blur="closeDropdown"
+                  class="form-control"
+                />
+                <div v-if="showDropdown" class="dropdown">
+                  <ul>
+                    <li
+                      v-for="locataire in filteredLocataires"
+                      :key="locataire.id"
+                      @mousedown="selectLocataire(locataire.locat_id)"
+                    >
+                      {{ locataire.locat_nom }} {{ locataire.locat_prenom }}
+                    </li>
+                  </ul>
+                </div>
+          </div>
         </div>
         <div class="table-responsive">
             <table class="table table-hover table-striped">
@@ -280,7 +302,11 @@ export default {
             etatLoyer: "",
             paiements: [],
             paginate: 5,
-            currentLoyer: null
+            currentLoyer: null,
+            selectedLocataireId: '',
+            searchQuery: "",
+            showDropdown: false,
+            listLocataireTab: []
         }
     },
     validations: {
@@ -343,12 +369,14 @@ export default {
     methods: {
     
        getOperations(page=1){
+        console.log(">>>", this.selectedLocataireId);
 
            this.isLoadingTab = true;
-            axios.get("/operations/paiement_loyer?paginate="+this.paginate+'&page=' + page).then(responses => {
+            axios.get("/operations/paiement_loyer?paginate="+this.paginate+'&page=' + page+'&locataireFiltre='+ this.selectedLocataireId).then(responses => {
                console.log(responses);
                this.operations = responses.data;
                this.isLoadingTab = false;
+
             }).catch(errors => { 
 
             // react on errors.
@@ -475,13 +503,87 @@ export default {
             });
 
             
-        }
+        },
+        toggleDropdown() {
+          this.showDropdown = !this.showDropdown;
+        },
+        closeDropdown() {
+          // Délai pour permettre la sélection avant de fermer
+          setTimeout(() => {
+            this.showDropdown = false;
+          }, 200);
+        },
+        selectLocataire(id) {
+          this.selectedLocataireId = id;
+          this.searchQuery = this.listLocataireTab.find((s) => s.locat_id === id).locat_nom;
+          this.showDropdown = false;
+          this.getOperations();
+        },
 
     },
+    computed: {
+        filteredLocataires() {
+            return this.listLocataireTab.filter((locataire) =>
+                locataire.locat_nom.toLowerCase().includes(this.searchQuery.toLowerCase())
+            );
+        },
+    },
     mounted() {
+        this.listLocataireTab=this.listLocataire;
         this.getOperations();
         
         
     }
 }
 </script>
+<style scoped>
+ .tr-data td {
+    cursor: pointer;
+}
+.custom-select {
+  position: relative;
+  width: 250px;
+  height: auto;
+  background: #fff !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding-right: 0 !important;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+}
+
+.custom-select input {
+  box-sizing: border-box;
+}
+
+
+.disable-input{
+    pointer-events: none;
+    opacity: .5;
+}
+.custom-select .dropdown {
+  position: absolute;
+  width: 97%;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: white;
+  z-index: 1000;
+}
+
+.custom-select ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.custom-select li {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.custom-select li:hover {
+  background-color: #eee;
+}
+</style>
+

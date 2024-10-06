@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\Proprietaires;
 use App\Models\Biens;
+use App\Models\Local;
 
 use App\Helpers\Helper;
 
@@ -189,6 +190,33 @@ class BiensController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $bien =  Biens::where('bien_id',$id)->first();
+
+        // Delete all files
+        Helper::deleteFiles(config('constants.PATH_BIEN'), $bien["bien_photos"]);
+
+        // Supprimer les locaux
+        $locaux = Local::where('bien_id',$id)->first();
+
+        if($locaux) $locaux->delete();
+
+
+        $rem = Biens::where('bien_id',$id)->first();
+
+        $rem->delete();
+
+        if($rem){
+            $rep = [
+                "code" => 0,
+                "message" => "OK"
+            ];
+        }else{
+            $rep = [
+                "code" => 1,
+                "message" => "KO"
+            ];
+        }
+
+        return response($rep);
     }
 }

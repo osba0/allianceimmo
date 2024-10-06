@@ -343,11 +343,11 @@ export default {
             })
         },
         getLocal(id){
-             axios.get("/bail/getLocal/"+id.toString()+"/"+this.form.proprio.proprio_id).then(responses => {
+             axios.get("/bail/getLocal/"+id.toString()+"/"+this.form.proprio.proprio_id+"?showAll=1").then(responses => {
                 if(responses.data.code=='0'){
                     this.form.agence = responses.data.agence;
                     this.form.pers = responses.data.responsable;
-                    this.locals = responses.data.locaaux;
+                    this.locals = responses.data.locaux;
                     this.locals.map(function (x){
                       return x.item_local = x.local_type_local.toUpperCase()+' ('+x.local_type_location.toUpperCase()+')';
                     });   

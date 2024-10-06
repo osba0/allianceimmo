@@ -50,6 +50,7 @@ class LocalController extends Controller
             $q->local_salle_bain=request('salle_bain');
             $q->local_description=request('description');
             $q->local_superficie=request('superficie');
+            $q->local_disponible=true;
             $q->local_annee_construction=request('annee_construction');
             $q->local_photos=json_encode($files); 
 
@@ -170,5 +171,35 @@ class LocalController extends Controller
             "message" => "OK",
             "file" => $allFileName
         ]);
+    }
+
+      /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $local =  Local::where('local_id',$id)->first();
+
+        // Delete all files
+        Helper::deleteFiles(config('constants.PATH_BIEN'), $local["local_photos"]);
+
+        $local->delete();
+
+        if($local){
+            $rep = [
+                "code" => 0,
+                "message" => "OK"
+            ];
+        }else{
+            $rep = [
+                "code" => 1,
+                "message" => "KO"
+            ];
+        }
+
+        return response($rep);
     }
 }

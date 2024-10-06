@@ -146,9 +146,13 @@
                                 </div>
                                 <div class="col-md-6">
                                    <div class="form-group max-country">
-                                        <label>Nombre de piéces</label>
+
+                                         <div class="d-flex justify-content-between align-items-baseline">
+                                            <label>Nombre de piéces </label>
+                                            <span  v-if="isSubmitted && !$v.formLocal.nombre_piece.validSelectionPiece" class="error-message">{{ errorMessagePiece() }}</span>
+                                        </div>
                                         <input v-model="formLocal.nombre_piece" type="number"
-                                            class="form-control">
+                                            class="form-control" :class="{ 'border-danger': isSubmitted && !$v.formLocal.nombre_piece.validSelectionPiece }">
                                     </div>
                                 </div>
                             </div>
@@ -168,7 +172,7 @@
                                 <div class="col-md-6">
                                    <div class="form-group">
                                         <label>Année de construction</label>
-                                          <date-picker v-model="formLocal.annee_construction" class="w-100"  required valueType="YYYY-MM-DD" input-class="form-control w-100" placeholder="dd/mm/yyyy" format="DD/MM/YYYY"></date-picker>
+                                          <date-picker v-model="formLocal.annee_construction" class="w-100"  required  type="year" format="YYYY"  valueType="YYYY" input-class="form-control w-100" placeholder="Choisir une année"></date-picker>
                                        
                                     </div>
                                 </div>
@@ -218,7 +222,7 @@
 import DatePicker from 'vue2-datepicker';
 import { EventBus } from '../../event-bus';
 import modalCarousel from '../../components/modal/carousel.vue';
-import { required, email, minLength, between } from 'vuelidate/lib/validators';
+import { required, email, minLength, between, minValue } from 'vuelidate/lib/validators';
 import InfoLocal from './InfoLocal.vue';
 export default {
     props: [],
@@ -255,7 +259,8 @@ export default {
       validations: {
         formLocal : {
             type_local: { required },
-            type_location: { required }
+            type_location: { required },
+            nombre_piece: {validSelectionPiece: minValue(0)}
         }
       },
       methods: {
@@ -453,7 +458,7 @@ export default {
                           'Local supprimé avec succés',
                           'success'
                         );
-                        this.getBien();  
+                        this.getLocal();
                     }else{
                         Vue.swal.fire(
                           'Suppression',

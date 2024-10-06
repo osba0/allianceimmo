@@ -25,5 +25,16 @@ class Biens extends Model
         'bien_photos'
     ];
 
+    public function proprietaire()
+    {
+        return $this->belongsTo(Proprietaire::class, 'bien_proprio');
+    }
+
+    public function locals()
+    {
+        return $this->hasMany(Local::class, 'bien_id');
+    }
+
+
   
 }

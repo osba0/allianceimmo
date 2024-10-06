@@ -7,10 +7,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -24,7 +25,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'username',
         'password',
         'is_admin',
-        'is_subscribed'
+        'is_subscribed',
+        'agence_id',
+        'filiale_id'
     ];
 
     /**
@@ -59,5 +62,21 @@ class User extends Authenticatable implements MustVerifyEmail
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    // Définir la relation "un à un" avec Personnels
+    public function personnel()
+    {
+        return $this->hasOne(Personnels::class, 'pers_user_id');
+    }
+
+    public function agence()
+    {
+        return $this->belongsTo(Agence::class);
+    }
+
+    public function filiale()
+    {
+        return $this->belongsTo(Filiale::class);
     }
 }

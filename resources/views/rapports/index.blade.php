@@ -3,11 +3,11 @@
 @section('content')
 
 @php
-    $title = "Rapport";
+    $title = "Rapports";
     $icon  = "fas fa-share-alt";
     $breadcrumbs = [
         'Tableau de bord' => ['url' => '/home'],
-        'Rapport' => ['url' => '']
+        'Rapports' => ['url' => '']
     ];
 @endphp
 
@@ -16,7 +16,14 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                   A venir
+                   <div class="viewRapport d-flex justify-content-between">
+                       <a href="{{ route('proprietairesRapport') }}" style="background: #219d21;">
+                        <i class="fas fa-key"></i><br/>Propriétaires</a>
+                       <a href="#" style="background: #4d81bb;">
+                        <i class="fas fa-male"></i><br/>Locataires</a>
+                       <a href="#" style="background: #cec47f;">
+                        <i class="fas fa-home"></i><br/>Agence</a>
+                   </div>
                 </div>
             </div>
         </div>

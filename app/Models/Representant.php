@@ -22,4 +22,9 @@ class Representant extends Model
         'repr_email',
         'repr_user'
     ];
+
+    public function proprietaire()
+    {
+        return $this->belongsTo(Proprietaire::class, 'repr_id_proprio');
+    }
 }

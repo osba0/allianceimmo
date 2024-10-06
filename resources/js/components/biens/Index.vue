@@ -11,7 +11,7 @@
                         <option value="20">20</option>
                     </select>
                 </div>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus-square"></i> Ajouter un Immeuble</button>
+                <button  v-if="hasPermission('Bien.Ajouter')"  type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Ajouter un Immeuble</button>
             </div>
              
             <div class="table-responsive">
@@ -35,6 +35,9 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <template v-if="!biens.data || !biens.data.length">
+                        <tr><td colspan="9" class="bg-white text-center" v-if="checking">Aucun résultat!</td></tr>
+                    </template>
                     <tr v-for="bien in biens.data" :key="bien.identifiant">
                         <td class="align-middle"><h5 class="mb-0"><label class="badge badge-primary mb-0">{{bien.identifiant}}</label></h5></td>
                         <td class="align-middle">{{bien.proprio_nom}} {{bien.proprio_prenom}}</td>
@@ -55,8 +58,8 @@
                                 </button>
                                 <div class="d-flex">
                                     <button class="btn btn-primary ml-1" @click="view(bien)" data-toggle="modal" data-target="#moreInfo" v-on:click="newModal"><i class="fa fa-eye"></i></button>
-                                    <button class="btn btn-info ml-1" data-toggle="modal" data-target="#addNew"  v-on:click="edit(bien)"><i class="fa fa-edit"></i></button>
-                                    <button class="btn btn-danger ml-1" @click="deleteBien(bien)"><i class="fa fa-trash"></i></button>
+                                    <button v-if="hasPermission('Bien.Modifier')"  class="btn btn-info ml-1" data-toggle="modal" data-target="#addNew"  v-on:click="edit(bien)"><i class="fa fa-edit"></i></button>
+                                    <button  v-if="hasPermission('Bien.Supprimer')" class="btn btn-danger ml-1" @click="deleteBien(bien)"><i class="fa fa-trash"></i></button>
                                 </div>
                             </div>
                            
@@ -96,8 +99,8 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Propriétaire</label>
-                                         <v-select :class="{ 'border-danger': isSubmitted && !$v.form.proprio.required }" v-model="form.proprio" :options="listProprio" :reduce="(option) => option.proprio_id"label="item_data"></v-select> 
+                                        <label>Propriétaire <span class="required">*</span></label>
+                                         <v-select :class="{ 'shadow-danger': isSubmitted && !$v.form.proprio.required }" v-model="form.proprio" :options="listProprio" :reduce="(option) => option.proprio_id"label="item_data"></v-select>
                                     </div>
                                 </div>
                                 <div class="col-md-6 d-flex justify-content-between">
@@ -107,23 +110,26 @@
                                             class="form-control">
                                     </div>
                                     <div class="form-group w-49">
-                                        <label>N°Immeuble</label>
+                                        <label>N°Immeuble <span class="required">*</span></label>
                                         <input v-model="form.numero" type="text"
-                                            class="form-control">
+                                            class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.numero.required }">
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Nombre d'Etage</label>
+                                         <div class="d-flex justify-content-between align-items-baseline">
+                                            <label>Nombre d'Etage </label>
+                                            <span  v-if="isSubmitted && !$v.form.etage.validSelectionEtage" class="error-message">{{ errorMessageEtage() }}</span>
+                                        </div>
                                         <input v-model="form.etage" type="number"
-                                            class="form-control">
+                                            class="form-control"  :class="{ 'border-danger': isSubmitted && !$v.form.etage.validSelectionEtage }"/>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                    <div class="form-group">
-                                        <label>Adresse</label>
+                                        <label>Adresse <span class="required">*</span></label>
                                         <input v-model="form.adresse" type="text"
                                             class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.adresse.required }">                                        
                                     </div>
@@ -132,7 +138,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                    <div class="form-group">
-                                        <label>Ville</label>
+                                        <label>Ville <span class="required">*</span></label>
                                         <input v-model="form.ville" type="text"
                                             class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.ville.required }">
                                        
@@ -140,7 +146,7 @@
                                 </div>
                                 <div class="col-md-6">
                                    <div class="form-group max-country">
-                                        <label>Pays</label>
+                                        <label>Pays <span class="required">*</span></label>
                                         <input v-model="form.pays" type="text"
                                             class="form-control d-none"  :class="{ 'border-danger': isSubmitted && !$v.form.pays.required }">
 
@@ -163,7 +169,7 @@
                                 <div class="col-md-6">
                                    <div class="form-group">
                                         <label>Année de construction</label>
-                                          <date-picker v-model="form.annee_construction" class="w-100"  required valueType="YYYY-MM-DD" input-class="form-control w-100" placeholder="dd/mm/yyyy" format="DD/MM/YYYY"></date-picker>
+                                          <date-picker v-model="form.annee_construction" class="w-100"  required type="year" format="YYYY"  valueType="YYYY" input-class="form-control w-100" placeholder="Choisir une année"></date-picker>
                                        
                                     </div>
                                 </div>
@@ -192,11 +198,11 @@
                               
                         </div>
                         <div class="modal-footer justify-content-center">
-                            <button v-show="editmode" type="submit" class="btn btn-lg btn-success">Enregister</button>
-                            <button v-show="editmode" type="button" class="btn btn-lg btn-warning"  data-dismiss="modal" @click="reset()">Annuler</button>
-                            <button v-show="!editmode" type="submit" class="btn btn-lg btn-success">Créer</button>
-                            <button  v-show="!editmode" type="button" class="btn btn-info btn btn-lg" @click="reset()">Réinitialiser</button>
-                            <button  v-show="!editmode" type="button" class="btn btn-secondary btn btn-lg" @click="reset()" data-dismiss="modal">Annuler</button>
+                            <button v-show="editmode" type="submit" class="btn btn-success">Enregister</button>
+                            <button v-show="editmode" type="button" class="btn btn-warning"  data-dismiss="modal" @click="reset()">Annuler</button>
+                            <button v-show="!editmode" type="submit" class="btn btn-success">Créer</button>
+                            <button  v-show="!editmode" type="button" class="btn btn-info" @click="reset()">Réinitialiser</button>
+                            <button  v-show="!editmode" type="button" class="btn btn-secondary" @click="reset()" data-dismiss="modal">Annuler</button>
                         </div>
                       </form>
                     </div>
@@ -223,7 +229,7 @@ import VueCountryDropdown from 'vue-country-dropdown';
 import 'vue2-datepicker/index.css';
 import modalCarousel from '../../components/modal/carousel.vue';
 import { EventBus } from "../../event-bus"; 
-import { required, email, minLength, between } from 'vuelidate/lib/validators';
+import { required, email, minLength, between, minValue  } from 'vuelidate/lib/validators';
 import HorizontalStepper from 'vue-stepper';
 import Info from './Info.vue';
 import LocalSetup from './Local.vue';
@@ -234,6 +240,7 @@ export default {
     components: { DatePicker, VueCountryDropdown, modalCarousel, HorizontalStepper, Info, LocalSetup },
     data () {
         return {
+            checking: false,
             editmode: false,
             biens : {},
             form: {
@@ -265,7 +272,9 @@ export default {
             adresse: { required },
             ville:   { required },
             pays:    { required },
-            proprio: { required }
+            proprio: { required },
+            numero:  { required },
+            etage:   { validSelectionEtage: minValue(0) }
         }
     },
     watch: {
@@ -354,7 +363,8 @@ export default {
             axios.get("/bien/listing?paginate="+ this.paginate+'&page=' + page).then(responses => {
               console.log(responses);
               this.biens = responses.data;
-               this.isLoadingTab = false;
+              this.isLoadingTab = false;
+              this.checking = true;
             }).catch(errors => { 
 
             // react on errors.
@@ -498,6 +508,7 @@ export default {
         });
         EventBus.$on('BACK', (event) => {
           this.viewLocal = event.back;
+          this.getBien();
         });    
     }
 }

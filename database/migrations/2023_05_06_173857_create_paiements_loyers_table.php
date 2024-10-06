@@ -18,7 +18,7 @@ class CreatePaiementsLoyersTable extends Migration
             $table->string('paiement_id')->unique(); 
             $table->string('paiement_bail_id'); 
             $table->double('paiement_montant');
-            $table->date('paiement_mois_location'); 
+            $table->string('paiement_mois_location');
             $table->string('paiement_echeance');
             $table->text('paiement_recu');
             $table->integer('paiement_etat'); // 0-impayé; 1-payé; 2-paiement_partiel....

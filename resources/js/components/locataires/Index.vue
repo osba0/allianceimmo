@@ -10,7 +10,7 @@
                     <option value="20">20</option>
                 </select>
             </div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Locataire</button>
+            <button v-if="hasPermission('Locataire.Ajouter')" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Locataire</button>
         </div>
         <div class="table-responsive">
             <table class="table table-hover table-striped">
@@ -31,6 +31,9 @@
                 </tr>
               </thead>
               <tbody>
+                 <template v-if="!locataires.data || !locataires.data.length">
+                    <tr><td colspan="7" class="bg-white text-center" v-if="checking">Aucun résultat!</td></tr>
+                </template>
                 <tr v-for="locataire in locataires.data" :key="locataire.identifiant">
                     <td class="align-middle"><h5 class="mb-0"><label class="badge badge-primary mb-0">{{locataire.identifiant}}</label></h5></td>
                     <td class="align-middle">
@@ -56,8 +59,8 @@
                     <td class="text-right align-middle">
                         <div class="d-flex justify-content-end">
                             <button class="btn btn-primary" @click="view(locataire)" data-toggle="modal" data-target="#moreInfo" v-on:click="newModal"><i class="fa fa-eye"></i></button>
-                            <button class="btn btn-info mx-2" data-toggle="modal" data-target="#addNew"  v-on:click="edit(locataire)"><i class="fa fa-edit"></i></button>
-                            <button class="btn btn-danger" @click="deleteProprio(locataire)"><i class="fa fa-trash"></i></button>
+                            <button class="btn btn-info mx-2"  v-if="hasPermission('Locataire.Modifier')" data-toggle="modal" data-target="#addNew"  v-on:click="edit(locataire)"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-danger"  v-if="hasPermission('Locataire.Supprimer')" @click="deleteLocataire(locataire)"><i class="fa fa-trash"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -247,8 +250,8 @@
                                            
                                         </div>
                                          <div class="form-group w-49">
-                                            <label>Adresse</label>
-                                            <input v-model="form.adresse" type="text" class="form-control">
+                                            <label>Adresse <span class="text-danger">*</span></label>
+                                            <input v-model="form.adresse" type="text" class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.adresse.required }">
                                            
                                         </div>
                                     </div>
@@ -337,6 +340,7 @@
                         <button v-show="editmode" type="submit" class="btn btn-success">Enregister</button>
                         <button v-show="editmode" type="button" class="btn btn-warning"  data-dismiss="modal" @click="reset()">Annuler</button>
                         <button v-show="!editmode" type="submit" class="btn btn-success">Créer</button>
+                         <button v-show="!editmode" type="button" class="btn btn-primary">Enregister comme brouillon</button>
                         <button  v-show="!editmode" type="button" class="btn btn-info btn" @click="reset()">Réinitialiser</button>
                         <button  v-show="!editmode" type="button" class="btn btn-secondary " @click="reset()" data-dismiss="modal">Annuler</button>
                     </div>
@@ -369,12 +373,13 @@ export default {
     data () {
         return {
             editmode: false,
+            checking: false,
             locataires : {},
             form: {
                 id : '',
                 nom : '',
                 prenom: '',
-                civilite:'',
+                civilite:'Mlle',
                 date_naissance: '',
                 type_locataire:'',
                 pays_naissance: '',
@@ -417,9 +422,14 @@ export default {
             nom:            { required },
             prenom:         { required },
             tel1:           { required },
-            email:          { email, required },
+            email:          { required,
+                emailValidation(value) {
+                    const regex = this.getRegexEmail();
+                    console.log(">>>", regex.test(value))
+                    return regex.test(value);
+                } },
             adresse:        { required },
-            civilite:       { required },
+          //  civilite:       { required },
             type_piece:     { required },
             type_locataire: { required },
             profession:     { required }
@@ -432,7 +442,7 @@ export default {
     },
     methods: {
         createLocataire(){
-
+console.log(">> check")
             this.isSubmitted = true;
             // stop here if form is invalid
             this.$v.form.$touch();
@@ -440,6 +450,8 @@ export default {
             if (this.$v.form.$invalid) {
                 return;
             }
+
+            console.log(">> ok")
 
             const data = new FormData();
             data.append('nom', this.form.nom);
@@ -539,10 +551,12 @@ export default {
         },
         getLocataire(page=1){
             this.isLoadingTab = true;
+            this.checking = false;
             axios.get("/locat/listing?paginate="+ this.paginate+'&page=' + page).then(responses => {
                 console.log(responses);
                 this.locataires = responses.data;
                 this.isLoadingTab = false;
+                this.checking = true;
             }).catch(errors => { 
                 this.isLoadingTab = true;
             // react on errors.
@@ -682,9 +696,9 @@ export default {
               }
             })
         },
-        deleteProprio(proprio){
+        deleteLocataire(locataire){
             Vue.swal.fire({
-              title:"Suppression Propriétaire ",
+              title:"Suppression Locataire ",
               text: "Attention!!! cette opération est irréversible.",
               icon: 'warning',
               showCancelButton: true,
@@ -694,12 +708,12 @@ export default {
             }).then((result) => {
             if (result.isConfirmed) {
     
-                axios.delete('/proprio/delete/'+proprio.identifiant).then(response => {
+                axios.delete('/locat/delete/'+locataire.identifiant).then(response => {
                     console.log(response);
                     if(response.data.code==0){
                          Vue.swal.fire(
                           'Suppression',
-                          'Propriétaire supprimé avec succés',
+                          'Locataire supprimé avec succés',
                           'success'
                         );
                         this.getLocataire();  

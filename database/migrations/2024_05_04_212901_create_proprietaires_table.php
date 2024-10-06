@@ -14,8 +14,8 @@ class CreateProprietairesTable extends Migration
     public function up()
     {
         Schema::create('proprietaires', function (Blueprint $table) {
-            $table->id();
-            $table->string('proprio_id')->unique(); 
+             $table->id();
+            $table->string('proprio_id')->unique();
             $table->string('proprio_nom');
             $table->string('proprio_prenom');
             $table->string('proprio_profession');
@@ -34,12 +34,19 @@ class CreateProprietairesTable extends Migration
             $table->string('proprio_pays')->nullable();
             $table->string('user');
             $table->string('proprio_compte_bancaire')->nullable();
-            $table->string('proprio_email')->unique();
+            $table->string('proprio_email');
             $table->string('proprio_type_piece')->nullable();
             $table->string('proprio_numero_piece')->nullable();
             $table->text('proprio_kyc')->nullable();
             $table->string('proprio_date_expiration')->nullable();
+            $table->boolean('proprio_etat')->default(true);
+            $table->unsignedBigInteger('agence_id');
+            $table->unsignedBigInteger('filiale_id')->nullable();
             $table->timestamps();
+
+            // Foreign key constraints
+            $table->foreign('agence_id')->references('id')->on('agences');
+            $table->foreign('filiale_id')->references('id')->on('filiales');
         });
     }
 
@@ -51,5 +58,6 @@ class CreateProprietairesTable extends Migration
     public function down()
     {
         Schema::dropIfExists('proprietaires');
+
     }
 }

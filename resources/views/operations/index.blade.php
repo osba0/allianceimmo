@@ -18,7 +18,7 @@
             <div class="card">
                 <div class="card-body">
                     @php $etatPaiement = \App\Models\PaiementsLoyer::getEtatPaiement(); @endphp
-                    <Operations :list-proprio="{{ json_encode($proprietaires) }}" :list-personnel="{{ json_encode($personnels) }}" :current-agence="{{ json_encode($agence) }}" :etat-paiement="{{ json_encode($etatPaiement) }}"></Operations>
+                    <Operations :list-proprio="{{ json_encode($proprietaires) }}" :list-personnel="{{ json_encode($personnels) }}" :current-agence="{{ json_encode($agence) }}" :etat-paiement="{{ json_encode($etatPaiement) }}" :list-locataire="{{ json_encode($listLocataire) }}"></Operations>
                 </div>
             </div>
         </div>

@@ -11,7 +11,7 @@
                         <option value="20">20</option>
                     </select>
                 </div>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Propriétaire</button>
+                <button v-if="hasPermission('Proprietaire.Ajouter')" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Propriétaire</button>
             </div>
             <div class="table-responsive">
                 <table class="table table-striped">
@@ -32,12 +32,15 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <template v-if="!hasData">
+                        <tr><td colspan="7" class="bg-white text-center">{{isLoadingTab?'Chargement en cours...':'Aucune donnée!'}}</td></tr>
+                    </template>
                     <tr v-for="pro in proprios.data" :key="pro.identifiant">
                         <td class="align-middle"><h5 class="mb-0"><label class="badge badge-primary mb-0">{{pro.identifiant}}</label></h5></td>
                         <td class="align-middle">{{pro.nom}} {{pro.prenom}}</td>
                         <td class="align-middle">{{pro.email}}</td>
                         <td class="align-middle"> 
-                            <div>{{pro.ind2}}{{pro.tel2}}</div>
+                            <div>{{pro.ind1}}{{pro.tel1}}</div>
                         </td>
                         <td class="align-middle"><label class="badge badge-info">{{pro.type_piece}}</label></td>
                         <td class="align-middle">
@@ -50,8 +53,8 @@
                                 <button type="button" title="Représentants" class="btn btn-sm border-2 border-info font-weight-bold position-relative mr-2 hover-info" @click="setUpRepresentant(pro)"><i class="fa fa-users"></i> <span class="badge badge-info badge-light position-absolute total-right-corner">{{ pro.nbreRespre }}</span>
                                 </button>
                                 <button title="Plus de détails" class="btn btn-sm border-2 btn-primary ml-1" @click="view(pro)" data-toggle="modal" data-target="#moreInfo" v-on:click="newModal"><i class="fa fa-eye"></i></button>
-                                <button title="Modifier" class="btn btn-sm btn-info border-2 ml-1" data-toggle="modal" data-target="#addNew"  v-on:click="edit(pro)"><i class="fa fa-edit"></i></button>
-                                <button title="Supprimer" class="btn btn-sm btn-danger border-2 ml-1" @click="deleteProprio(pro)"><i class="fa fa-trash"></i></button>
+                                <button v-if="hasPermission('Proprietaire.Modifier')" title="Modifier" class="btn btn-sm btn-info border-2 ml-1" data-toggle="modal" data-target="#addNew"  v-on:click="edit(pro)"><i class="fa fa-edit"></i></button>
+                                <button v-if="hasPermission('Proprietaire.Supprimer')" title="Supprimer" class="btn btn-sm btn-danger border-2 ml-1" @click="deleteProprio(pro)"><i class="fa fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -90,12 +93,12 @@
                                     <div class="row">
                                         <div class="col-md-6 d-flex justify-content-between">
                                             <div class="form-group w-49">
-                                                <label>Nom</label>
+                                                <label>Nom <span class="required">*</span></label>
                                                 <input v-model="form.nom" type="text"
                                                     class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.nom.required }">
                                             </div>
                                              <div class="form-group w-49">
-                                                <label>Prénom</label>
+                                                <label>Prénom <span class="required">*</span></label>
                                                 <input v-model="form.prenom" type="text"
                                                     class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.prenom.required }">
                                                
@@ -103,12 +106,16 @@
                                         </div>
                                         <div class="col-md-6 d-flex justify-content-between">
                                            <div class="form-group w-49">
-                                                <label>Nationalié</label>
-                                                <input v-model="form.nationalite" type="text"
-                                                    class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.nationalite.required }">
+                                                <label>Nationalié <span class="required">*</span></label>
+                                                <select class="form-control" v-model="form.nationalite" :class="{ 'border-danger': isSubmitted && !$v.form.nationalite.required }">
+                                                  <option value="" disabled>Sélectionner une nationalité</option>
+                                                  <option v-for="nationalite in getNationale()" :key="nationalite" :value="nationalite">
+                                                    {{ nationalite }}
+                                                  </option>
+                                                </select>
                                             </div>
                                             <div class="form-group max-country  w-49">
-                                                <label>Profession</label>
+                                                <label>Profession <span class="required">*</span></label>
                                                  <input v-model="form.profession" type="text"
                                                     class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.profession.required }">
                                                
@@ -122,7 +129,7 @@
                                                   <date-picker v-model="form.date_naissance" class="w-100"  required valueType="YYYY-MM-DD" input-class="form-control w-100" placeholder="dd/mm/yyyy" format="DD/MM/YYYY"></date-picker>
                                             </div>
                                              <div class="form-group max-country  w-49">
-                                                <label>Ville de naissance</label>
+                                                <label>Ville de naissance <span class="required">*</span></label>
                                                 <input v-model="form.ville_naissance" type="text"
                                                     class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.ville_naissance.required }">
                                                
@@ -132,8 +139,8 @@
                                            <div class="form-group max-country  w-49">
                                                 <label>Pays de naissance</label>
                                                 <vue-country-dropdown
-                                                        @onSelect="onSelectNaissance" :onlyCountries="['SN']" :showNameInput="true">
-                                                    </vue-country-dropdown>
+                                                        @onSelect="onSelectNaissance" :onlyCountries="allCountriesISO2()" :showNameInput="true">
+                                                </vue-country-dropdown>
                                                
                                             </div>
                                         </div>
@@ -172,14 +179,18 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Email</label>
-                                                <input v-model="form.email" type="email"
-                                                    class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.email.required }">
+
+                                                <div class="d-flex justify-content-between align-items-baseline">
+                                                    <label>Email <span class="required">*</span></label>
+                                                     <span  v-if="isSubmitted && !$v.form.email.emailValidation && $v.form.email.required" class="error-message">{{ errorMessageEmail() }}</span>
+                                                </div>
+                                                <input v-model="form.email" type="text"
+                                                    class="form-control" :class="{ 'border-danger': isSubmitted && (!$v.form.email.required || !$v.form.email.emailValidation)}">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                            <div class="form-group">
-                                            <label>Adresse</label>
+                                            <label>Adresse <span class="required">*</span></label>
                                                 <input v-model="form.adresse" type="text"
                                                     class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.adresse.required }">
                                                 
@@ -189,7 +200,7 @@
                                     <div class="row">
                                         <div class="col-md-6 d-flex justify-content-between">
                                            <div class="form-group w-49">
-                                                <label>Ville</label>
+                                                <label>Ville <span class="required">*</span></label>
                                                 <input v-model="form.ville" type="text"
                                                     class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.ville.required }">
                                                
@@ -202,12 +213,12 @@
                                         </div>
                                         <div class="col-md-6">
                                            <div class="form-group max-country">
-                                                <label>Pays</label>
+                                                <label>Pays <span class="required">*</span></label>
                                                 <input v-model="form.pays" type="text"
                                                     class="form-control d-none"  :class="{ 'border-danger': isSubmitted && !$v.form.pays.required }">
 
                                                     <vue-country-dropdown
-                                                        @onSelect="onSelect" :onlyCountries="['SN']" :showNameInput="true">
+                                                        @onSelect="onSelect" :onlyCountries="countriesAuthorizedISO2()" :showNameInput="true">
                                                     </vue-country-dropdown>
                                                
                                             </div>
@@ -216,26 +227,35 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                            <div class="form-group">
-                                                <label>Téléphone Mobile</label>
+                                                <div class="d-flex justify-content-between align-items-baseline">
+                                                    <label>Téléphone Mobile <span class="required">*</span></label>
+                                                    <span  v-if="isSubmitted && !$v.form.tel1.customTelValidation && $v.form.tel1.required" class="error-message">{{ errorMessageTelephone() }}</span>
+                                                </div>
                                                 <div class="d-flex">
                                                     <vue-country-dropdown
-                                                        @onSelect="onSelectIndicatif1" :onlyCountries="['SN']" :showNameInput="false" :enabledCountryCode="true">
+                                                        @onSelect="onSelectIndicatif1" :onlyCountries="countriesAuthorizedISO2()" :showNameInput="false" :enabledCountryCode="true">
                                                     </vue-country-dropdown>
                                                     <input v-model="form.tel1" type="text"
-                                                    class="form-control ml-2" :class="{ 'border-danger': isSubmitted && !$v.form.tel1.required }">
+                                                    class="form-control ml-2" :class="{ 'border-danger': isSubmitted && (!$v.form.tel1.required || !$v.form.tel1.customTelValidation)}">
                                                 </div>
                                                 
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Téléphone Fixe</label>
+                                                <div class="d-flex justify-content-between align-items-baseline">
+                                                    <label>Téléphone Fixe</label>
+                                                    <template v-if="form.tel2!=''">
+                                                        <span  v-if="isSubmitted && !$v.form.tel2.customTelFixeValidation" class="error-message">{{ errorMessageTelephone() }}</span>
+                                                    </template>
+
+                                                </div>
                                                 <div class="d-flex">
                                                     <vue-country-dropdown
-                                                            @onSelect="onSelectIndicatif2" :onlyCountries="['SN']" :showNameInput="false" :enabledCountryCode="true">
+                                                            @onSelect="onSelectIndicatif2" :onlyCountries="countriesAuthorizedISO2()" :showNameInput="false" :enabledCountryCode="true">
                                                         </vue-country-dropdown>
                                                     <input v-model="form.tel2" type="text"
-                                                        class="form-control ml-2">
+                                                        class="form-control ml-2"  :class="{ 'border-danger': isSubmitted && !$v.form.tel2.customTelFixeValidation}">
                                                 </div>
                                             </div>
                                         </div>
@@ -251,7 +271,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                            <div class="form-group">
-                                                <label>Type piéce</label>
+                                                <label>Type piéce <span class="required">*</span></label>
                                                 <select v-model="form.type_piece" class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.type_piece.required }">
                                                     <option value="">Choisir</option>
                                                     <option value="CNI">CNI</option>
@@ -262,9 +282,9 @@
                                         </div>
                                         <div class="col-md-6">
                                            <div class="form-group">
-                                                <label>N°Piéce</label>
+                                                <label>N°Piéce <span class="required">*</span></label>
                                                 <input v-model="form.numero_piece" type="text"
-                                                    class="form-control">
+                                                    class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.numero_piece.required }">
                                                
                                             </div>
                                         </div>
@@ -305,6 +325,7 @@
                             <button v-show="editmode" type="submit" class="btn btn-success">Enregister</button>
                             <button v-show="editmode" type="button" class="btn btn-warning"  data-dismiss="modal" @click="reset()">Annuler</button>
                             <button v-show="!editmode" type="submit" class="btn btn-success">Créer</button>
+                             <button v-show="!editmode" type="button" class="btn btn-primary">Enregister comme brouillon</button>
                             <button  v-show="!editmode" type="button" class="btn btn-info btn" @click="reset()">Réinitialiser</button>
                             <button  v-show="!editmode" type="button" class="btn btn-secondary btn" @click="reset()" data-dismiss="modal">Annuler</button>
                         </div>
@@ -484,6 +505,7 @@
 </template>
 
 <script>
+
 import DatePicker from 'vue2-datepicker';
 import VueCountryDropdown from 'vue-country-dropdown';
 import 'vue2-datepicker/index.css';
@@ -499,6 +521,7 @@ export default {
         return {
             editmode: false,
             proprios : {},
+            hasData: false,
             form: {
                 id : '',
                 nom : '',
@@ -538,15 +561,50 @@ export default {
         form : {
             nom:     { required },
             prenom:  { required },
-            tel1:    { required },
-            email:   { email, required },
+            tel1:    { required,
+                customTelValidation(value) {
+                   const regex = this.getRegexForCountryTelMobile(this.form.indicatif1);
+                   if(!regex){
+                    Vue.swal.fire(
+                      'error!',
+                      'Regex non défini',
+                      'error'
+                    )
+                    return false
+                   }
+                    return regex.test(value);
+                }
+            },
+            tel2:    {
+                customTelFixeValidation(value) {
+                    if(value=='') return true;
+                   const regex = this.getRegexForCountryTelFixe(this.form.indicatif2);
+                   if(!regex){
+                    Vue.swal.fire(
+                      'error!',
+                      'Regex non défini',
+                      'error'
+                    )
+                    return false
+                   }
+                    return regex.test(value);
+                }
+            },
+            email:   { required,
+                emailValidation(value) {
+                    const regex = this.getRegexEmail();
+                    console.log(">>>", regex.test(value))
+                    return regex.test(value);
+                }
+            },
             adresse: { required },
             ville:   { required },
             pays:    { required },
             ville_naissance: { required },
             profession: { required },
             nationalite: { required },
-            type_piece: { required }
+            type_piece: { required },
+            numero_piece: { required }
         }
     },
     watch: {
@@ -558,6 +616,8 @@ export default {
         createProprio(){
 
             this.isSubmitted = true;
+
+
             // stop here if form is invalid
             this.$v.form.$touch();
 
@@ -618,7 +678,7 @@ export default {
 
                     Vue.swal.fire(
                       'succés!',
-                      'Proprietaire crée avec succés!',
+                      action=='create'? 'Propriétaire crée avec succés!':'Propriétaire modifié avec succés!',
                       'success'
                     );
 
@@ -659,9 +719,21 @@ export default {
         getProprio(page=1){
             this.isLoadingTab = true;
             axios.get("/proprio/listing?paginate="+ this.paginate+'&page=' + page).then(responses => {
+
               console.log(responses);
+              this.isLoadingTab = false;
+
               this.proprios = responses.data;
-               this.isLoadingTab = false;
+
+              if(this.proprios.data.length == 0){
+                this.hasData = false;
+              }
+              else{
+                 this.hasData = true;
+              }
+
+
+
             }).catch(errors => { 
 
             // react on errors.
@@ -669,6 +741,7 @@ export default {
             })
         },
         reset(){
+            this.isSubmitted = false;
             this.form.id = '';
             this.form.nom = '';
             this.form.prenom = '';
@@ -815,9 +888,10 @@ export default {
 
     },
     mounted() {
-         this.getProprio();   
+        this.getProprio();
          EventBus.$on('BACK', (event) => {
           this.viewRepresentant = event.back;
+          this.getProprio();
         });        
     }
 }

@@ -20,7 +20,7 @@ class BiensResource extends JsonResource
             "identifiant"        => $this->bien_id,
             "adresse"            => $this->bien_adresse,
             "nom_immeuble"       => $this->bien_nom,
-            "annee_construction" =>  Carbon::parse($this->bien_annee_construction)->format('d/m/Y'),
+            "annee_construction" => $this->bien_annee_construction,
             "annee_cons_natif"   => $this->bien_annee_construction,
             "description"        => $this->bien_description,
             "numero"             => $this->bien_numero,

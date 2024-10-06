@@ -63,10 +63,11 @@ class GenerationLoyer extends Command
             $fromDateFormat = $fromDate->format('Y-m');
             // Nbre de mois 
             $months = $toDate->diffInMonths($fromDateFormat);
+
             if($months > 0){
                 $i=0;
                 while($i<$months){
-
+                    print_r($fromDateFormat);
                     if(!$this->checkMonthExist($bail["bail_id"], $fromDateFormat)){
                         // inserer un nouveau loyer
                         $paiement_id = Helper::IDGenerator(new PaiementsLoyer, 'paiement_id',config('constants.ID_LENGTH'), config('constants.PREFIX_PAIEMENT_LOYER'));

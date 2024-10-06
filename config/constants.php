@@ -19,6 +19,8 @@ return [
     "CREDIT"                => "CREDIT",
     "PATH_FACTURE"          => "assets/factures/",
     "PREFIX_CHARGES_FRAIS"  => "CHARGE",
-    "PREFIX_REPRESENTANT"   => "REPRE"
+    "PREFIX_REPRESENTANT"   => "REPRE",
+    "PREFIX_FILIALE"        => "FILIAL",
+    "PREFIX_PERS"           => "PERS"
 
 ]; 

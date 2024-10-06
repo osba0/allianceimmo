@@ -18,6 +18,7 @@ import Operations from "./components/operations/Index";
 import Charges from "./components/operations/Charges";  
 import OperationsList from "./components/operations/List";  
 import Pie from "./components/dashboard/Pie";
+import Bar from "./components/dashboard/Bar";
 import RoleManager from './components/config/RoleManager.vue';
 import PermissionManager from './components/config/PermissionManager.vue';
 import RolePermissionAssigner from './components/config/RolePermissionAssigner.vue';
@@ -556,6 +557,7 @@ const app = new Vue({
         PermissionManager,
         RolePermissionAssigner,
         UserManager,
-        AgenceList
+        AgenceList,
+        Bar
     }
 });

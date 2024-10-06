@@ -171,8 +171,8 @@
                                 </div>
                                  <div class="col-md-6">
                                       <div class="form-group">
-                                        <label for="role">Rôle</label>
-                                        <select class="form-control" id="role" v-model="newUser.role">
+                                        <label for="role">Rôle <span class="required">*</span></label>
+                                        <select class="form-control" id="role" v-model="newUser.role"  :class="{ 'border-danger': isSubmitted && (!$v.newUser.role.required)}">
                                           <option v-for="role in roles" :key="role.id" :value="role.name">{{ role.name }}</option>
                                         </select>
                                       </div>
@@ -192,9 +192,9 @@
                                 </div>
                                 <div class="col-md-6 d-flex justify-content-between">
                                     <div class="form-group w-49">
-                                        <label for="role">Agence</label>
+                                        <label for="role">Agence <span class="required">*</span></label>
 
-                                         <select class="form-control" v-model="newUser.selectedAgenceId" @change="filterFiliales">
+                                         <select class="form-control" v-model="newUser.selectedAgenceId" @change="filterFiliales" :class="{ 'border-danger': isSubmitted && (!$v.newUser.agence.required)}">
                                           <option value="" disabled>Sélectionner une agence</option>
                                           <option v-for="agence in agences" :key="agence.id" :value="agence.id">
                                             {{ agence.agence_nom }}
@@ -282,6 +282,8 @@ export default {
           nomUtilisateur: { required },
           pers_nom: { required },
           pers_prenom: { required },
+          role: { required },
+          agence: { required },
           pers_tel_1: {
               required,
               customTelValidation(value) {

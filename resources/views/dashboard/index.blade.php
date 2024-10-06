@@ -16,7 +16,8 @@
             <div class="boxes">
                 <div class="box box1">
                     <h2>Encaissement de l'année 2023</h2>
-                    <Pie/>
+                    <!--Pie/-->
+                    <Bar />
                 </div>
                 <div class="box box2">
                     <h2>Nbre Prioprétaire(s)</h2>

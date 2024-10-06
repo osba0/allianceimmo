@@ -7,6 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PermissionGroupController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,3 +44,5 @@ Route::get('roles/{role}/permissions', [RoleController::class, 'getPermissions']
 Route::get('/users', [UserController::class, 'list']);
 Route::post('/users', [UserController::class, 'store']);
 Route::delete('/users/{user}', [UserController::class, 'destroy']);
+
+Route::get('/solde-mensuel', [HomeController::class, 'getSoldeMensuel']);

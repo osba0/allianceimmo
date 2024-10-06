@@ -168,9 +168,9 @@
                               
                         </div>
                         <div class="modal-footer justify-content-center">
-                            <button v-show="editmodeRepresenant" type="submit" class="btn btn-success">Enregister</button>
+                            <button v-show="editmodeRepresenant" type="submit" class="btn btn-success" :disabled="isLoadingRepr ? true: false">Enregister</button>
                             <button v-show="editmodeRepresenant" type="button" class="btn btn-warning"  data-dismiss="modal" @click="resetFormRepre()">Annuler</button>
-                            <button v-show="!editmodeRepresenant" type="submit" class="btn btn-success">Créer</button>
+                            <button v-show="!editmodeRepresenant" type="submit" class="btn btn-success" :disabled="isLoadingRepr ? true: false">Créer</button>
                             <button  v-show="!editmodeRepresenant" type="button" class="btn btn-info btn" @click="resetFormRepre()">Réinitialiser</button>
                             <button  v-show="!editmodeRepresenant" type="button" class="btn btn-secondary btn" @click="resetFormRepre()" data-dismiss="modal">Annuler</button>
                         </div>

@@ -19,6 +19,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'osba@yopmail.com',
             'username' => 'osba',
             'password' => bcrypt('passer@123'), // Changez le mot de passe selon vos besoins
+            'agence_id' => 1,
         ]);
 
         // Assigner le rôle Root à l'utilisateur

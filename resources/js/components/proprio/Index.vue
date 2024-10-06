@@ -322,9 +322,9 @@
                               
                         </div>
                         <div class="modal-footer justify-content-center">
-                            <button v-show="editmode" type="submit" class="btn btn-success">Enregister</button>
+                            <button v-show="editmode" type="submit" class="btn btn-success" :disabled="isLoading ? true: false">Enregister</button>
                             <button v-show="editmode" type="button" class="btn btn-warning"  data-dismiss="modal" @click="reset()">Annuler</button>
-                            <button v-show="!editmode" type="submit" class="btn btn-success">Créer</button>
+                            <button v-show="!editmode" type="submit" class="btn btn-success" :disabled="isLoading ? true: false">Créer</button>
                              <button v-show="!editmode" type="button" class="btn btn-primary">Enregister comme brouillon</button>
                             <button  v-show="!editmode" type="button" class="btn btn-info btn" @click="reset()">Réinitialiser</button>
                             <button  v-show="!editmode" type="button" class="btn btn-secondary btn" @click="reset()" data-dismiss="modal">Annuler</button>
@@ -753,7 +753,7 @@ export default {
             this.form.email = '';
             this.form.adresse = '';
             this.form.ville = '';
-            this.form.pays = '';
+            //this.form.pays = '';
             this.form.entreprise = '';
             this.form.compte_bancaire = '';
             this.form.type_piece = '';

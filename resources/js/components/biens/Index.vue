@@ -146,7 +146,7 @@
                                 </div>
                                 <div class="col-md-6">
                                    <div class="form-group max-country">
-                                        <label>Pays <span class="required">*</span></label>
+                                        <label :class="{ 'border px-2 border-danger': isSubmitted && !$v.form.pays.required }">Pays <span class="required">*</span></label>
                                         <input v-model="form.pays" type="text"
                                             class="form-control d-none"  :class="{ 'border-danger': isSubmitted && !$v.form.pays.required }">
 
@@ -198,9 +198,9 @@
                               
                         </div>
                         <div class="modal-footer justify-content-center">
-                            <button v-show="editmode" type="submit" class="btn btn-success">Enregister</button>
+                            <button v-show="editmode" type="submit" class="btn btn-success" :disabled="isLoading ? true: false">Enregister</button>
                             <button v-show="editmode" type="button" class="btn btn-warning"  data-dismiss="modal" @click="reset()">Annuler</button>
-                            <button v-show="!editmode" type="submit" class="btn btn-success">Créer</button>
+                            <button v-show="!editmode" type="submit" class="btn btn-success" :disabled="isLoading ? true: false">Créer</button>
                             <button  v-show="!editmode" type="button" class="btn btn-info" @click="reset()">Réinitialiser</button>
                             <button  v-show="!editmode" type="button" class="btn btn-secondary" @click="reset()" data-dismiss="modal">Annuler</button>
                         </div>
@@ -249,7 +249,7 @@ export default {
                 nom: '',
                 adresse: '',
                 ville: '',
-                pays: '',
+                pays: "",
                 superficie:'',
                 description: '',
                 annee_construction: '',
@@ -264,7 +264,7 @@ export default {
             paginate: 5,
             editKyc: [],
             isLoadingTab: false,
-            viewLocal: false
+            viewLocal: false,
         }
     },
     validations: {
@@ -379,7 +379,7 @@ export default {
             this.form.superficie = '';
             this.form.annee_construction = '';
             this.form.ville = '';
-            this.form.pays = '';
+            //this.form.pays = '';
             this.form.description = '';
             this.form.etage = '';
             this.form.numero = '';

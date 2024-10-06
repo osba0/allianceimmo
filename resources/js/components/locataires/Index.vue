@@ -337,9 +337,9 @@
                         </div>    
                     </div>
                     <div class="modal-footer justify-content-center">
-                        <button v-show="editmode" type="submit" class="btn btn-success">Enregister</button>
+                        <button v-show="editmode" type="submit" class="btn btn-success" :disabled="isLoading ? true: false">Enregister</button>
                         <button v-show="editmode" type="button" class="btn btn-warning"  data-dismiss="modal" @click="reset()">Annuler</button>
-                        <button v-show="!editmode" type="submit" class="btn btn-success">Créer</button>
+                        <button v-show="!editmode" type="submit" class="btn btn-success" :disabled="isLoading ? true: false">Créer</button>
                          <button v-show="!editmode" type="button" class="btn btn-primary">Enregister comme brouillon</button>
                         <button  v-show="!editmode" type="button" class="btn btn-info btn" @click="reset()">Réinitialiser</button>
                         <button  v-show="!editmode" type="button" class="btn btn-secondary " @click="reset()" data-dismiss="modal">Annuler</button>

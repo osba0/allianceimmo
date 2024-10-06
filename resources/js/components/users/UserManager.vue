@@ -38,9 +38,9 @@
                 <td><label class="badge badge-primary">{{ user.roles.map(role => role.name).join(', ') }}</label></td>
                 <td class="text-right align-middle">
                   <div class="d-inline-flex">
-                    <button @click="editUser(user.id)" class="btn btn-sm btn-info border-2 ml-1">
+                    <!--button @click="editUser(user.id)" class="btn btn-sm btn-info border-2 ml-1">
                       <i class="fa fa-edit"></i>
-                    </button>
+                    </button-->
                     <button @click="deleteUser(user.id)" class="btn btn-sm btn-danger border-2 ml-1">
                       <i class="fa fa-trash"></i>
                     </button>
@@ -182,11 +182,11 @@
                               <div class="row">
                                 <div class="col-md-6 d-flex justify-content-between">
                                     <div class="form-group w-49">
-                                        <label for="password">Mot de passe</label>
+                                        <label for="password">Mot de passe<span class="required">*</span></label>
                                         <input type="password" class="form-control" id="password" v-model="newUser.password">
                                     </div>
                                     <div class="form-group w-49">
-                                        <label for="rpassword">Confirmer Mot de passe</label>
+                                        <label for="rpassword">Confirmer Mot de passe <span class="required">*</span></label>
                                         <input type="password" class="form-control" id="rpassword" v-model="newUser.rpassword">
                                     </div>
                                 </div>
@@ -218,7 +218,7 @@
 
                         </div>
                         <div class="modal-footer justify-content-center">
-                            <button type="submit" class="btn btn-success">Créer</button>
+                            <button type="submit" class="btn btn-success" :disabled="isLoading ? true: false">Créer</button>
                         </div>
                       </form>
                     </div>

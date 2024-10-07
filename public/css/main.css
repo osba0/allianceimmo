@@ -82,6 +82,9 @@ img{
 .navbar-white {
   background: linear-gradient(120deg, #fff 50%, #2c2e3e 50%) !important;
 }
+.main-header{
+  box-shadow: 1px 2px 8px #aeaaaa;
+}
 body a {
   color: #4d81bb;
 }
@@ -235,7 +238,7 @@ body .content-wrapper {
   /*position: fixed;*/
   bottom: 0;
   width: calc(100% - 250px);
-  border-left: 5px solid #3490dc;
+  border-left: 0px solid #3490dc;
   padding: 5px 15px;
 
 }

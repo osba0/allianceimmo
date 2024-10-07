@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="box box5">
-                    <h2>Derniére opération(s)</h2>
+                    <h2>5 derniéres opération(s)</h2>
                         <div class="table-responsive lastOperation">
                             <table class="table table-hover">
                                 <thead class="bg-white">
@@ -80,6 +80,9 @@
 
                                 </tbody>
                             </table>
+                            <div class="text-align text-align d-flex justify-content-center">
+                                <a class="btn-sm btn btn-primary" href="{{route('operation')}}">Voir tout <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                            </div>
                         </div>
                     </div>
                      <div class="box box4">

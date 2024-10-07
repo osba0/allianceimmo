@@ -49,7 +49,7 @@ export default {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Montant',
+              text: 'Montant en F CFA',
             },
           },
         },

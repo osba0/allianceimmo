@@ -15,7 +15,7 @@
            
             <div class="boxes">
                 <div class="box box1">
-                    <h2>Encaissement de l'année 2023</h2>
+                    <h2>Encaissement des <u>3 derniers mois</u> de l'année {{ date('Y') }}</h2>
                     <!--Pie/-->
                     <Bar />
                 </div>

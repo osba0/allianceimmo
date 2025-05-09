@@ -186,7 +186,7 @@
 
                     <div class="modal-footer justify-content-center">
                         <button type="submit" class="btn btn-success">Ajouter</button>
-                        <button type="button" class="btn btn-secondary " ref="closePopup" data-dismiss="modal" aria-label="Close" @click="reset()">Fermer</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Fermer</button>
                     </div>
                   </form>
                  </template>

@@ -154,11 +154,10 @@ class ProprietairesController extends Controller
             ]);
 
             // Lorsqu'un nouveau locataire est créé
-            NotificationService::createForRole(
+            NotificationService::creerNotification(
                 'creation',
                 'Nouveau Propiétaire',
                 "Un nouveau propiétaire a été ajouté.",
-                $user->username, // ou 'proprio' ou 'agent'
                 [
                     'proprio_id' => $proprio_id,
                     'proprio_nom' => request('nom'),

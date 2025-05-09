@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 use App\Helpers\Helper;
 
 use App\Models\Locataires;
+use App\Models\Bail;
 use App\Http\Resources\LocatairesResource;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 use DB;
 use File;
@@ -40,8 +42,13 @@ class LocatairesController extends Controller
 
         $locataires = DB::table('locataires');
 
+        if(request('locataireID')){
+
+            $locataires->where('locataires.locat_id', request('locataireID'));
+        }
+
         if(isset($paginate)){
-            $locataires = Locataires::orderby("created_at", "desc")->paginate($paginate);
+            $locataires = $locataires->orderby("created_at", "desc")->paginate($paginate);
         }else{
             $locataires = $locataires->get(); 
         }
@@ -69,6 +76,7 @@ class LocatairesController extends Controller
             $locat_id = Helper::IDGenerator(new Locataires, 'locat_id',config('constants.ID_LENGTH'), config('constants.PREFIX_LOCATAIRE'));
       
             $q->locat_id=$locat_id;
+            $q->agence_id = $user->agence_id;
             $q->locat_civilite=request('civilite');
             $q->locat_type=request('type_location');
             $q->locat_societe=request('societe');
@@ -98,6 +106,8 @@ class LocatairesController extends Controller
             $q->locat_date_expiration=request('date_expiration');
             $q->locat_photo_perso=json_encode($filesPerso);
             $q->locat_photo_piece=json_encode($filesPiece);
+            $q->token = Str::random(60);
+            $q->pin = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT); // 🔒 PIN à 4 chiffres
 
             $q->save();
 
@@ -244,6 +254,37 @@ class LocatairesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $locataire =  Locataires::where('locat_id',$id)->first();
+        if(!$locataire){
+            $rep = [
+                "code" => 1,
+                "message" => "Locataire introuvable"
+            ];
+        }
+
+        // Delete all files
+        if(isset($locataire["locat_photo_piece"])){
+            Helper::deleteFiles(config('constants.PATH_LOCATAIRE'), $locataire["locat_photo_piece"]);
+        }
+        if(isset($locataire["locat_photo_perso"])){
+            Helper::deleteFiles(config('constants.PATH_LOCATAIRE'), $locataire["locat_photo_perso"]);
+        }
+
+        $rem = $locataire->delete();
+
+        if($rem){
+            $rep = [
+                "code" => 0,
+                "message" => "OK"
+            ];
+        }else{
+            $rep = [
+                "code" => 1,
+                "message" => "KO"
+            ];
+        }
+
+        return response($rep);
+
     }
 }

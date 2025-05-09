@@ -1,16 +1,26 @@
 <template>
     <div>
         <template v-if="!viewRepresentant">
-            <div class="d-flex justify-content-between mb-3">
-                <div class="d-flex align-items-center">
-                    <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>
-                    <select class="form-control form-control-sm" v-model="paginate">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                        <option value="20">20</option>
-                    </select>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex justify-content-between align-items-center gap-15">
+                    <div class="d-flex align-items-center">
+                        <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>
+                        <select class="form-control form-control-sm" v-model="paginate">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
+                    </div>
+                    <!-- Filtres -->
+
+                    <div class="d-flex align-items-end gap-15">
+                        <div style="width: 300px">
+                            <v-select v-model="proprioSelected" @input="onInputSelectProprio" placeholder="Filtrer par propriétaire" :options="listProprio"  @option:selected="onProprioChoisi" label="item_data"></v-select>
+                        </div>
+                    </div>
                 </div>
+
                 <button v-if="hasPermission('Proprietaire.Ajouter')" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Propriétaire</button>
             </div>
             <div class="table-responsive">
@@ -19,9 +29,10 @@
                     <tr>
                         <th>Identifiant</th>
                         <th>Propriétaire</th>
-                        <th>Email</th>
                         <th>Téléphone</th>
-                        <th>Type Piéce</th>
+                        <th class="text-center">Bien loué</th>
+                        <th>Locataire Actif</th>
+                        <th class="text-right">Revenus Locatif</th>
                         <th>Photo piéce</th>
                         <th class="text-right">Action</th>
                     </tr>
@@ -36,13 +47,28 @@
                         <tr><td colspan="7" class="bg-white text-center">{{isLoadingTab?'Chargement en cours...':'Aucune donnée!'}}</td></tr>
                     </template>
                     <tr v-for="pro in proprios.data" :key="pro.identifiant">
-                        <td class="align-middle"><h5 class="mb-0"><label class="badge badge-primary mb-0">{{pro.identifiant}}</label></h5></td>
-                        <td class="align-middle">{{pro.nom}} {{pro.prenom}}</td>
-                        <td class="align-middle">{{pro.email}}</td>
-                        <td class="align-middle"> 
-                            <div>{{pro.ind1}}{{pro.tel1}}</div>
+                        <td class="align-middle">
+                            <h5 class="mb-0">
+                                <label class="badge badge-primary mb-0">{{pro.identifiant}}</label>
+                            </h5>
                         </td>
-                        <td class="align-middle"><label class="badge badge-info">{{pro.type_piece}}</label></td>
+                        <td class="align-middle">{{pro.nom}} {{pro.prenom}}</td>
+
+                        <td class="align-middle"> 
+                            <div>{{pro.ind1}} {{pro.tel1}}</div>
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            <button title="Voir la liste" :disabled="pro.nbreBienLoue > 0
+                             ?false:true" class="btn btn-sm border-2 ml-1" :class="'btn-'+(pro.nbreBienLoue > 0?'primary':'secondary')" @click="view(pro)" data-toggle="modal" data-target="#modalBienLoue">{{pro.nbreBienLoue}}</button>
+                        </td>
+                        <td class="align-middle">
+                             <button title="Voir la liste" :disabled="pro.nbreLocatairesActifs > 0
+                             ?false:true" class="btn btn-sm border-2 ml-1" :class="'btn-'+(pro.nbreLocatairesActifs > 0?'success':'danger')" @click="view(pro)" data-toggle="modal" data-target="#modalLocataireActif">{{ pro.nbreLocatairesActifs }}</button></td>
+                        <td class="align-middle text-right">
+                            {{ helper_separator_amount(pro.revenus_locatifs) }}
+                        </td>
                         <td class="align-middle">
                             <span v-for="photo in pro.kyc" class="mr-2 cursor-pointer">
                                 <img :src="'/assets/kyc/'+photo" height="30" data-toggle="modal" data-target="#carouselPhoto" @click="setKyc(pro)"/>
@@ -50,11 +76,12 @@
                         </td>
                         <td class="text-right align-middle">
                             <div class="d-inline-flex">
+                                <button class="btn btn-success mr-2" data-toggle="modal" data-target="#badgeProprietaire" @click="showBadge(pro)"><i class="fa fa-id-badge" aria-hidden="true"></i> Badge</button>
                                 <button type="button" title="Représentants" class="btn btn-sm border-2 border-info font-weight-bold position-relative mr-2 hover-info" @click="setUpRepresentant(pro)"><i class="fa fa-users"></i> <span class="badge badge-info badge-light position-absolute total-right-corner">{{ pro.nbreRespre }}</span>
                                 </button>
                                 <button title="Plus de détails" class="btn btn-sm border-2 btn-primary ml-1" @click="view(pro)" data-toggle="modal" data-target="#moreInfo" v-on:click="newModal"><i class="fa fa-eye"></i></button>
                                 <button v-if="hasPermission('Proprietaire.Modifier')" title="Modifier" class="btn btn-sm btn-info border-2 ml-1" data-toggle="modal" data-target="#addNew"  v-on:click="edit(pro)"><i class="fa fa-edit"></i></button>
-                                <button v-if="hasPermission('Proprietaire.Supprimer')" title="Supprimer" class="btn btn-sm btn-danger border-2 ml-1" @click="deleteProprio(pro)"><i class="fa fa-trash"></i></button>
+                                <button :disabled="pro.nbreLocatairesActifs>0?true:false" v-if="hasPermission('Proprietaire.Supprimer')" title="Supprimer" class="btn btn-sm btn-danger border-2 ml-1" @click="deleteProprio(pro)"><i class="fa fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -72,7 +99,7 @@
             <!-- Modal -->
             <div class="modal fade" id="addNew" data-backdrop="static" data-keyboard="false" tabindex="-1"  role="dialog" aria-labelledby="addNew" aria-hidden="true">
                 
-                <div class="modal-dialog modal-xl position-relative" role="document">
+                <div class="modal-dialog  modal-xl position-relative" role="document">
                     <div class="loader-line" :class="[isLoading?'d-block':'d-none']"></div>
                     <div class="modal-content">
                     <div class="modal-header">
@@ -325,7 +352,7 @@
                             <button v-show="editmode" type="submit" class="btn btn-success" :disabled="isLoading ? true: false">Enregister</button>
                             <button v-show="editmode" type="button" class="btn btn-warning"  data-dismiss="modal" @click="reset()">Annuler</button>
                             <button v-show="!editmode" type="submit" class="btn btn-success" :disabled="isLoading ? true: false">Créer</button>
-                             <button v-show="!editmode" type="button" class="btn btn-primary">Enregister comme brouillon</button>
+                            <!--button v-show="!editmode" type="button" class="btn btn-primary">Enregister comme brouillon</button-->
                             <button  v-show="!editmode" type="button" class="btn btn-info btn" @click="reset()">Réinitialiser</button>
                             <button  v-show="!editmode" type="button" class="btn btn-secondary btn" @click="reset()" data-dismiss="modal">Annuler</button>
                         </div>
@@ -496,6 +523,131 @@
 
             <!-- modal carousel -->
             <modalCarousel></modalCarousel>
+            <!-- Modal Badge-->
+            <div  class="modal fade" id="badgeProprietaire" data-backdrop="static" data-keyboard="false" tabindex="-1"  role="dialog" aria-labelledby="badgeLocataire" aria-hidden="true">
+                <div class="modal-dialog modal-xl position-relative" role="document">
+                    <div class="modal-content" >
+                        <div class="modal-header">
+                            <h5 class="modal-title text-uppercase">
+                                <strong><span class="text-primary"><u>Badge</u></span> Proprietaire</strong>
+                            </h5>
+
+                            <button type="button" class="close" ref="closePopupBadge" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" style="background: #373737;">
+                            <template v-if="proprietaireSelected && Object.keys(proprietaireSelected).length > 0">
+                               <BadgeProprietaire
+                                  :photo="'/assets/images/user.png'"
+                                  :logo="'/assets/images/logo_abi_immo.png'"
+                                  :qrCode="env+'/badge/proprietaire/'+proprietaireSelected.identifiant"
+                                  :size="120"
+                                  :proprietaire="{
+                                    nom: proprietaireSelected.nom || '',
+                                    prenom: proprietaireSelected.prenom || '',
+                                    id: proprietaireSelected.identifiant || '',
+                                    telephone: proprietaireSelected.ind1  +' '+proprietaireSelected.tel1,
+                                    email: proprietaireSelected.email || ''
+                                  }"
+                                />
+                            </template>
+
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-danger " @click="reset()" data-dismiss="modal">Fermer</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+             <!-- Modal locataires actif-->
+            <div  class="modal fade" id="modalLocataireActif" data-backdrop="static" data-keyboard="false" tabindex="-1"  role="dialog" aria-labelledby="modalLocataireActif" aria-hidden="true">
+                <div class="modal-dialog modal-xl position-relative" role="document">
+                    <div class="modal-content" >
+                        <div class="modal-header">
+                            <h5 class="modal-title text-uppercase">
+                                <strong><span class="text-primary"><u>Locataire</u></span> actif</strong>
+                            </h5>
+
+                            <button type="button" class="close" ref="closePopupBadge" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                             <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead class="bg-white">
+                                        <th>Nom</th>
+                                        <th>Prénom</th>
+                                        <th>Téléphone</th>
+                                        <th>Montant loyer</th>
+
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="locataire in infosLocataire" :key="locataire.identifiant">
+                                            <td>{{locataire.locat_nom}}</td>
+                                            <td>{{locataire.locat_prenom}}</td>
+                                            <td>{{locataire.locat_tel_1}}</td>
+                                            <td>{{ helper_separator_amount(locataire.bail_montant_ht) }}</td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+             <!-- Modal bien loué-->
+            <div  class="modal fade" id="modalBienLoue" data-backdrop="static" data-keyboard="false" tabindex="-1"  role="dialog" aria-labelledby="modalBienLoue" aria-hidden="true">
+                <div class="modal-dialog modal-xl position-relative" role="document">
+                    <div class="modal-content" >
+                        <div class="modal-header">
+                            <h5 class="modal-title text-uppercase">
+                                <strong><span class="text-primary"><u>Bien</u></span> loué</strong>
+                            </h5>
+
+                            <button type="button" class="close" ref="closePopupBadge" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                             <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead class="bg-white">
+                                        <th>ID local</th>
+                                        <th>Local loué</th>
+                                        <th>Immeuble</th>
+                                        <th>Adresse</th>
+                                        <th class="text-right">Montant loyer</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="local in locauxLoue" :key="local.identifiantLocal">
+                                            <th><span class="badge badge-info">{{ local.identifiantLocal }} </span></th>
+                                            <td>{{ local.local_type_local }} ({{ local.local_type_location }})</td>
+                                            <td>{{ local.bien_nom}}</td>
+                                            <td>{{ local.bien_adresse }}, {{ local.bien_ville }} ({{ local.bien_pays }})</td>
+                                            <td class="text-right">{{ helper_separator_amount(local.bail_montant_ht) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
     </template>
     <template v-else>
         <RepresentantSetup></RepresentantSetup>
@@ -513,10 +665,11 @@ import modalCarousel from '../../components/modal/carousel.vue';
 import { EventBus } from "../../event-bus"; 
 import { required, email, minLength, between } from 'vuelidate/lib/validators';
 import RepresentantSetup from './Representant.vue';
+import BadgeProprietaire from '../badges/BadgeProprietaire.vue'
 export default {
     name: "Proprietaire",
-    props: [],
-    components: { DatePicker, VueCountryDropdown, modalCarousel, RepresentantSetup },
+    props: ["listProprio", "env"],
+    components: { DatePicker, VueCountryDropdown, modalCarousel, RepresentantSetup, BadgeProprietaire },
     data () {
         return {
             editmode: false,
@@ -554,7 +707,12 @@ export default {
             paginate: 5,
             editKyc: [],
             isLoadingTab: false,
-            viewRepresentant: false
+            viewRepresentant: false,
+            proprioSelected: null,
+            proprioID: '',
+            proprietaireSelected: {},
+            infosLocataire: [],
+            locauxLoue: []
         }
     },
     validations: {
@@ -653,6 +811,8 @@ export default {
             for (let i = 0; i < this.attachmentsPhotos.length; i++) {
                 data.append('files' + i, this.attachmentsPhotos[i]);
             }
+
+
             data.append('TotalFiles', this.attachmentsPhotos.length);
 
             let action = "create";
@@ -693,6 +853,18 @@ export default {
                 }
                 this.isSubmitted = false;
 
+            }).catch(error => {
+                this.isLoading = false;
+                this.isSubmitted = false;
+
+                // 🔥 Gestion des erreurs serveurs
+                Vue.swal.fire(
+                    'Erreur serveur',
+                    error.response?.data?.message || 'Erreur inattendue. Veuillez réessayer.',
+                    'error'
+                );
+
+                console.error('Erreur Axios :', error);
             });
         },
         onSelect({name, iso2, dialCode}) {
@@ -718,7 +890,9 @@ export default {
         },
         getProprio(page=1){
             this.isLoadingTab = true;
-            axios.get("/proprio/listing?paginate="+ this.paginate+'&page=' + page).then(responses => {
+            const params = {};
+            if (this.proprioID) params.proprioID = this.proprioID;
+            axios.get("/proprio/listing?paginate="+ this.paginate+'&page=' + page, {params}).then(responses => {
 
               console.log(responses);
               this.isLoadingTab = false;
@@ -806,6 +980,9 @@ export default {
         },
         view(prop){
             this.info = prop;
+            this.infosLocataire =  prop.locatairesActifs;
+            this.locauxLoue     = prop.locauxloue;
+            console.log("locat>>", this.infosLocataire)
         },
         supprimerPhoto(name, kyc, id){
             Vue.swal.fire({
@@ -885,9 +1062,30 @@ export default {
             }, 200);
             
         },
+        showBadge(item) {
+            this.proprietaireSelected = item;
+            console.log(">>>>", this.proprietaireSelected)
+        },
+        onInputSelectProprio(value) {
+          if (!value) {
+            this.proprioSelected = null;
+            this.proprioID = '';
+            this.getProprio(); // 💡 appel de ton action de réinitialisation
+          }
+        },
+        onProprioChoisi(proprio){
+          this.proprioSelected = proprio;
+          this.proprioID = proprio.proprio_id;
+          this.getProprio();
+        }
 
     },
     mounted() {
+        this.listProprio.map(function (x){
+          return x.item_data = x.proprio_nom + ' ' + x.proprio_prenom + ' (' +x.proprio_id +')';
+        }); this.listProprio.map(function (x){
+          return x.item_data = x.proprio_nom + ' ' + x.proprio_prenom + ' (' +x.proprio_id +')';
+        });
         this.getProprio();
          EventBus.$on('BACK', (event) => {
           this.viewRepresentant = event.back;
@@ -896,3 +1094,36 @@ export default {
     }
 }
 </script>
+<style>
+.modal.modal-fullscreen {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+
+    display: block;
+    overflow: hidden;
+}
+
+.modal-dialog.modal-fullscreen {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+}
+
+.modal-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.modal-body {
+    overflow-y: auto;
+    flex: 1;
+}
+</style>

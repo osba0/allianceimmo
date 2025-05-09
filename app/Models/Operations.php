@@ -14,7 +14,10 @@ class Operations extends Model
     const EAU = 2;
     const ELECTRICITE = 3;
     const REFECTION = 4;
+    const CAUTION = 6;
+    const AVANCE_LOYER = 7;
     const AUTRE = 5;
+    const VERSEMENT_PROPRIO = 8;
 
 
     protected $primaryKey = 'id';
@@ -26,7 +29,8 @@ class Operations extends Model
         'oper_montant',
         'oper_id_bail',
         'oper_note',
-        'oper_user'
+        'oper_user',
+        'oper_id_versement_proprio'
     ];
 
     public static function getListCharges(){
@@ -50,6 +54,12 @@ class Operations extends Model
             case 3: $label="Electricité";
             break;
             case 4: $label="Réfection";
+            break;
+            case 6: $label="Caution";
+            break;
+            case 7: $label="Avance loyer";
+            break;
+            case 8: $label="Versement Propriétaire";
             break;
             case 5: $label="Autre";
             break;

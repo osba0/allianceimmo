@@ -2,14 +2,23 @@
     <div>
         <template v-if="!viewLocal">
             <div class="d-flex justify-content-between mb-3">
-                <div class="d-flex align-items-center">
-                    <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>
-                    <select class="form-control form-control-sm" v-model="paginate">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                        <option value="20">20</option>
-                    </select>
+                <div class="d-flex justify-content-between align-items-center gap-15">
+                    <div class="d-flex align-items-center">
+                        <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>
+                        <select class="form-control form-control-sm" v-model="paginate">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
+                    </div>
+                     <!-- Filtres -->
+
+                    <div class="d-flex align-items-end gap-15">
+                        <div style="width: 300px">
+                            <v-select v-model="proprioSelected" @input="onInputSelectProprio" placeholder="Filtrer par propriétaire" :options="listProprio"  @option:selected="onProprioChoisi" label="item_data"></v-select>
+                        </div>
+                    </div>
                 </div>
                 <button  v-if="hasPermission('Bien.Ajouter')"  type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Ajouter un Immeuble</button>
             </div>
@@ -235,7 +244,7 @@ import Info from './Info.vue';
 import LocalSetup from './Local.vue';
 
 export default {
-    name: "Proprietaire",
+    name: "Biens",
     props: ["listProprio"],
     components: { DatePicker, VueCountryDropdown, modalCarousel, HorizontalStepper, Info, LocalSetup },
     data () {
@@ -265,6 +274,9 @@ export default {
             editKyc: [],
             isLoadingTab: false,
             viewLocal: false,
+            proprioSelected: null,
+            proprioID: '',
+            proprietaireSelected: {}
         }
     },
     validations: {
@@ -360,7 +372,9 @@ export default {
         },
         getBien(page=1){
             this.isLoadingTab = true;
-            axios.get("/bien/listing?paginate="+ this.paginate+'&page=' + page).then(responses => {
+            const params = {};
+            if (this.proprioID) params.proprioID = this.proprioID;
+            axios.get("/bien/listing?paginate="+ this.paginate+'&page=' + page, {params}).then(responses => {
               console.log(responses);
               this.biens = responses.data;
               this.isLoadingTab = false;
@@ -498,10 +512,23 @@ export default {
             }, 200);
             
         },
+        onInputSelectProprio(value) {
+          if (!value) {
+            this.proprioSelected = null;
+            this.proprioID = '';
+            this.getBien(); // 💡 appel de ton action de réinitialisation
+          }
+        },
+        onProprioChoisi(proprio){
+          this.proprioSelected = proprio;
+          this.proprioID = proprio.proprio_id;
+          this.getBien();
+        }
        
 
     },
     mounted() {
+
         this.getBien();  
         this.listProprio.map(function (x){
           return x.item_data = x.proprio_nom + ' ' + x.proprio_prenom + ' (' +x.proprio_id +')';

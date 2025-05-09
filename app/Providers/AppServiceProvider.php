@@ -7,9 +7,23 @@ use App\Http\ViewComposers\WebsiteComposer;
 use Illuminate\Pagination\Paginator;
 use App\Models\Proprietaires;
 use App\Observers\ProprietaireObserver;
+use App\Repositories\Template\TemplateRepositoryInterface;
+use App\Repositories\Template\TemplateRepository;
+
+use App\Services\Core\Repositories\Operation\OperationRepository;
+use App\Services\Core\Repositories\Operation\OperationRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
+     /**
+     * All of the container bindings that should be registered.
+     *
+     * @var array
+     */
+    public $bindings = [
+            TemplateRepositoryInterface::class => TemplateRepository::class,
+            OperationRepositoryInterface::class => OperationRepository::class,
+        ];
     /**
      * Register any application services.
      *
@@ -17,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+
     }
 
     /**

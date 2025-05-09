@@ -24,8 +24,18 @@ import PermissionManager from './components/config/PermissionManager.vue';
 import RolePermissionAssigner from './components/config/RolePermissionAssigner.vue';
 import UserManager from './components/users/UserManager.vue';
 import AgenceList from './components/agence/Index';
+import RapportLoyers from './components/rapports/RapportLoyers';
+import RapportEtReleveLoyer from './components/rapports/RapportEtReleveLoyer';
+import NotificationDropdown from './components/notification/NotificationDropdown.vue';
+import Notifications from './components/notification/Notifications.vue';
+import VersementProprio from "./components/operations/VersementProprio";
 
 import moment from 'moment';
+
+//import QuittanceLoyerTemplate from "./components/template/QuittanceLoyerTemplate";
+//import TemplateDataTable from "./components/template/TemplateDataTable";
+import PaiementLoyers from './components/paiementLoyer/Index';
+import VueQRCodeComponent from 'vue-qrcode-component';
 
 
 require("./bootstrap");
@@ -59,7 +69,8 @@ Vue.filter('formatDateFR', function(value) {
     }
 });
 
-
+Vue.component('qr-code', VueQRCodeComponent);
+require('./summernoteEditor');
 Vue.mixin({
   methods: {
     supprimer_espace_mnt(value){
@@ -72,6 +83,14 @@ Vue.mixin({
            return moment(String(dte)).format('DD/MM/YYYY')
           }
       },
+    getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    },
     currentDateTime() {
         const current = new Date();
         const date = current.getDate()+'/'+(current.getMonth()+1)+'/'+current.getFullYear();
@@ -526,7 +545,49 @@ Vue.mixin({
          if(  numberToLetter.substr(numberToLetter.length-"quatre-vingt".length,"quatre-vingt".length) == "quatre-vingt"  ) numberToLetter = numberToLetter + "s";
          
          return numberToLetter;
+    },
+   getMonthsBetweenDates(startDate, endDate) {
+      const start = new Date(startDate+ "T23:00:00Z");
+      const end = new Date(endDate+ "T23:00:00Z");
+
+      if (isNaN(start) || isNaN(end)) {
+        console.error("Les dates fournies ne sont pas valides.");
+        return [];
+      }
+
+      const months = [];
+      let currentYear = start.getFullYear();
+      let currentMonth = start.getMonth(); // Mois (0 = Janvier)
+      console.log("Start", start)
+
+      console.log("started", currentMonth)
+
+      // Ajouter le premier mois (startDate) dans le tableau
+      months.push(`${(currentMonth + 1).toString().padStart(2, "0")}-${currentYear}`);
+
+      // Passer au mois suivant
+      currentMonth++;
+
+      // Si on est à décembre, passer à l'année suivante
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+
+      // Boucle pour ajouter les mois suivants
+      while (currentYear < end.getFullYear() || (currentYear === end.getFullYear() && currentMonth <= end.getMonth())) {
+        months.push(`${(currentMonth + 1).toString().padStart(2, "0")}-${currentYear}`);
+
+        currentMonth++;
+        if (currentMonth > 11) {
+          currentMonth = 0;
+          currentYear++;
+        }
+      }
+
+      return months;
     }
+
   }
 })
 
@@ -558,6 +619,14 @@ const app = new Vue({
         RolePermissionAssigner,
         UserManager,
         AgenceList,
-        Bar
+        Bar,
+       // TemplateDataTable,
+       // QuittanceLoyerTemplate,
+        PaiementLoyers,
+        RapportLoyers,
+        RapportEtReleveLoyer,
+        NotificationDropdown,
+        Notifications,
+        VersementProprio
     }
 });

@@ -23,6 +23,7 @@ class Agence extends Model
         'agence_ville',
         'agence_pays',
         'agence_logo',
-        'agence_user'
+        'agence_user',
+        'agence_nom'
     ];
 }

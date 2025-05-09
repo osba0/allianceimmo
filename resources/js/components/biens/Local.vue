@@ -18,6 +18,7 @@
                     <th class="text-nowrap">Type Local</th>
                     <th class="text-nowrap" ttle="Type Local">Type de Local</th>
                     <th class="text-nowrap" title="Prix du Loyer Hors Charge">Prix Loyer</th>
+                    <th>Disponibilité</th>
                     <th>Détails</th>
                     <th>Photo</th>
                     <th class="text-right">Action</th>
@@ -41,6 +42,11 @@
                         <span class="text-danger text-uppercase font-weight-bold">{{lo.type_location}}</span>
                     </td>
                     <td class="font-weight-bold text-dark">{{lo.prix_loyer}} FCFA</td>
+                    <td class="font-weight-bold text-dark">
+                        <span class="badge" :class="lo.is_loue ? 'badge-danger font-bold' : 'badge-success font-bold'">
+                          {{ lo.is_loue ? 'Loué' : 'Disponible' }}
+                        </span>
+                    </td>
                     <td clss="align-middle">
                         <ul class="ml-0 pl-0">
                             <li>Superficie: {{lo.superficie}}</li>
@@ -59,7 +65,7 @@
                         <div class="w-100 d-flex justify-content-end">
                             <button class="btn btn-primary" @click="view(lo)" data-toggle="modal" data-target="#moreInfo" v-on:click="moreInfo"><i class="fa fa-eye"></i></button>
                             <button class="btn btn-info mx-1" data-toggle="modal" data-target="#addNewLocal"  v-on:click="edit(lo)"><i class="fa fa-edit"></i></button>
-                            <button class="btn btn-danger" @click="deleteLocal(lo)"><i class="fa fa-trash"></i></button>
+                            <button class="btn btn-danger" :disabled="lo.is_loue?true:false" @click="deleteLocal(lo)"><i class="fa fa-trash"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -91,111 +97,224 @@
 
                     <form @submit.prevent="createLocal()">
                         <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Type Local</label>
-                                        <select class="form-control" v-model="formLocal.type_local" :class="{ 'border-danger': isSubmitted && !$v.formLocal.type_local.required }">
-                                            <option value="">Choisir</option>
-                                            <option value="maison">Maison</option>
-                                            <option value="appartement">Appartement</option>
-                                            <option value="studio">Studio</option>
-                                            <option value="chambre">Chambre</option>
-                                            <option value="magasin">Magasin</option>
-                                            <option value="bureau">Bureau</option>
-                                            <option value="depôt">Depôt</option>
-                                        </select>
-                                    </div>
+                            <div class="d-flex mb-3">
+                                <div class="orientation mr-3 text-left border-right pr-2">
+                                    <label class="text-uppercase text-info titleform border-info pt-2">Détails Local</label>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Type de Location proposé</label>
-                                        <select class="form-control" v-model="formLocal.type_location" :class="{ 'border-danger': isSubmitted && !$v.formLocal.type_location.required }">
-                                            <option value="">Choisir</option>
-                                            <option value="meublée">Meublée</option>
-                                            <option value="vide">Vide</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Prix du Loyer hors charge</label>
-                                        <input v-model="formLocal.prix_loyer" type="text"
-                                            class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                   <div class="form-group">
-                                    <label>Montant des charges</label>
-                                        <input v-model="formLocal.montant_charge" type="text"
-                                            class="form-control">
-                                        
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                   <div class="form-group">
-                                        <label>Superficie en m<sup>2</sup></label>
-                                        <input v-model="formLocal.superficie" type="text"
-                                            class="form-control">
-                                       
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                   <div class="form-group max-country">
+                                <div class="flex-grow-1">
+                                     <div class="row">
+                                        <div class="col-md-6 d-flex justify-content-between">
+                                            <div class="form-group w-49">
+                                                <label>Type Local <span class="required">*</span></label>
+                                                <select class="form-control" v-model="formLocal.type_local" :class="{ 'border-danger': isSubmitted && !$v.formLocal.type_local.required }">
+                                                    <option value="">Choisir</option>
+                                                    <option value="maison">Maison</option>
+                                                    <option value="appartement">Appartement</option>
+                                                    <option value="studio">Studio</option>
+                                                    <option value="chambre">Chambre</option>
+                                                    <option value="magasin">Magasin</option>
+                                                    <option value="bureau">Bureau</option>
+                                                    <option value="depôt">Depôt</option>
+                                                </select>
+                                            </div>
+                                             <div class="form-group w-49">
+                                                <label>Nature Local <span class="required">*</span></label>
+                                                <select class="form-control" v-model="formLocal.nature_local" :class="{ 'border-danger': isSubmitted && !$v.formLocal.nature_local.required }">
+                                                    <option value="">Choisir</option>
+                                                    <option value="maison">Habitation</option>
+                                                    <option value="appartement">Commerce</option>
 
-                                         <div class="d-flex justify-content-between align-items-baseline">
-                                            <label>Nombre de piéces </label>
-                                            <span  v-if="isSubmitted && !$v.formLocal.nombre_piece.validSelectionPiece" class="error-message">{{ errorMessagePiece() }}</span>
+                                                </select>
+                                            </div>
                                         </div>
-                                        <input v-model="formLocal.nombre_piece" type="number"
-                                            class="form-control" :class="{ 'border-danger': isSubmitted && !$v.formLocal.nombre_piece.validSelectionPiece }">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Type de Location proposé <span class="required">*</span></label>
+                                                <select class="form-control" v-model="formLocal.type_location" :class="{ 'border-danger': isSubmitted && !$v.formLocal.type_location.required }">
+                                                    <option value="">Choisir</option>
+                                                    <option value="meublée">Meublée</option>
+                                                    <option value="vide">Vide</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                     <div class="row">
+                                        <div class="col-md-6 d-flex justify-content-between">
+                                           <div class="form-group w-49">
+                                                <label>Superficie en m<sup>2</sup></label>
+                                                <input v-model="formLocal.superficie" type="text"
+                                                    class="form-control">
+
+                                            </div>
+                                            <div class="form-group w-49">
+                                                <label>Année de construction</label>
+                                                  <date-picker v-model="formLocal.annee_construction" class="w-100"  required  type="year" format="YYYY"  valueType="YYYY" input-class="form-control w-100" placeholder="Choisir une année"></date-picker>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 d-flex justify-content-between">
+                                           <div class="form-group w-49">
+                                                 <div class="d-flex justify-content-between align-items-baseline">
+                                                    <label>Nombre de piéces </label>
+                                                    <span  v-if="isSubmitted && !$v.formLocal.nombre_piece.validSelectionPiece" class="error-message">{{ errorMessagePiece() }}</span>
+                                                </div>
+                                                <input v-model="formLocal.nombre_piece" type="number"
+                                                    class="form-control" :class="{ 'border-danger': isSubmitted && !$v.formLocal.nombre_piece.validSelectionPiece }">
+                                            </div>
+                                            <div class="form-group w-49">
+                                                <template  v-if="formLocal.type_local === '' || formLocal.type_local === 'maison' || formLocal.type_local === 'appartement' || formLocal.type_local === 'studio' || formLocal.type_local === 'bureau'">
+                                                <label>Nombre de toilette</label>
+                                                <input v-model="formLocal.toilette" type="number"
+                                                    class="form-control">
+                                                </template>
+                                                <template v-else>
+                                                    <label>Avec salle de Bain?</label>
+                                                    <div class="d-flex align-items-center">
+                                                        <input id="oui" v-model="formLocal.salle_bain" value="oui" type="radio">
+                                                        <label class="pr-3 mb-0 pl-1 text-success" for="oui">Oui</label>
+                                                        <input id="non" v-model="formLocal.salle_bain" value="non" type="radio">
+                                                        <label class="mb-0 pl-1 text-danger" for="non">Non</label>
+                                                    </div>
+                                                </template>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <template  v-if="formLocal.type_local === 'maison' || formLocal.type_local === 'appartement' || formLocal.type_local === 'studio'">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                               <div class="form-group">
+                                                    <label>Nombre de chambre</label>
+                                                    <input v-model="formLocal.maison_appartement_studio.chambres" type="number"
+                                                        class="form-control">
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                               <div class="form-group max-country">
+
+                                                     <div class="d-flex justify-content-between align-items-baseline">
+                                                        <label>Nombre salles De Bain </label>
+                                                    </div>
+                                                    <input v-model="formLocal.maison_appartement_studio.sallesDeBain" type="number"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                               <div class="form-group">
+                                                    <label>Cuisine</label>
+                                                    <input v-model="formLocal.maison_appartement_studio.cuisine" type="number"
+                                                        class="form-control">
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                               <div class="form-group max-country">
+
+                                                     <div class="d-flex justify-content-between align-items-baseline">
+                                                        <label>Piscine </label>
+                                                    </div>
+                                                    <input v-model="formLocal.maison_appartement_studio.piscine" type="number"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                           <div class="form-group d-flex justify-content-between flex-column">
+                                                <label>Description</label>
+                                                <textarea class="form-control" v-model="formLocal.description"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                           <div class="form-group">
+                                                <label>Photos</label>
+                                                <input namela liga="file" multiple type="file" ref="attachmentsPhotosLocal"
+                                                    class="form-control border-0 pl-0" v-on:change="handleFileUploadLocal()">
+                                            </div>
+                                            <div v-if="editmodeLocal">
+                                                 <span v-for="photo in editKyc" class="mr-3 cursor-pointer" v-on:click="supprimerPhoto(photo, editKyc, formLocal.id)">
+                                                    <img :src="'/assets/biens/'+photo" height="50" data-toggle="modal" data-target="#carouselPhoto" @click="setKyc(pro)"/>
+                                                    <i class="text-danger fa fa-times"></i>
+                                                </span>
+
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                           
-                            <div class="row">
-                                <div class="col-md-6">
-                                   <div class="form-group">
-                                        <label>Salle de Bain</label>
-                                        <div class="d-flex align-items-center">
-                                            <input id="oui" v-model="formLocal.salle_bain" value="oui" type="radio">
-                                            <label class="pr-3 mb-0 pl-1 text-success" for="oui">Oui</label> 
-                                            <input id="non" v-model="formLocal.salle_bain" value="non" type="radio">
-                                            <label class="mb-0 pl-1 text-danger" for="non">Non</label>  
+                            <div class="d-flex">
+                                <div class="orientation mr-3 text-left border-right pr-2">
+                                    <label class="text-uppercase text-danger titleform border-danger pt-2">Prix Local / Taxes</label>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Prix du Loyer - Toute(s) charge(s) inclue(s)</label>
+                                                <input v-model="formLocal.prix_loyer" type="text"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                           <div class="form-group">
+                                            <label>Montant des charges diverses</label>
+                                                <input v-model="formLocal.montant_charge" type="text"
+                                                    class="form-control">
+
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                   <div class="form-group">
-                                        <label>Année de construction</label>
-                                          <date-picker v-model="formLocal.annee_construction" class="w-100"  required  type="year" format="YYYY"  valueType="YYYY" input-class="form-control w-100" placeholder="Choisir une année"></date-picker>
-                                       
+                                    <div class="row">
+                                        <div class="col-md-6 d-flex justify-content-between">
+                                           <div class="form-group w-49">
+                                                <label>TOM (%)</label>
+                                                <input v-model="formLocal.tom" type="text"
+                                                    class="form-control">
+
+                                            </div>
+                                            <div class="form-group w-49">
+                                                <label>Enregist. ou TLV (%)</label>
+                                                 <input v-model="formLocal.tlv" type="text"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 d-flex justify-content-between">
+                                            <div class="form-group w-49">
+                                                <label>TVA (%)</label>
+                                                <input v-model="formLocal.tva" type="text"
+                                                    class="form-control"/>
+
+                                            </div>
+                                            <div class="form-group w-49">
+                                                <label>Eau Forfait</label>
+                                                 <input v-model="formLocal.eau_forfait" type="text"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                             <div class="row">
-                                <div class="col-md-6">
-                                   <div class="form-group d-flex justify-content-between flex-column">
-                                        <label>Description</label>
-                                        <textarea class="form-control" v-model="formLocal.description"></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                   <div class="form-group">
-                                        <label>Photos</label>
-                                        <input namela liga="file" multiple type="file" ref="attachmentsPhotosLocal" 
-                                            class="form-control border-0 pl-0" v-on:change="handleFileUploadLocal()">
-                                    </div>
-                                    <div v-if="editmodeLocal">
-                                         <span v-for="photo in editKyc" class="mr-3 cursor-pointer" v-on:click="supprimerPhoto(photo, editKyc, formLocal.id)">
-                                            <img :src="'/assets/biens/'+photo" height="50" data-toggle="modal" data-target="#carouselPhoto" @click="setKyc(pro)"/>
-                                            <i class="text-danger fa fa-times"></i>
-                                        </span>
-                                       
+                                    <div class="row">
+                                        <div class="col-md-6 d-flex justify-content-between">
+                                            <div class="form-group w-49">
+                                                <label>Timbre principal</label>
+                                                 <input v-model="formLocal.timbre_principal" type="text"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="form-group w-49">
+                                                <label>Timbre</label>
+                                                <input v-model="formLocal.timbre" type="text"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+                                         <div class="col-md-6">
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -248,7 +367,22 @@ export default {
                 annee_construction: '',
                 type_local:'',
                 type_location:'',
-                photo_local: null
+                nature_local: '',
+                photo_local: null,
+                toilette: 0,
+                maison_appartement_studio: {
+                    chambres: 0,
+                    sallesDeBain: 0,
+                    cuisines: 0,
+                    piscine: 0,
+
+                },
+                timbre_principal:0,
+                timbre:0,
+                tva:0,
+                tlv:0,
+                tom:0,
+                eau_forfait: 0
             },
             attachmentsPhotosLocal: [],
             isSubmitted: false,
@@ -260,6 +394,7 @@ export default {
         formLocal : {
             type_local: { required },
             type_location: { required },
+            nature_local: { required },
             nombre_piece: {validSelectionPiece: minValue(0)}
         }
       },
@@ -308,6 +443,22 @@ export default {
             data.append('salle_bain', this.formLocal.salle_bain);
             data.append('description', this.formLocal.description);
             data.append('annee_construction', this.formLocal.annee_construction);
+
+            // new champs
+            data.append('nature_local', this.formLocal.nature_local);
+            data.append('nbre_toilette', this.formLocal.toilette);
+            data.append('nbre_chambre', this.formLocal.maison_appartement_studio.chambres);
+            data.append('nbre_salle_bain', this.formLocal.maison_appartement_studio.sallesDeBain);
+            data.append('nbre_cuisine', this.formLocal.maison_appartement_studio.cuisine);
+            data.append('nbre_piscine', this.formLocal.maison_appartement_studio.piscine);
+            data.append('tom', this.formLocal.tom);
+            data.append('tva', this.formLocal.tva);
+            data.append('tlv', this.formLocal.tlv);
+            data.append('timbre_principal', this.formLocal.timbre_principal);
+            data.append('timbre', this.formLocal.timbre);
+            data.append('eau_forfait', this.formLocal.eau_forfait);
+            // end new champs
+
             data.append('file[]', this.attachmentsPhotosLocal);
 
             for (let i = 0; i < this.attachmentsPhotosLocal.length; i++) {
@@ -476,6 +627,8 @@ export default {
         
         EventBus.$on('VIEW_LOCAL', (event) => {
             this.current_bien = event.current;
+            this.formLocal.annee_construction = this.current_bien.annee_construction;
+            this.formLocal.superficie = this.current_bien.superficie;
             this.getLocal();
         });
       }

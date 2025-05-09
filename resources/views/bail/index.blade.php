@@ -16,7 +16,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <Bail :list-proprio="{{ json_encode($proprietaires) }}" :list-locataire="{{ json_encode($listLocataire) }}"></Bail>
+                    <Bail :list-proprio="{{ json_encode($proprietaires) }}" :list-tout-locataires = "{{ json_encode($listToutLocataires) }}" :list-locataire="{{ json_encode($listLocataire) }}"></Bail>
                 </div>
             </div>
         </div>

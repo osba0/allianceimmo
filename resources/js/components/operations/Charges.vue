@@ -2,17 +2,25 @@
     <div>
         <div class="d-flex justify-content-between mb-3">
             <div class="d-flex justify-content-between mb-3">
-                <div class="d-flex align-items-center">
-                    <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>
-                    <select class="form-control form-control-sm" v-model="paginate">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                        <option value="20">20</option>
-                    </select>
+                <div class="d-flex justify-content-between align-items-center gap-15">
+                    <div class="d-flex align-items-center">
+                        <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>
+                        <select class="form-control form-control-sm" v-model="paginate">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
+                    </div>
+                    <!-- Filtres -->
+                    <div class="d-flex align-items-end gap-15">
+                        <div style="width: 350px">
+                             <v-select v-model="proprioSelected" @input="onInputSelectProprio" placeholder="Filtrer par propriétaire" :options="listProprio"  @option:selected="onProprioChoisi" label="item_proprio"></v-select>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouvelle Charge / Frais</button>
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouvelle Charge / Frais</button>
         </div>
         <div class="table-responsive">
             <table class="table table-hover table-striped">
@@ -22,10 +30,9 @@
                     <th>Bien</th>
                     <th>Local</th>
                     <th>Type</th>
-                    <th>Montant Total</th>
-                    <th>Note</th>
+                    <th>Montant</th>
                     <th>Date</th>
-                    <th>User</th>
+                    <th>Ajouté par</th>
                     <th class="text-right">Action</th>
                 </tr>
                 <tr>
@@ -42,18 +49,26 @@
                     <td class="align-middle">
                         {{ charge.bien_nom }}, {{ charge.bien_adresse }},n° {{ charge.bien_numero }}
                     </td>
-                    <td class="align-middle">
+                    <td class="align-middle text-uppercase">
                         {{ charge.local_type }}    
                     </td>
                     <td class="align-middle">{{ charge.type }}</td>
                     <td class="align-middle">{{ helper_separator_amount(charge.montant) }}</td>
-                    <td class="align-middle">{{ charge.note }}</td>
-                    <td class="align-middle">{{ charge.date_creation }}</td>
+                    <td class="align-middle">{{ charge.date }}</td>
                     <td class="align-middle">
                         {{ charge.user }}
                     </td>
                     <td class="text-right align-middle">
-                        <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+
+                        <button  title="Fichier" v-if="charge.fichier.length > 0" class="btn btn-info mr-2 cursor-pointer" data-toggle="modal" data-target="#modalFichier" v-on:click="showDocument('assets/factures/'+charge.fichier[0])">
+                                <i class="fa fa-file-pdf"></i>
+                        </button>
+                        <button  v-if="charge.note != '' && charge.note != 'undefined'" class="btn btn-primary mr-2 cursor-pointer" v-on:click="showInfo(charge.note)">
+                            <i class="fa fa-info"></i>
+                        </button>
+                        <button class="btn btn-danger" v-on:click="deleteDecharge(charge)">
+                            <i class="fa fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
               </tbody>
@@ -87,25 +102,26 @@
                             <div class="col-md-12">
                                 <label class="d-block text-uppercase text-info border-bottom titleform border-info">Propriétaire Lié</label>
                                 <div class="form-group">
-
                                     <label>Choisir un propriétaire <span class="text-danger">*</span></label>
-                                     <v-select :class="{ 'border-danger': isSubmitted && !$v.form.proprio.required }" v-model="form.proprio" :options="listProprio" :reduce="(option) => option" label="item_proprio"></v-select> 
-
-                                    <label class="pt-2">Choisir un bien <span class="text-danger">*</span></label>
-                                     <v-select  :class="{ 'border-danger': isSubmitted && !$v.form.bien.required }" v-model="form.bien" :options="biens" :reduce="(option) => option" label="item_bien"></v-select>  
-
-                                     <label class="pt-2">Choisir un local <span class="text-danger">*</span></label>
-                                     <v-select v-model="form.local" :options="locals" :reduce="(option) => option" label="item_local"></v-select>  
+                                     <v-select :class="{ 'border-danger': isSubmitted && !$v.form.proprio.required }" v-model="form.proprio" :options="listProprio" :reduce="(option) => option" label="item_proprio"></v-select>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                 <label class="pt-2">Choisir un bien <span class="text-danger">*</span></label>
+                                     <v-select  :class="{ 'border-danger': isSubmitted && !$v.form.bien.required }" v-model="form.bien" :options="biens" :reduce="(option) => option" label="item_bien"></v-select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="pt-2">Choisir un local</label>
+                                     <v-select v-model="form.local" :options="locals" :reduce="(option) => option" label="item_local"></v-select>
+                            </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-3">
                             <div class="col-md-12">
                                 <label class="d-block text-uppercase text-info border-bottom titleform border-info">Charges / Frais</label>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label class="pt-2">Type</label>
                                 <div class="d-flex align-items-center">
                                   <select class="form-control" v-model="form.type">
@@ -114,9 +130,7 @@
                                   </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label class="pt-2">Montant</label>
                                 <div class="d-flex align-items-center">
                                     <input v-model="form.montant" type="text"
@@ -124,6 +138,16 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <label class="pt-2">Date </label>
+                                <div class="d-flex align-items-center">
+                                    <date-picker v-model="form.date" class="w-100"  required valueType="YYYY-MM-DD" input-class="form-control w-100" placeholder="dd/mm/yyyy" format="DD/MM/YYYY"></date-picker>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="pt-2">Note</label>
@@ -135,8 +159,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="pt-2 mb-0">Décharge</label>
-                                    <input name="file" multiple type="file" ref="form.decharge" 
+                                    <label class="pt-2 mb-0">Facture / Décharge</label>
+                                    <input name="file" multiple type="file" ref="attachmentsDecharge"
                                         class="form-control border-0 pl-0" v-on:change="handleFileUpload()">
                                 </div>
                             </div>
@@ -155,6 +179,9 @@
                 </div>
             </div>
         </div>
+
+        <modalDocument/>
+        <modalInfo/>
         
     </div>
 </template>
@@ -163,6 +190,8 @@
 import DatePicker from 'vue2-datepicker';
 import VueCountryDropdown from 'vue-country-dropdown';
 import 'vue2-datepicker/index.css';
+import modalDocument from '../../components/modal/document.vue';
+import modalInfo from '../../components/modal/viewInfos.vue';
 import { EventBus } from "../../event-bus"; 
 import { required, email, minLength, between } from 'vuelidate/lib/validators';
 
@@ -177,7 +206,7 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 export default {
     name: "Charges",
     props: ["listProprio", "typeCharge"],
-    components: { DatePicker, VueCountryDropdown },
+    components: { DatePicker, VueCountryDropdown, modalDocument, modalInfo },
     data () {
         return {
             editmode: false,
@@ -194,6 +223,7 @@ export default {
                 local: '',
                 montant: '',
                 decharge: null,
+                date: null,
                 type: '',
                 type_autre: ''
                
@@ -201,7 +231,9 @@ export default {
             biens: [],
             locals: [],
             attachmentsDecharge: [],
-            editFile: []
+            editFile: [],
+            proprioSelected: null,
+            proprioID: '',
         }
     },
     validations: {
@@ -237,7 +269,9 @@ export default {
     methods: {
         getCharges(page=1){
            this.isLoading = true;
-            axios.get("/operations/charges?paginate="+this.paginate+'&page=' + page).then(responses => {
+           const params = {};
+            if (this.proprioID) params.proprioID = this.proprioID;
+            axios.get("/operations/charges?paginate="+this.paginate+'&page=' + page, {params}).then(responses => {
                console.log(responses);
                this.charges = responses.data;
                this.isLoading = false;
@@ -251,7 +285,14 @@ export default {
 
         },
         reset(){
-
+            this.form.id = '';
+            this.form.proprio = '';
+            this.form.bien = '',
+            this.form.montant = '';
+            this.form.decharge = null;
+            this.form.type = '';
+            this.form.note = '';
+            this.form.type_autre = '';
         },
         editCharge(oper){
 
@@ -277,10 +318,15 @@ export default {
             data.append('bien', this.form.bien.bien_id);
             data.append('local', this.form.local.local_id);
             data.append('montant', this.form.montant);
+            data.append('date', this.form.date);
             data.append('type', this.form.type);
             data.append('type_autre', this.form.type_autre);
             data.append('note', this.form.note);
             data.append('file[]', this.attachmentsDecharge);
+
+            data.append('proprio_email', this.form.proprio.proprio_email);
+            data.append('proprio_nom', this.form.proprio.proprio_nom);
+            data.append('proprio_prenom', this.form.proprio.proprio_prenom);
 
             for (let i = 0; i < this.attachmentsDecharge.length; i++) {
                 data.append('files' + i, this.attachmentsDecharge[i]);
@@ -360,6 +406,62 @@ export default {
             
 
             })
+        },
+         deleteDecharge(d){
+            Vue.swal.fire({
+              title:"Suppression Charge ",
+              text: "Attention!!! cette opération est irréversible.",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              confirmButtonText: 'Oui, supprimer!'
+            }).then((result) => {
+            if (result.isConfirmed) {
+
+                axios.delete('/operations/charges/deletedecharge/'+d.identifiant).then(response => {
+                    console.log(response);
+                    if(response.data.code==0){
+                         Vue.swal.fire(
+                          'Suppression',
+                          'Charge supprimé avec succés',
+                          'success'
+                        );
+                        this.getCharges();
+                    }else{
+                        Vue.swal.fire(
+                          'Suppression',
+                          'Une erreure est survenue!',
+                          'error'
+                        );
+                    }
+                });
+              }
+            })
+        },
+        showDocument(file){
+             EventBus.$emit('VIEW_DOCUMENT', {
+                path: file,
+                title: 'Facture'
+            });
+        },
+        showInfo(note){
+            EventBus.$emit('VIEW_TEXT', {
+                texte: note,
+                title: 'Info'
+            });
+        },
+         onInputSelectProprio(value) {
+          if (!value) {
+            this.proprioSelected = null;
+            this.proprioID = '';
+            this.getCharges(); // 💡 appel de ton action de réinitialisation
+          }
+        },
+        onProprioChoisi(proprio){
+          this.proprioSelected = proprio;
+          this.proprioID = proprio.proprio_id;
+          this.getCharges();
         }
 
     },

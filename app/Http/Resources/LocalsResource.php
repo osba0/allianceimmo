@@ -32,6 +32,20 @@ class LocalsResource extends JsonResource
             "date_creation"      => Carbon::parse($this->created_at)->format('d/m/Y H:i:s'),
             "date_modif"         => Carbon::parse($this->updated_at)->format('d/m/Y H:i:s'),
             "user"               => $this->user,
+            // new champs
+            "nature_local"       => $this->local_nature_local,
+            "nbre_toilette"      => $this->local_nbre_toilette,
+            "nbre_chambre"       => $this->local_nbre_chambre,
+            "nbre_salle_bain"    => $this->local_nbre_salle_bain,
+            "nbre_cuisine"       => $this->local_nbre_cuisine,
+            "nbre_piscine"       => $this->local_nbre_piscine,
+            "tom"                => $this->local_tom,
+            "tva"                => $this->local_tva,
+            "tlv"                => $this->local_tlv,
+            "timbre_principal"   => $this->local_timbre_principal,
+            "timbre"             => $this->local_timbre,
+            "eau_forfait"        => $this->local_eau_forfait,
+            "is_loue"            => $this->is_loue
         ];
     }
 }

@@ -35,7 +35,8 @@ class UserController extends Controller
             'username' => $request->nomUtilisateur,
             'password' => Hash::make($request->password),
             'agence_id' => $request->selectedAgenceId,
-            'filiale_id' => $request->selectedFilialeId
+            'filiale_id' => $request->selectedFilialeId,
+            'is_admin' => $request->is_admin=='false'?0:1
         ]);
 
         $user->assignRole($request->role);

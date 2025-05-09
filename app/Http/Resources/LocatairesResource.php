@@ -28,7 +28,7 @@ class LocatairesResource extends JsonResource
             "societe"                 => $this->locat_societe,
             "num_tva"                 => $this->locat_num_tva,
             "ninea_rc"                => $this->locat_ninea_rc,
-            "prefession"              => $this->locat_prefession,
+            "prefession"              => $this->locat_profession,
             "domaine_activite"        => $this->locat_domaine_activite,
             "revenu_mensuel"          => $this->locat_revenu_mensuel,
             "justificatif_revenu"     => $this->locat_justificatif_revenu,

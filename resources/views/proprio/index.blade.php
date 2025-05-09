@@ -1,22 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
+<?php
 
-@php
-    $title = "Propriétaires";
+    use App\Models\Proprietaires;
+    $title = "🏠 Propriétaires";
     $icon  = "fas fa-key";
     $breadcrumbs = [
         'Tableau de bord' => ['url' => '/home'],
         'Propriétaires' => ['url' => '']
     ];
-@endphp
+    $proprietaires = Proprietaires::get();
+
+?>
 
 <div class="container-fluide">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <Proprio></Proprio>
+                    <Proprio  :list-proprio="{{ json_encode($proprietaires) }}" env="{{ env('APP_URL') }}" ></Proprio>
                 </div>
             </div>
             

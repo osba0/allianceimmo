@@ -85,16 +85,20 @@ class BiensController extends Controller
 
         $paginate = request('paginate');  
 
-        $proprios = DB::table('biens')->leftJoin('proprietaires', 'biens.bien_proprio', '=', 'proprietaires.proprio_id')->leftJoin('locals', 'biens.bien_id', '=', 'locals.bien_id')->select('biens.*', DB::raw('COUNT(locals.local_id) as totalLocal'),'proprietaires.proprio_nom','proprietaires.proprio_prenom','proprietaires.created_at as crea_prop','proprietaires.proprio_tel_1', 'proprietaires.proprio_indicatif_1', 'proprietaires.updated_at as up_prop'); 
+        $biens = DB::table('biens')->leftJoin('proprietaires', 'biens.bien_proprio', '=', 'proprietaires.proprio_id')->leftJoin('locals', 'biens.bien_id', '=', 'locals.bien_id')->select('biens.*', DB::raw('COUNT(locals.local_id) as totalLocal'),'proprietaires.proprio_nom','proprietaires.proprio_prenom','proprietaires.created_at as crea_prop','proprietaires.proprio_tel_1', 'proprietaires.proprio_indicatif_1', 'proprietaires.updated_at as up_prop');
+
+        if(request('proprioID')){
+            $biens->where('biens.bien_proprio', request('proprioID'));
+        }
 
         if(isset($paginate)){
-            $proprios = $proprios->groupBy("biens.bien_id")->orderby("created_at", "desc")->paginate($paginate);
+            $biens = $biens->groupBy("biens.bien_id")->orderby("created_at", "desc")->paginate($paginate);
         }else{
-            $proprios = $proprios->get();
+            $biens = $biens->get();
         }
 
       
-        return BiensResource::collection($proprios);
+        return BiensResource::collection($biens);
     }
 
     /**

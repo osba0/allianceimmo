@@ -1,14 +1,23 @@
 <template>
     <div>
         <div class="d-flex justify-content-between mb-3">
-            <div class="d-flex align-items-center">
-                <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>
-                <select class="form-control form-control-sm" v-model="paginate">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select>
+            <div class="d-flex justify-content-between align-items-center gap-15">
+                <div class="d-flex align-items-center">
+                    <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>
+                    <select class="form-control form-control-sm" v-model="paginate">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
+                 <!-- Filtres -->
+
+                <div class="d-flex align-items-end gap-15">
+                    <div style="width: 300px">
+                         <v-select  v-model="proprioSelected" @input="onInputSelectProprio" :options="listProprio" placeholder="Filtrer par propriétaire" :reduce="(option) => option" @option:selected="onProprioChoisi" label="item_proprio"></v-select>
+                    </div>
+                </div>
             </div>
             <button v-if="hasPermission('Mandat.Ajouter')" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Mandat de Gérance</button>
         </div>
@@ -94,7 +103,7 @@
         </div>
         <div class="d-flex mt-4 justify-content-center">
             <pagination
-                :data="mandats"
+                :data="paginationMeta"
                 :limit=10
                 @pagination-change-page="getMandats"
             ></pagination>
@@ -124,7 +133,7 @@
                                 <div class="form-group">
 
                                     <label>Choisir un propriétaire <span class="text-danger">*</span></label>
-                                     <v-select :class="{ 'border-danger': isSubmitted && !$v.form.proprio.required }" v-model="form.proprio" :options="listProprio" :reduce="(option) => option" label="item_proprio"></v-select> 
+                                     <v-select :class="{ 'border-danger': isSubmitted && !$v.form.proprio.required }" v-model="form.proprio" :options="proprioFiltres" :reduce="(option) => option" label="item_proprio"></v-select>
 
                                     <label  class="pt-2">Choisir un bien <span class="text-danger">*</span></label>
                                      <v-select :class="{ 'border-danger': isSubmitted && !$v.form.bien.required }" v-model="form.bien" :options="biens" :reduce="(option) => option" label="item_bien"></v-select>  
@@ -289,7 +298,12 @@ export default {
             mandat_previsualise: null,
             iscompleted: false,
             biens: [],
-            representants_proprio: []
+            representants_proprio: [],
+            proprioSelected: null,
+            proprioID: '',
+            proprietaireSelected: {},
+            paginationMeta: {},
+            proprioMandanteValide: []
         }
     },
     validations: {
@@ -301,6 +315,13 @@ export default {
             duree:           { required }
 
         }
+    },
+    computed: {
+      proprioFiltres() {
+        const idsAExclure = this.proprioMandanteValide.map(p => p.proprio_id);
+        console.log(">>PPPP", idsAExclure)
+        return this.listProprio.filter(p => !idsAExclure.includes(p.proprio_id));
+      }
     },
     watch: {
        paginate: function(){
@@ -339,6 +360,9 @@ export default {
             const data = new FormData();
 
             data.append('proprio', this.form.proprio.proprio_id);
+            data.append('proprio_nom', this.form.proprio.proprio_nom);
+            data.append('proprio_prenom', this.form.proprio.proprio_prenom);
+            data.append('proprio_email', this.form.proprio.proprio_email);
             data.append('bien', this.form.bien.bien_id);
             data.append('agence', this.form.agence.agence_id);
             data.append('position', this.form.position);
@@ -391,11 +415,17 @@ export default {
         getMandats(page=1){
             this.isLoadingTab = true;
             this.checking = false;
-            axios.get("/gerance/listing?paginate="+ this.paginate+'&page=' + page).then(responses => {
+            const params = {};
+
+            if (this.proprioID) params.proprioID = this.proprioID;
+            axios.get("/gerance/listing?paginate="+ this.paginate+'&page=' + page, {params}).then(responses => {
                 console.log(responses);
-                this.mandats = responses.data;
                 this.isLoadingTab = false;
                 this.checking = true;
+                this.mandats = responses.data;
+                this.paginationMeta = responses.data.meta.pagination;
+                this.proprioMandanteValide = responses.data.meta.proprioMandanteValide;
+
             }).catch(errors => { 
                 this.isLoadingTab = true;
             // react on errors.
@@ -619,6 +649,21 @@ export default {
             data.append('id_mandat', this.form.id);
             data.append('file_genered', file_generate);
             data.append('name_file', namefile);
+
+            data.append('proprio', this.form.proprio.proprio_id);
+            data.append('proprio_nom', this.form.proprio.proprio_nom);
+            data.append('proprio_prenom', this.form.proprio.proprio_prenom);
+            data.append('proprio_email', this.form.proprio.proprio_email);
+            data.append('bien_id', this.form.bien.bien_id);
+            data.append('agence', this.form.agence.agence_id);
+            data.append('position', this.form.position);
+            data.append('pers', this.form.pers.pers_id);
+            data.append('duree', this.form.duree);
+            data.append('date_debut', this.form.date_debut);
+            data.append('date_fin', this.form.date_fin);
+            data.append('preavis_mandataire', this.form.preavis_mandataire);
+            data.append('preavis_proprio', this.form.preavis_proprio);
+            data.append('honoraire_gestion', this.form.honoraire_gestion);
             
             let action = "create_file_mandat";
 
@@ -657,6 +702,18 @@ export default {
                 path: file,
                 title: 'Mandat de Gérance'
             });
+        },
+         onInputSelectProprio(value) {
+          if (!value) {
+            this.proprioSelected = null;
+            this.proprioID = '';
+            this.getMandats(); // 💡 appel de ton action de réinitialisation
+          }
+        },
+        onProprioChoisi(proprio){
+          this.proprioSelected = proprio;
+          this.proprioID = proprio.proprio_id;
+          this.getMandats();
         }
 
     },

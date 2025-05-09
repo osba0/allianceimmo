@@ -9,6 +9,8 @@
         'Tableau de bord' => ['url' => '/home'],
         'Mandat de Gérance' => ['url' => '']
     ];
+
+
 @endphp
 
 <div class="container-fluide">

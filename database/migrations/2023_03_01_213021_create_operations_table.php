@@ -22,6 +22,7 @@ class CreateOperationsTable extends Migration
             $table->double('oper_montant');
             $table->string('oper_id_bail')->nullable(); 
             $table->string('oper_id_charge')->nullable();  
+            $table->string('oper_id_versement_proprio')->nullable();
             $table->string('oper_note');  
             $table->string('oper_user');
             $table->string('oper_reserve_1')->nullable();

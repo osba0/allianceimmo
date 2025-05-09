@@ -11,6 +11,7 @@ use App\Models\Personnels;
 use App\Models\Biens;
 use App\Models\MandatGerance;
 use App\Models\Representant;
+use App\Models\MailEnAttente;
 
 use App\Helpers\Helper;
 use App\Http\Resources\MandatGeranceResource;
@@ -52,26 +53,57 @@ class MandatGeranceController extends Controller
      */
     public function create()
     {
+        $user = Auth::user();
 
         $mandat =  MandatGerance::where('mandat_id', request('id_mandat'))->first(); 
 
         if($mandat){
 
-            $base64_pdf = trim(request('file_genered'), "data:application/pdf;base64,");
-            $base64_decode = base64_decode($base64_pdf);
-            $pathFile = config('constants.PATH_MANDAT').request('name_file');
-            $pdf = fopen($pathFile, 'w');
-            fwrite($pdf, $base64_decode);
-            fclose($pdf);
+            try{
+                $base64_pdf = trim(request('file_genered'), "data:application/pdf;base64,");
+                $base64_decode = base64_decode($base64_pdf);
+                $pathFile = config('constants.PATH_MANDAT').request('name_file');
+                $pdf = fopen($pathFile, 'w');
+                fwrite($pdf, $base64_decode);
+                fclose($pdf);
 
-            $up = $mandat->update([
-                "mandat_fichiers"  => $pathFile
-            ]);
+                $up = $mandat->update([
+                    "mandat_fichiers"  => $pathFile
+                ]);
 
-            $rep = [
-                "code" => 0,
-                "message" => "OK"
-            ];
+                // Preparer le mail
+                $data['proprio_nom'] = request('proprio_nom');
+                $data['proprio_prenom'] = request('proprio_prenom');
+                $data['mandat_date_debut'] = request('date_debut');
+                $data['mandat_date_fin'] = request('date_fin');
+                $data['created_by'] = $user->username;
+                $data['bien_id'] = request('bien_id');
+                $data['agence_id'] = auth()->user()->agence_id;
+                $data['path_mandat'] = $pathFile;
+                $sent = MailEnAttente::create([
+                    'email_destinataire' => request('proprio_email'),
+                    'email_cc' => "",
+                    'sujet' => 'Mandat de Gérance',
+                    'action'=> 'Nouveau Mandat de Gérance',
+                    'contenu_html' => '',
+                    'contenu_text' => '',
+                    'fichier_joint' => $pathFile,
+                    'etat' => 'en_attente',
+                    'template' => 'nouveau_mandat_gerance',
+                    'data' => json_encode($data)
+                ]);
+
+                $rep = [
+                    "code" => 0,
+                    "message" => "OK"
+                ];
+
+                }catch(\Exceptions $e){
+                  return response([
+                    "code" => 1,
+                    "message" => $e->getMessage()
+                ]);
+            }
 
         }else{
             $rep = [
@@ -115,6 +147,8 @@ class MandatGeranceController extends Controller
 
             $q->save();
 
+
+
         }catch(\Exceptions $e){
               return response([
                 "code" => 1,
@@ -143,6 +177,10 @@ class MandatGeranceController extends Controller
         $mandats = MandatGerance::leftJoin('proprietaires', 'mandat_gerances.proprio', '=', 'proprietaires.proprio_id')
         ->leftJoin('agences', 'mandat_gerances.agence', '=', 'agences.agence_id')->leftJoin('biens', 'mandat_gerances.bien', '=', 'biens.bien_id')
         ->select('mandat_gerances.*','agences.agence_nom', 'proprietaires.proprio_nom', 'proprietaires.proprio_prenom', 'biens.bien_nom', 'biens.bien_adresse', 'biens.bien_numero')->groupBy('mandat_gerances.mandat_id');
+
+        if(request('proprioID')){
+            $mandats->where('mandat_gerances.proprio', request('proprioID'));
+        }
         if(isset($paginate)){
            $mandats = $mandats->orderby("created_at", "desc")->paginate($paginate);
         }else{
@@ -151,8 +189,21 @@ class MandatGeranceController extends Controller
 
         //var_dump($mandats);die();
 
+        $data = MandatGeranceResource::collection($mandats);
+
+        $proprioMandanteValide = Proprietaires::leftJoin('mandat_gerances', 'mandat_gerances.proprio', '=', 'proprietaires.proprio_id')->where('mandat_gerances.mandat_etat', 1)->get();
+
+        return response()->json([
+            'code' => 0,
+            'data' => $data,
+            'meta' => [
+                'pagination' => $mandats, // 👈 très important
+                'proprioMandanteValide' => $proprioMandanteValide
+            ]
+        ]);
+
       
-        return MandatGeranceResource::collection($mandats);
+       // return  ::collection($mandats);
     }
 
     /**

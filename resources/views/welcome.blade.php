@@ -20,6 +20,8 @@
                 font-weight: 200;
                 height: 100vh;
                 margin: 0;
+                background: url('assets/images/modern_real_estate_background_images-1746289147296.png') no-repeat center center;
+                background-size: cover;
             }
             .full-height {
                 height: 100vh;
@@ -39,6 +41,10 @@
             }
             .content {
                 text-align: center;
+                background: #ffffffe0;
+                padding-left: 15px;
+                padding-right: 15px;
+                border-radius: 8px;
             }
             .title {
                 font-size: 54px;
@@ -73,6 +79,20 @@
                 font-family: 'Sofia Sans Extra Condensed', sans-serif !important;
                  font-size: 2rem;
             }
+
+            @media (max-width: 767.98px) {
+              .titleHome{
+                font-size: 2rem;
+                margin-top: 20px;
+              }
+              .logo_nav{
+                height: 100px;
+              }
+              p {
+                  font-size: 15px;
+                }
+            }
+
         </style>
     </head>
     <body>
@@ -101,15 +121,13 @@
 
                 <div class="title m-b-md">
                     <h1 class="font-semibold titleHome text-uppercase">{{ config('app.name', 'Laravel') }}<span>.net</span></h1>
-
-                    <hr>
                     <img src="{{ url('/assets/images/logo-login.png') }}" class="logo_nav" height="180">
                     <p>Gérer votre agence immobiliére en toute confiance!</p>
 
                     <div class="text-center btn-home">
                         
                         @auth
-                            <a href="{{ url('/home') }}"  class="rounded-0 btn btn-info btn-lg">Acceder à l'application</a>
+                            <a href="{{ url('/home') }}"  class="rounded-0 btn btn-info">Acceder à l'application</a>
                         @else
                             <a href="{{ route('login') }}" class="rounded-0 btn btn-primary btn-lg px-3" >Se connecter ➔</a>
 

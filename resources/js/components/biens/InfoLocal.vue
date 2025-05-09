@@ -59,7 +59,7 @@
                     <div class="row">
                         <div class="col-md-6">
                            <div class="form-group">
-                                <label>Salle de Bain</label>
+                                <label>Avec Salle de Bain</label>
                                 <span class="bg-light h4 px-2 d-block">{{ info.salle_bain }}</span>    
                             </div>
                         </div>
@@ -73,16 +73,97 @@
                     <div class="row">
                         <div class="col-md-6">
                            <div class="form-group">
+                                <label>Nature Local</label>
+                                <span class="bg-light h4 px-2 d-block">{{ info.nature_local }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Nbre Toilette</label>
+                                <span class="bg-light h4 px-2 d-block">{{ info.nbre_toilette }}</span>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                                <label>Nbre chambre</label>
+                                <span class="bg-light h4 px-2 d-block">{{ info.nbre_chambre }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Nbre Salle bain</label>
+                                <span class="bg-light h4 px-2 d-block">{{ info.nbre_salle_bain }}</span>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                                <label>Nbre cuisine</label>
+                                <span class="bg-light h4 px-2 d-block">{{ info.nbre_piscine }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                                <label>TOM</label>
+                                <span class="bg-light h4 px-2 d-block">{{ info.tom }}</span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>TVA</label>
+                            <span class="bg-light h4 px-2 d-block">{{ info.tva }}</span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                                <label>Timbre principal</label>
+                                <span class="bg-light h4 px-2 d-block">{{ info.timbre_principal }}</span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Timbre</label>
+                            <span class="bg-light h4 px-2 d-block">{{ info.timbre }}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                                <label>Eau Forfait</label>
+                                <span class="bg-light h4 px-2 d-block">{{ info.eau_forfait }}</span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+
+                        </div>
+                    </div>
+                     <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
                                 <label>Description</label>
-                                <span class="bg-light h4 px-2 d-block">{{ info.description }}</span>  
-                                
+                                <span class="bg-light h4 px-2 d-block">{{ info.description }}</span>
+
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label>Agent</label>
-                            <span class="bg-light h4 px-2 d-block">{{ info.user }}</span> 
+                            <span class="bg-light h4 px-2 d-block">{{ info.user }}</span>
                         </div>
                     </div>
+
                      <div class="row">
                         <div class="col-md-6">
                            <div class="form-group">

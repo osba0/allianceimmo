@@ -28,10 +28,16 @@ class BailResource extends JsonResource
             "bail_fichier"          => $this->bail_fichiers,
             "proprio_nom"           => $this->proprio_nom,
             "proprio_prenom"        => $this->proprio_prenom,
+            "bail_etat"             => $this->bail_etat,
             "locataire_nom"         => $this->locat_nom,
             "locataire_prenom"      => $this->locat_prenom,
             "bail_difference"       => $toDate->diffInDays($fromDate),
-            "bail_expiration"       => $fromDate->diffInDays($today)
+            "bail_expiration"       => $fromDate->diffInDays($today),
+            "bail_local"            => (isset($this->bail_local) && !is_null($this->bail_local) && $this->bail_local!='')? is_array($this->bail_local)?$this->bail_local: json_decode($this->bail_local) : json_decode("[]") ,
+            "bail_bien"             => $this->bail_bien,
+            "bail_montant_ht"       => $this->bail_montant_ht,
+            "locataire_id"          => $this->locat_id,
+            "locataire_email"       => $this->locat_email,
         ];
     }
 }

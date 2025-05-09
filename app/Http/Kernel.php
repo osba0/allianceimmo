@@ -66,5 +66,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'permission' => \App\Http\Middleware\CheckPermission::class, // protéger les routes qui n'ont pas de permission
         'permissionOrRoot' => \App\Http\Middleware\CheckPermissionOrRoot::class,
+        'pin.locataire.verified' => \App\Http\Middleware\PinLocataireVerified::class,
+        'pin.proprietaire.verified' => \App\Http\Middleware\PinProprietaireVerified::class,
     ];
 }

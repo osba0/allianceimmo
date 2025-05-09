@@ -29,7 +29,9 @@ class PaiementsLoyer extends Model
         'paiement_recu',
         'paiement_etat',
         'paiement_cloture',
-        'paiement_recu'
+        'paiement_recu',
+        'paiement_user',
+        'paiement_date'
     ];
     
 
@@ -39,7 +41,7 @@ class PaiementsLoyer extends Model
     public static function getEtatPaiement()
     {
         return [
-            static::EN_RETARD        => 'En retard',
+            static::EN_RETARD        => 'Initié', //'En retard',
             static::IMPAYEE          => 'Impayé',
             static::PAIEMENT_PARTIEL => 'Paiement Partiel',
             static::PAYE             => 'Payé'

@@ -169,11 +169,22 @@
                         </a>
                     </li>
                     @endif
+
+
                     @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.ChargeFrais'))
                      <li class="nav-item">
                         <a href="{{ route('charges') }}" class="nav-link {{Request::route()->getName()=='charges'? 'active':''}}">
                             <i class="nav-icon fas fa-bolt"></i>
                             <p>Charge & Frais</p>
+                        </a>
+                    </li>
+                    @endif
+
+                     @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.ChargeFrais'))
+                     <li class="nav-item">
+                        <a href="{{ route('versements') }}" class="nav-link {{Request::route()->getName()=='versements'? 'active':''}}">
+                            <i class="nav-icon fas fa-hand-holding-usd"></i>
+                            <p>Versements</p>
                         </a>
                     </li>
                     @endif
@@ -216,6 +227,12 @@
                         </a>
                     </li>
                     @endif
+                    <li class="nav-item">
+                        <a href="{{ route('notif')}}" class="nav-link {{Request::route()->getName()=='notif'? 'active':''}}">
+                            <i class="nav-icon fas fa-bell"></i>
+                            <p>Notifications</p>
+                        </a>
+                    </li>
                    
                    
                 </ul>
@@ -260,9 +277,11 @@
         </form>
 
         <div class="ml-md-auto d-flex align-items-center mr-3">
-            <div class="mr-3">
+            <div class="mr-2"><notification-dropdown /></div>
+            <div class="mr-3 d-none">
                 <a href="#" class="text-info h3 mb-0"><i class="fas fa-bell"></i></a>
             </div>
+
             <span class="badge badge-primary">Profil</span> 
             <span class="mx-1 text-white">:</span>
             <span class="badge badge-info mr-2">{{ auth()->user()->roles->pluck('name')[0]  }}</span>
@@ -290,16 +309,51 @@
                     </a>
                 </form>
         </div>
-
-       
-
-
     </nav>
+
         <Container :user="{{ auth()->user()->tojson() }}" domain="{{ env('APP_URL') }}" current_route="{{ Request::route()->getName() }}">
+            <div class="content-wrapper global-loader">
+                <div id="skeleton-loader" class="px-4 pt-4">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-center">
+                     <div class="skeleton skeleton-title mb-4" style="width: 20%; height: 30px;"></div>
+                    </div>
+
+                    <div class="pagination-skeleton-wrapper">
+                      <p class="loading-animated">Chargement<span class="dots"></span></p>
+                    </div>
+
+                  <!-- Cards -->
+                  <div class="row">
+                    <div class="col-md-12 mb-4">
+                      <div class="skeleton-card p-3">
+                        <div class="skeleton skeleton-img mb-3"></div>
+                        <div class="skeleton skeleton-line mb-2" style="width: 80%"></div>
+                        <div class="skeleton skeleton-line" style="width: 60%"></div>
+                        <div class="skeleton skeleton-line" style="width: 50%"></div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                 <!-- Pagination skeleton -->
+                  <div class="pagination-skeleton">
+                    <div class="skeleton-btn"></div>
+                    <div class="skeleton-btn"></div>
+                    <div class="skeleton-btn"></div>
+                    <div class="skeleton-btn"></div>
+                  </div>
+
+
+                </div>
+            </div>
+
             <template v-slot:breadcrumbs>
                 @include('partials.breadcrumbs', ['title' => $title ?? '', 'items' => $breadcrumbs ?? []])
             </template>
+
             <template v-slot:content>
+
                 @yield('content')
             </template>
         </Container>
@@ -307,6 +361,10 @@
     <script>
         window.userPermissions = @json(Auth::user()->getAllPermissions()->pluck('name'));
         window.userRoles = @json(Auth::user()->roles->pluck('name'));
+         window.addEventListener('load', function () {
+            const loader = document.getElementById('global-loader');
+            if (loader) loader.style.display = 'none';
+          });
     </script>
 </body>
 </html>

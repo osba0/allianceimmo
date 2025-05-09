@@ -28,6 +28,7 @@ class Bail extends Model
         'bail_duree_contrat',
         'bail_montant_ht',
         'bail_caution_mnt_ht',
+        'bail_avance_loyer',
         'bail_frais_retard',
         'bail_date_debut',
         'bail_date_fin',

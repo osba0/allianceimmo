@@ -149,7 +149,7 @@
 
 
 
-                          <div class="d-flex">
+                        <div class="d-flex">
                             <div class="orientation mr-3 text-left border-right pr-2">
                                 <label class="text-uppercase text-info titleform border-info pt-2">Création compte</label>
                             </div>
@@ -182,7 +182,7 @@
                               <div class="row">
                                 <div class="col-md-6 d-flex justify-content-between">
                                     <div class="form-group w-49">
-                                        <label for="password">Mot de passe<span class="required">*</span></label>
+                                        <label for="password">Mot de passe <span class="required">*</span></label>
                                         <input type="password" class="form-control" id="password" v-model="newUser.password">
                                     </div>
                                     <div class="form-group w-49">
@@ -211,6 +211,28 @@
                                         </select>
                                     </div>
                                 </div>
+                              </div>
+
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="orientation mr-3 text-left border-right pr-2">
+                                <label class="text-uppercase text-info titleform border-info pt-2">Options</label>
+                            </div>
+                            <div style="width: 100%;" class="py-3">
+
+                              <div class="row">
+                                  <div class="col-md-12">
+                                      <div class="form-group mt-3">
+                                           <label class="containerCheckbox" style="font-size: 18px">Ce compte est un administrateur
+                                          <input type="checkbox"  v-model="newUser.is_admin">
+                                          <span class="checkmark"></span>
+                                        </label>
+                                         <small class="form-text text-muted mt-1">
+                                            <strong>ℹ️</strong> ce rôle est important pour recevoir les notifications du système 🔔.
+                                          </small>
+                                      </div>
+                                  </div>
                               </div>
                             </div>
                         </div>
@@ -250,6 +272,7 @@ export default {
       newUser: {
         name: '',
         nomUtilisateur: '',
+        is_admin: false,
         email: '',
         password: '',
         rpassword: '',
@@ -395,6 +418,7 @@ export default {
         this.newUser.pers_adresse= '';
         this.newUser.pers_ville= '';
         this.newUser.pers_pays= '';
+        this.newUser.is_admin= false;
     },
     editUser(userId) {
       // Implémenter la fonctionnalité de modification si nécessaire
@@ -429,7 +453,8 @@ export default {
         pers_tel_2: '',
         pers_adress: '',
         pers_ville: '',
-        pers_pays: ''
+        pers_pays: '',
+        is_admin: false
       };
     },
     filterFiliales() {

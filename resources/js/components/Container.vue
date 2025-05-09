@@ -5,7 +5,7 @@
         <div class="content-wrapper">
             <slot name="breadcrumbs"></slot>
             <!-- Main content -->
-            <section class="content">
+            <section class="content pt-3">
                 <slot name="content"></slot>
             </section>
             <!-- /.content -->

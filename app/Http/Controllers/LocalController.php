@@ -52,6 +52,19 @@ class LocalController extends Controller
             $q->local_superficie=request('superficie');
             $q->local_disponible=true;
             $q->local_annee_construction=request('annee_construction');
+            $q->local_nature_local=request('nature_local');
+            $q->local_nbre_toilette=request('nbre_toilette');
+            $q->local_nbre_chambre=request('nbre_chambre');
+            $q->local_nbre_salle_bain=request('nbre_salle_bain');
+            $q->local_nbre_cuisine=request('nbre_cuisine');
+            $q->local_nbre_piscine=request('nbre_piscine');
+            $q->local_tom=request('tom');
+            $q->local_tva=request('tva');
+            $q->local_tlv=request('tlv');
+            $q->local_timbre_principal=request('timbre_principal');
+            $q->local_timbre=request('timbre');
+            $q->local_eau_forfait=request('eau_forfait');
+
             $q->local_photos=json_encode($files); 
 
             $q->save();
@@ -76,7 +89,16 @@ class LocalController extends Controller
         $paginate = request('paginate');
 
 
-        $locals = DB::table('locals')->where("bien_id", request('bien_id')); 
+        //$locals = DB::table('locals')->where("bien_id", request('bien_id'));
+
+        $locals =  DB::table('locals')->where('bien_id', request('bien_id'))
+        ->select('locals.*', DB::raw('
+            EXISTS (
+                SELECT 1 FROM bails
+                WHERE JSON_CONTAINS(bails.bail_local, JSON_QUOTE(CAST(locals.local_id AS CHAR)))
+                AND bails.bail_etat = 1
+            ) as is_loue
+        '));
 
         if(isset($paginate)){
             $locals = $locals->orderby("created_at", "desc")->paginate($paginate);
@@ -96,17 +118,19 @@ class LocalController extends Controller
      */
     public function edit($id, Request $request)
     {
+
         $additionalFile = request('additionalFile');
         if(isset($additionalFile)){
             $additionalFile = request('additionalFile');
         }else{
             $additionalFile = null;
         }
+        $files = Helper::getFiles($request->TotalFiles, config('constants.PATH_BIEN'), request('type_local'), 'local', $additionalFile);
 
-        $files = Helper::getFiles($request, config('constants.PATH_BIEN'), request('type_local'), 'local', $additionalFile);
+
 
         $local =  Local::where('local_id', $id)->first(); 
-         
+
         $up = $local->update([
             "local_type_local"          => request('type_local'),
             "local_type_location"       => request('type_location'),
@@ -117,7 +141,19 @@ class LocalController extends Controller
             "local_description"         => request('description'),
             "local_superficie"          => request('superficie'),
             "local_annee_construction"  => request('annee_construction'),
-            "local_photos"              => json_encode($files),
+            "local_nature_local"        => request('nature_local'),
+            "local_nbre_toilette"       => request('nbre_toilette'),
+            "local_nbre_chambre"        => request('nbre_chambre'),
+            "local_nbre_salle_bain"     => request('nbre_salle_bain'),
+            "local_nbre_cuisine"        => request('nbre_cuisine'),
+            "local_nbre_piscine"        => request('nbre_piscine'),
+            "local_tom"                 => request('tom'),
+            "local_tva"                 => request('tva'),
+            "local_tlv"                 => request('tlv'),
+            "local_timbre_principal"    => request('timbre_principal'),
+            "local_timbre"              => request('timbre'),
+            "local_eau_forfait"         => request('eau_forfait'),
+            "local_photos"              => json_encode($files)
         ]);
         
         if($up){

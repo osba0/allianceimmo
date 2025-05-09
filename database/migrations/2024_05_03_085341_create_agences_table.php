@@ -17,6 +17,7 @@ class CreateAgencesTable extends Migration
             $table->id();
             $table->string('agence_id')->unique(); 
             $table->string('agence_nom'); 
+            $table->string('agence_gerant');
             $table->string('agence_slogan')->nullable(); 
             $table->string('agence_activite')->nullable(); 
             $table->string('agence_ninea')->nullable();

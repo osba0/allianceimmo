@@ -46,6 +46,7 @@ class GenerationLoyer extends Command
      */
     public function handle()
     {
+
         // Lister les loyers des locataires qui ont un bail en cours
         $mois_paiement = Carbon::yesterday()->format('Y-m');
 
@@ -71,7 +72,7 @@ class GenerationLoyer extends Command
                     if(!$this->checkMonthExist($bail["bail_id"], $fromDateFormat)){
                         // inserer un nouveau loyer
                         $paiement_id = Helper::IDGenerator(new PaiementsLoyer, 'paiement_id',config('constants.ID_LENGTH'), config('constants.PREFIX_PAIEMENT_LOYER'));
-                        DB::insert('insert into paiements_loyers (paiement_id, paiement_bail_id, paiement_montant, paiement_mois_location, paiement_echeance, paiement_etat, paiement_cloture, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', [$paiement_id, $bail["bail_id"], $bail["bail_montant_ht"],$fromDateFormat, '', false, false, Carbon::now(), Carbon::now()]);
+                        DB::insert('insert into paiements_loyers (paiement_id, paiement_bail_id, paiement_montant, paiement_mois_location, paiement_echeance, paiement_etat, paiement_cloture, paiement_user, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', [$paiement_id, $bail["bail_id"], $bail["bail_montant_ht"],$fromDateFormat, '', false, false,'SYSTEM', Carbon::now(), Carbon::now()]);
                     }
                     $fromDate = $fromDate->addMonth();
                     $fromDateFormat = $fromDate->format('Y-m');

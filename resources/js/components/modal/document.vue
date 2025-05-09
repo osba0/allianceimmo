@@ -32,6 +32,7 @@
 
 <script>
 import { EventBus } from '../../event-bus';
+
 export default {
     props: [],
      components: {

@@ -40,6 +40,13 @@ class Locataires extends Model
         'locat_domaine_activite',
         'locat_ninea_rc',
         'locat_num_tva',
-        'locat_avoir'
+        'locat_avoir',
+        'token',
+        'pin'
     ];
+
+    public function agence()
+    {
+        return $this->belongsTo(Agence::class);
+    }
 }

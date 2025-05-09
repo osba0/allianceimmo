@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Proprietaires;
 use App\Models\MandatGerance;
+use App\Models\MailEnAttente;
 
 use App\Helpers\Helper;
 
@@ -13,6 +14,8 @@ use App\Http\Resources\ProprietairesResource;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+
+use App\Services\NotificationService;
 
 use DB;
 use File;
@@ -55,7 +58,23 @@ class ProprietairesController extends Controller
 
         $paginate = request('paginate');
 
-        $proprios = DB::table('proprietaires')->leftJoin('representants', 'proprietaires.proprio_id', '=', 'representants.repr_id_proprio')->select('proprietaires.*', DB::raw('COUNT(representants.repr_id_proprio) as nbreRespre'));
+        $proprios = DB::table('proprietaires')->leftJoin('representants', 'proprietaires.proprio_id', '=', 'representants.repr_id_proprio')->leftJoin('bails', function ($join) {
+        $join->on('proprietaires.proprio_id', '=', 'bails.bail_proprio')
+             ->where('bails.bail_etat', true); })->leftJoin('locataires', 'locataires.locat_id', '=', 'bails.bail_locataire')
+            ->select(
+                'proprietaires.*',
+                'locataires.locat_prenom',
+                'locataires.locat_nom',
+                'locataires.locat_tel_1',
+                DB::raw('COUNT(DISTINCT representants.repr_id_proprio) as nbreRespre'),
+                DB::raw('COUNT(DISTINCT bails.bail_id) as nbreLocatairesActifs'),
+                DB::raw('COUNT(DISTINCT bails.bail_bien) as nbreBienLoue'),
+                DB::raw('COALESCE(SUM(bails.bail_montant_ht), 0) as revenus_locatifs')
+            );
+
+        if(request('proprioID')){
+            $proprios->where('proprietaires.proprio_id', request('proprioID'));
+        }
 
         if(isset($paginate)){
             $proprios = $proprios->groupBy("proprietaires.proprio_id")->orderby("created_at", "desc")->paginate($paginate);
@@ -113,6 +132,40 @@ class ProprietairesController extends Controller
 
 
             $q->save();
+
+            $data['proprio_nom'] = request('nom');
+            $data['proprio_prenom'] = request('prenom');
+            $data['proprio_email'] = request('email');
+            $data['proprio_tel'] = request('indicatif1').' '.request('tel1');
+            $data['created_by'] = $user->username;
+            $data['agence_id'] = auth()->user()->agence_id;
+
+            $sent = MailEnAttente::create([
+                'email_destinataire' => $user->email,
+                'email_cc' => "",
+                'sujet' => 'Nouveau Propriétaire',
+                'action'=> 'Nouveau Propriétaire',
+                'contenu_html' => '',
+                'contenu_text' => '',
+                'fichier_joint' => '',
+                'etat' => 'en_attente',
+                'template' => 'nouveau_proprietaire',
+                'data' => json_encode($data)
+            ]);
+
+            // Lorsqu'un nouveau locataire est créé
+            NotificationService::createForRole(
+                'creation',
+                'Nouveau Propiétaire',
+                "Un nouveau propiétaire a été ajouté.",
+                $user->username, // ou 'proprio' ou 'agent'
+                [
+                    'proprio_id' => $proprio_id,
+                    'proprio_nom' => request('nom'),
+                    'proprio_prenom' => request('prenom'),
+                ]
+            );
+
 
         }catch(\Exceptions $e){
               return response([
@@ -173,6 +226,7 @@ class ProprietairesController extends Controller
      */
     public function edit($id, Request $request)
     {
+         $user = Auth::user();
         $additionalFile = request('additionalFile');
         if(isset($additionalFile)){
             $additionalFile = request('additionalFile');
@@ -208,6 +262,17 @@ class ProprietairesController extends Controller
             "proprio_date_expiration"=> request('date_expiration'),
             "proprio_kyc"            => json_encode($files)
         ]);
+
+         // Lorsqu'un nouveau locataire est créé
+
+
+            NotificationService::creerNotification(
+                "modification",
+                "propriétaire modifié",
+                "Le propriétaire ".request('nom')." a été modifié avec succès.",
+                ['proprio_id' => $id],
+                'root' // 👈 Ici tu cibles uniquement les utilisateurs ayant le rôle admin
+            );
         
         if($up){
             $rep = [

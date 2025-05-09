@@ -18,7 +18,15 @@ use App\Http\Controllers\CompteController;
 use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\FilialeController;
 use App\Http\Controllers\GlobalController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\BadgeController;
+use App\Http\Controllers\VersementsController;
 use App\Http\Controllers\Rapports\ProprietairesRapport;
+
+use App\Http\Controllers\PaiementLoyerSysController;
+
+use App\Http\Controllers\Template\QuittanceLoyerTemplateController;
+use App\Http\Controllers\Template\TemplateController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -110,6 +118,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/bail/create_file_bail', [BailController::class, 'create']);
         Route::get('/bail/listing', [BailController::class, 'listing']);
         Route::get('/bail/getbien/{id_proprio}', [BailController::class, 'getBienByProprio']);
+        Route::get('/bail/find_local_loue/{id_locataire}', [BailController::class, 'findLocalLoue']);
+        Route::post('/bail/resiliation', [BailController::class, 'resiliationBail']);
     });
 
     // Operations
@@ -120,10 +130,34 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/operations/charges_frais', [OperationsController::class, 'charges'])->name('charges');
         Route::get('/operations/charges', [OperationsController::class, 'listingCharges']);
         Route::post('/operations/charge/create', [OperationsController::class, 'ajoutCharge']);
+        Route::delete('/operations/charges/deletedecharge/{id}', [OperationsController::class, 'destroyCharge']);
         Route::get('/operations/list', [OperationsController::class, 'list'])->name('operationList');
         Route::get('/operations/listing', [OperationsController::class, 'listOperation']);
         Route::get('/operations/getbien/{id_proprio}', [OperationsController::class, 'getBienByProprio']);
+        Route::get('/operations/loyers_actif/{id_locataire}', [OperationsController::class, 'getloyersActifByLocataire']);
+
+        Route::post('/operations/ajoutPaiement', [OperationsController::class, 'ajoutPaiement']);
+
+        Route::get('/operations/paiement-loyers/checkCanPayMoisLoyer/{id}/{mois}', [OperationsController::class, 'checkLoyerIsPayable']);
+        Route::delete('/operations/paiements/delete/{id}', [OperationsController::class, 'destroyPaiement']);
+
+        // Paiement Loyers New
+        Route::get('/operations/paiement-loyers', [PaiementLoyerSysController::class, 'index'])->name('loyers');
+
+        Route::get('/operations/paiement-loyers/listing', [PaiementLoyerSysController::class, 'listing']);
+        Route::post('/operations/ajoutPaiementLoyerManuel', [OperationsController::class, 'ajoutPaiementLoyerManuel']);
+
+        Route::get('/operations/versements', [VersementsController::class, 'index'])->name('versements');
+        Route::get('/operations/versements/all', [VersementsController::class, 'all']);
+        Route::post('/operations/versements/create', [VersementsController::class, 'ajoutVersement']);
+        Route::post('/operations/versements/edit', [VersementsController::class, 'edit']);
+        Route::delete('/operations/versements/deleteversement/{id}', [VersementsController::class, 'destroy']);
+
+
     });
+
+
+
 
 
     // Rapport
@@ -131,6 +165,20 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/rapport/index', [RapportController::class, 'index'])->name('rapport');
         Route::get('/rapport/proprietaires', [ProprietairesRapport::class, 'index'])->name('proprietairesRapport');
         Route::get('/rapport/proprietaires/{id}', [ProprietairesRapport::class, 'show'])->name('proprietaires.show');
+        Route::get('/rapports/loyers', [RapportController::class, 'rapportLoyers']);
+
+        Route::get('rapports/loyers/locataires', [RapportController::class, 'rapportLocataires']);
+        Route::get('rapports/loyers/proprietaires', [RapportController::class, 'rapportProprietaires']);
+        Route::get('rapports/loyers/agence', [RapportController::class, 'rapportAgence']);
+
+        Route::get('rapports/loyers/generation_encaissement_loyer', [RapportController::class, 'rapportPDFProprietaires']);
+        Route::get('rapports/envoye_au_proprio', [RapportController::class, 'envoisRapportProprio']);
+        Route::get('rapports/loyers/generation_rapport_locataire', [RapportController::class, 'rapportPDFLocataire']);
+        Route::get('rapports/envoye_au_locataire', [RapportController::class, 'envoisRapportLocataire']);
+
+
+
+
     });
 
     // Personnel
@@ -170,7 +218,62 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Global
     Route::get('/global/getsolde', [GlobalController::class, 'getSolde']);
+
+    // Template
+     Route::group(['as' => 'templates.', 'prefix' => 'templates'], function () {
+        Route::get('/', [TemplateController::class, 'index'])->name('index');
+        Route::post('/quittance-loyer/preview', [QuittanceLoyerTemplateController::class, 'preview'])->name('quittance-loyer.preview');
+
+        Route::get('/getList', [TemplateController::class, 'getList'])->name('get-list');
+        Route::get('/create', [TemplateController::class, 'create'])->name('create');
+        Route::post('/', [TemplateController::class, 'store'])->name('store');
+        Route::delete('/{template}', [TemplateController::class, 'delete'])->name('delete')->middleware(['ajax']);
+        Route::get('/{template}/edit', [TemplateController::class, 'edit'])->name('edit');
+        Route::patch('/{template}/edit', [TemplateController::class, 'update'])->name('update');
+    });
+
+
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::post('/{id}/mark-read', [NotificationController::class, 'markAsRead']);
+        Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/clear', [NotificationController::class, 'clearAll']);
+        Route::get('/all', [NotificationController::class, 'all']);
+        Route::get('/index', [NotificationController::class, 'allNotif'])->name('notif');
+
+    });
+
+
 });
+
+// Middleware de protection par PIN Locataire
+Route::group(['middleware' => ['pin.locataire.verified']], function () {
+    Route::match(['get', 'post'], '/badge/locataire/{locataire_id}', [BadgeController::class, 'show'])->name('badgeLocataire.show');
+});
+
+Route::get('/badge/locataire/logout/{locataire_id}', function ($locataire_id) {
+    session()->forget('pin_verified');
+    session()->forget('pin_verified_at');
+
+    return redirect()->route('badgeLocataire.show', ['locataire_id' => $locataire_id])
+        ->with('message', 'Vous avez été déconnecté du badge.');
+})->name('badgeLocataire.logout');
+
+// Middleware de protection par PIN Proprietaire
+Route::group(['middleware' => ['pin.proprietaire.verified']], function () {
+    Route::match(['get', 'post'], '/badge/proprietaire/{proprietaire_id}', [BadgeController::class, 'showProprio'])->name('badgeProprietaire.show');
+});
+
+Route::get('/badge/proprietaire/logout/{proprietaire_id}', function ($proprietaire_id) {
+    session()->forget('pin_verified');
+    session()->forget('pin_verified_at');
+
+    return redirect()->route('badgeProprietaire.show', ['proprietaire_id' => $proprietaire_id])
+        ->with('message', 'Vous avez été déconnecté du badge.');
+})->name('badgeProprietaire.logout');
+
+
+
 
 Route::fallback(function () {
     abort(404);

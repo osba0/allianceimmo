@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Services\OperationService;
+
 use DB;
 
 class GlobalController extends Controller
@@ -17,19 +19,10 @@ class GlobalController extends Controller
     public function getSolde()
     {
         // Calculer le solde total
-        $credit = DB::table('operations')
-            ->where('oper_sens', 'CREDIT') // Filtrer par type 'credit'
-            ->sum('oper_montant'); // Somme des montants
-
-        $debit = DB::table('operations')
-            ->where('oper_sens', 'DEBIT') // Filtrer par type 'credit'
-            ->sum('oper_montant');
-
-        $soldeTotal = $credit - $debit;
 
         return response()->json([
             'codeRetour' => 0,
-            'solde' => $soldeTotal
+            'solde' => OperationService::calculerSolde()
         ]);
     }
 }

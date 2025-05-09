@@ -3,9 +3,14 @@
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
+                <div class="col-md-12">
+                    <ul class="rounded-tabs">
+                      <li><span class="title-page">{{ $title }}</span></li>
+                    </ul>
+                </div>
+                <!--div class="col-sm-6">
                     <h1 class="m-0 text-dark">@if(isset($icon)) <i class="{{$icon}}"></i> @endif {{ $title }}</h1>
-                </div><!-- /.col -->
+                </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         @foreach ($breadcrumbs as $key => $breadcrumb)
@@ -14,7 +19,7 @@
                             </li>
                         @endforeach
                     </ol>
-                </div><!-- /.col -->
+                </div-->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>

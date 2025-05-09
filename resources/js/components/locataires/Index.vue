@@ -1,14 +1,21 @@
 <template>
     <div>
         <div class="d-flex justify-content-between mb-3">
-            <div class="d-flex align-items-center">
-                <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>
-                <select class="form-control form-control-sm" v-model="paginate">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select>
+             <div class="d-flex justify-content-between align-items-center gap-15">
+                <div class="d-flex align-items-center">
+                    <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>
+                    <select class="form-control form-control-sm" v-model="paginate">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
+                <div class="d-flex align-items-end gap-15">
+                    <div style="width: 300px">
+                        <v-select v-model="locataireSelected" @input="onInputSelectLocataire" placeholder="Filtrer par locataire" :options="listLocataire"  @option:selected="onLocataireChoisi" label="item_data"></v-select>
+                    </div>
+                </div>
             </div>
             <button v-if="hasPermission('Locataire.Ajouter')" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Locataire</button>
         </div>
@@ -58,6 +65,7 @@
                     </td>
                     <td class="text-right align-middle">
                         <div class="d-flex justify-content-end">
+                            <button class="btn btn-success mr-2" data-toggle="modal" data-target="#badgeLocataire" @click="showBadge(locataire)"><i class="fa fa-id-badge" aria-hidden="true"></i> Badge</button>
                             <button class="btn btn-primary" @click="view(locataire)" data-toggle="modal" data-target="#moreInfo" v-on:click="newModal"><i class="fa fa-eye"></i></button>
                             <button class="btn btn-info mx-2"  v-if="hasPermission('Locataire.Modifier')" data-toggle="modal" data-target="#addNew"  v-on:click="edit(locataire)"><i class="fa fa-edit"></i></button>
                             <button class="btn btn-danger"  v-if="hasPermission('Locataire.Supprimer')" @click="deleteLocataire(locataire)"><i class="fa fa-trash"></i></button>
@@ -73,6 +81,44 @@
                 :limit=10
                 @pagination-change-page="getLocataire"
             ></pagination>
+        </div>
+
+
+         <!-- Modal Badge-->
+        <div class="modal fade" id="badgeLocataire" data-backdrop="static" data-keyboard="false" tabindex="-1"  role="dialog" aria-labelledby="badgeLocataire" aria-hidden="true">
+            <div class="modal-dialog modal-xl position-relative" role="document">
+                <div class="modal-content" >
+                    <div class="modal-header">
+                        <h5 class="modal-title text-uppercase"><strong><span class="text-primary"><u>Badge</u></span> Locataire</strong></h5>
+
+                        <button type="button" class="close" ref="closePopup" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="background: #373737;">
+                        <template v-if="locataireSelected && Object.keys(locataireSelected).length > 0">
+                           <BadgeLocataire
+                              :photo="locataireSelected.photo_perso.length==0?'/assets/images/user.png':'/assets/locataires/'+locataireSelected.photo_perso[0]"
+                              :logo="'/assets/images/logo_abi_immo.png'"
+                              :qrCode="env+'/badge/locataire/'+locataireSelected.identifiant"
+                               :size="120"
+                              :locataire="{
+                                nom: locataireSelected.nom,
+                                prenom: locataireSelected.prenom,
+                                id: locataireSelected.identifiant,
+                                telephone: locataireSelected.ind1  +' '+locataireSelected.tel1,
+                                email: locataireSelected.email
+                              }"
+                            />
+                        </template>
+
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-danger " @click="reset()" data-dismiss="modal">Fermer</button>
+                    </div>
+
+                </div>
+            </div>
         </div>
 
         <!-- Modal -->
@@ -245,8 +291,13 @@
                                     <div class="col-md-6 d-flex justify-content-between">
                                        <div class="form-group w-49">
                                             <label>Email <span class="text-danger">*</span></label>
-                                            <input v-model="form.email" type="text"
-                                                class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.email.required }">
+                                           <input
+                                              v-model="form.email"
+                                              type="email"
+                                              class="form-control"
+                                              :class="{ 'border-danger': isSubmitted && (!$v.form.email.required || !$v.form.email.emailValidation) }"
+                                            />
+
                                            
                                         </div>
                                          <div class="form-group w-49">
@@ -305,9 +356,9 @@
                                     </div>
                                     <div class="col-md-6">
                                        <div class="form-group">
-                                            <label>N°Piéce</label>
+                                            <label>N°Piéce <span class="text-danger">*</span></label>
                                             <input v-model="form.numero_piece" type="text"
-                                                class="form-control">
+                                                class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.numero_piece.required }">
                                            
                                         </div>
                                     </div>
@@ -340,7 +391,7 @@
                         <button v-show="editmode" type="submit" class="btn btn-success" :disabled="isLoading ? true: false">Enregister</button>
                         <button v-show="editmode" type="button" class="btn btn-warning"  data-dismiss="modal" @click="reset()">Annuler</button>
                         <button v-show="!editmode" type="submit" class="btn btn-success" :disabled="isLoading ? true: false">Créer</button>
-                         <button v-show="!editmode" type="button" class="btn btn-primary">Enregister comme brouillon</button>
+                        <!--button v-show="!editmode" type="button" class="btn btn-primary">Enregister comme brouillon</button-->
                         <button  v-show="!editmode" type="button" class="btn btn-info btn" @click="reset()">Réinitialiser</button>
                         <button  v-show="!editmode" type="button" class="btn btn-secondary " @click="reset()" data-dismiss="modal">Annuler</button>
                     </div>
@@ -366,15 +417,18 @@ import modalCarousel from '../../components/modal/carousel.vue';
 import { EventBus } from "../../event-bus"; 
 import { required, email, minLength, between } from 'vuelidate/lib/validators';
 import InfoLocataire from './Info.vue';
+import BadgeLocataire from '../badges/BadgeLocataire.vue'
 export default {
-    name: "Proprietaire",
-    props: [],
-    components: { DatePicker, VueCountryDropdown, modalCarousel, InfoLocataire },
+    name: "Locataire",
+    props: ["listLocataire", "env"],
+    components: { DatePicker, VueCountryDropdown, modalCarousel, InfoLocataire, BadgeLocataire },
     data () {
         return {
             editmode: false,
             checking: false,
             locataires : {},
+            locataireSelected: null,
+            locataireID: '',
             form: {
                 id : '',
                 nom : '',
@@ -414,7 +468,8 @@ export default {
             paginate: 5,
             editPhotoPerso: [],
             editPhotoPiece:[],
-            isLoadingTab: false
+            isLoadingTab: false,
+
         }
     },
     validations: {
@@ -432,7 +487,8 @@ export default {
           //  civilite:       { required },
             type_piece:     { required },
             type_locataire: { required },
-            profession:     { required }
+            profession:     { required },
+            numero_piece: { required }
         }
     },
     watch: {
@@ -442,7 +498,7 @@ export default {
     },
     methods: {
         createLocataire(){
-console.log(">> check")
+            console.log(">> check")
             this.isSubmitted = true;
             // stop here if form is invalid
             this.$v.form.$touch();
@@ -530,6 +586,18 @@ console.log(">> check")
                 }
                 this.isSubmitted = false;
 
+            }).catch(error => {
+                this.isLoading = false;
+                this.isSubmitted = false;
+
+                // 🔥 Gestion des erreurs serveurs
+                Vue.swal.fire(
+                    'Erreur serveur',
+                    error.response?.data?.message || 'Erreur inattendue. Veuillez réessayer.',
+                    'error'
+                );
+
+                console.error('Erreur Axios :', error);
             });
         },
         onSelect({name, iso2, dialCode}) {
@@ -550,9 +618,11 @@ console.log(">> check")
           this.editmode = false;
         },
         getLocataire(page=1){
+            const params = {};
+            if (this.locataireID) params.locataireID = this.locataireID;
             this.isLoadingTab = true;
             this.checking = false;
-            axios.get("/locat/listing?paginate="+ this.paginate+'&page=' + page).then(responses => {
+            axios.get("/locat/listing?paginate="+ this.paginate+'&page=' + page, {params}).then(responses => {
                 console.log(responses);
                 this.locataires = responses.data;
                 this.isLoadingTab = false;
@@ -735,10 +805,28 @@ console.log(">> check")
         onSelectResidance({name, iso2, dialCode}) {
            console.log(name, iso2, dialCode);
            this.form.pays = iso2; 
+        },
+        showBadge(item) {
+            this.locataireSelected = item;
+        },
+        onLocataireChoisi(locat){
+          this.locataireSelected = locat;
+          this.locataireID = locat.locat_id;
+          this.getLocataire();
+        },
+        onInputSelectLocataire(value) {
+          if (!value) {
+            this.locataireSelected = null;
+            this.locataireID = '';
+            this.getLocataire(); // 💡 appel de ton action de réinitialisation
+          }
         }
 
     },
     mounted() {
+        this.listLocataire.map(function (x){
+          return x.item_data = x.locat_nom + ' ' + x.locat_prenom + ' (' +x.locat_id +')';
+        });
         this.getLocataire();          
     }
 }

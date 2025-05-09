@@ -19,6 +19,7 @@ class CreateChargesFraisTable extends Migration
             $table->string('charge_type'); 
             $table->string('charge_type_autre')->nullable(); 
             $table->double('charge_montant');
+            $table->date('charge_date');
             $table->string('charge_id_proprio')->nullable(); 
             $table->string('charge_id_bien')->nullable(); 
             $table->string('charge_id_local')->nullable(); 

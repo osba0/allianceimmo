@@ -1,14 +1,21 @@
 <template>
     <div>
         <div class="d-flex justify-content-between mb-3">
-            <div class="d-flex align-items-center">
-                <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>
-                <select class="form-control form-control-sm" v-model="paginate">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select>
+            <div class="d-flex justify-content-between align-items-center gap-15">
+                <div class="d-flex align-items-center">
+                    <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>
+                    <select class="form-control form-control-sm" v-model="paginate">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
+                <div class="d-flex align-items-end gap-15">
+                    <div style="width: 300px">
+                        <v-select  v-model="locataireSelected" @input="onInputSelectLocataire" :options="listToutLocataires" placeholder="Filtrer par locataire" :reduce="(option) => option"  @option:selected="onLocataireChoisi" label="item_data"></v-select>
+                    </div>
+                </div>
             </div>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouveau Contrat de Bail</button>
         </div>
@@ -74,7 +81,8 @@
                             <i class="fa fa-file-pdf" ></i>
                               
                         </button>
-                        <button class="btn btn-danger" @click="deleteProprio(bail)"><i class="fa fa-trash"></i></button>
+                        <button class="btn btn-secondary" @click="resilierBail(bail)" :disabled="!bail.bail_etat"><i class="fa fa-times"></i> Récilier le bail</button>
+                        <button class="btn btn-danger" @click="deleteBail(bail)"><i class="fa fa-trash"></i></button>
                     </td>
                 </tr>
               </tbody>
@@ -192,8 +200,16 @@
                                         </div>
                                       
                                     </div>
-                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                     <div class="col-md-6  justify-content-between d-flex">
+                                         <div class="form-group w-49">
+                                            <label>Montant Avance Loyer</label>
+                                            <div class="d-flex align-items-center">
+                                                <input v-model="form.bail_avance_loyer" type="text"
+                                                class="form-control">
+                                                <span class="px-2">FCFA</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group w-49">
                                             <label>Montant Caution</label>
                                             <div class="d-flex align-items-center">
                                                 <input v-model="form.caution_mnt_ht" type="text"
@@ -283,12 +299,15 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 
 export default {
     name: "Bail",
-    props: ["listProprio", "listLocataire"],
+    props: ["listProprio", "listLocataire", "listToutLocataires"],
     components: { DatePicker, VueCountryDropdown, modalCarousel, ModalConfirmationBail, modalDocument },
     data () {
         return {
             editmode: false,
             bails : {},
+            locataires : {},
+            locataireSelected: null,
+            locataireID: '',
             form: {
                 id : '',
                 proprio : '',
@@ -304,6 +323,7 @@ export default {
                 date_fin:'',
                 montant_ht: 0,
                 caution_mnt_ht: 0,
+                bail_avance_loyer: 0,
                 depot_garantie: '',
                 garant: '',
                 frais_retard: '',
@@ -359,7 +379,7 @@ export default {
        form:  {
             handler: function (el) {
                 console.log("BIEN>>", el.bien, ">>PROP",el.proprio, '>>>>AG',el.agence,'>>>PERS', this.form.pers);
-                if(this.form.proprio  && this.form.bien && this.form.local && this.form.locataire && this.form.duree  && this.form.date_debut  && this.form.date_fin   && this.form.montant_ht  && this.form.frais_retard && this.form.caution_mnt_ht){
+                if(this.form.proprio  && this.form.bien && this.form.local && this.form.locataire && this.form.duree  && this.form.date_debut  && this.form.date_fin   && this.form.montant_ht  && this.form.frais_retard && this.form.caution_mnt_ht&& this.form.bail_avance_loyer){
                     this.iscompleted = true;
                 }else{
                     this.iscompleted = false;
@@ -403,6 +423,7 @@ export default {
             data.append('date_fin', this.form.date_fin);
             data.append('montant_ht', this.supprimer_espace_mnt(this.form.montant_ht));
             data.append('caution_mnt_ht', this.supprimer_espace_mnt(this.form.caution_mnt_ht));   
+            data.append('bail_avance_loyer', this.supprimer_espace_mnt(this.form.bail_avance_loyer));
             data.append('depot_garantie', this.form.depot_garantie); 
             data.append('garant', this.form.garant);    
             data.append('frais_retard', this.supprimer_espace_mnt(this.form.frais_retard));      
@@ -445,7 +466,9 @@ export default {
         },
         getBail(page=1){
             this.isLoadingTab = true;
-            axios.get("/bail/listing?paginate="+ this.paginate+'&page=' + page).then(responses => {
+             const params = {};
+            if (this.locataireID) params.locataireID = this.locataireID;
+            axios.get("/bail/listing?paginate="+ this.paginate+'&page=' + page, {params}).then(responses => {
                 console.log(responses);
                 this.bails = responses.data;
                 this.isLoadingTab = false;
@@ -546,7 +569,7 @@ export default {
               }
             })
         },
-        deleteProprio(proprio){
+        deleteBail(bail){
             Vue.swal.fire({
               title:"Suppression Bail ",
               text: "Attention!!! cette opération est irréversible.",
@@ -558,7 +581,7 @@ export default {
             }).then((result) => {
             if (result.isConfirmed) {
     
-                axios.delete('/proprio/delete/'+proprio.identifiant).then(response => {
+                axios.delete('/bail/delete/'+bail.identifiant).then(response => {
                     console.log(response);
                     if(response.data.code==0){
                          Vue.swal.fire(
@@ -642,9 +665,32 @@ export default {
         fileBailGenerate(file_generate, namefile){
             const data = new FormData();
 
+            // get ID local
+            var listLocal=[];
+
+            for(var i=0; i<this.form.local.length;i++){
+                listLocal.push(this.form.local[i].local_id);
+            }
+
             data.append('id_bail', this.form.id);
             data.append('file_genered', file_generate);
             data.append('name_file', namefile);
+
+            data.append('proprio_id', this.form.proprio.proprio_id);
+            data.append('bien_id', this.form.bien.bien_id);
+            data.append('agence_id', this.form.agence.agence_id);
+            data.append('type_bail', this.form.type_bail);
+            data.append('local', JSON.stringify(listLocal));
+            data.append('locataire_id', this.form.locataire.locat_id);
+            data.append('locataire_email', this.form.locataire.locat_email);
+            data.append('duree', this.form.duree);
+            data.append('date_debut', this.form.date_debut);
+            data.append('date_fin', this.form.date_fin);
+            data.append('montant_loyer', this.supprimer_espace_mnt(this.form.montant_ht));
+            data.append('caution_mnt_ht', this.supprimer_espace_mnt(this.form.caution_mnt_ht));
+            data.append('depot_garantie', this.form.depot_garantie);
+            data.append('garant', this.form.garant);
+            data.append('frais_retard', this.supprimer_espace_mnt(this.form.frais_retard));
             
             let action = "create_file_bail";
 
@@ -682,6 +728,69 @@ export default {
                 path: file,
                 title: 'Contrat de bail'
             });
+        },
+        onLocataireChoisi(locat){
+          this.locataireSelected = locat;
+          this.locataireID = locat.locat_id;
+          this.getBail();
+        },
+        onInputSelectLocataire(value) {
+          if (!value) {
+            this.locataireSelected = null;
+            this.locataireID = '';
+            this.getBail(); // 💡 appel de ton action de réinitialisation
+          }
+        },
+        resilierBail(bail){
+            Vue.swal.fire({
+              title:"❌ Résiliation du bail",
+              text: "Êtes-vous sûr de vouloir résilier ce bail ?",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              confirmButtonText: 'Confirmer la résiliation'
+            }).then((result) => {
+            if (result.isConfirmed) {
+
+                const data = new FormData();
+
+                data.append('identifiant', bail.identifiant)
+                data.append('bien',bail.bail_bien);
+                data.append('type_bail', bail.bail_type);
+                data.append('local', JSON.stringify(bail.bail_local));
+                data.append('locataire_id',bail.locataire_id);
+                data.append('duree', bail.bail_duree);
+                data.append('date_debut', bail.bail_date_debut);
+                data.append('date_fin', bail.bail_date_fin);
+                data.append('locataire_email', bail.locataire_email);
+                data.append('montant_loyer', bail.bail_montant_ht);
+                data.append('pathFile', bail.bail_fichier);
+
+
+                axios.post('/bail/resiliation/', data,  {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then(response => {
+                    console.log(response);
+                    if(response.data.code==0){
+                         Vue.swal.fire(
+                          'Résiliation bail',
+                          'Bail résilié avec succés',
+                          'success'
+                        );
+                        this.getBail();
+                    }else{
+                        Vue.swal.fire(
+                          'Résiliation bail',
+                          'Une erreure est survenue!',
+                          'error'
+                        );
+                    }
+                });
+              }
+            })
         }
 
     },
@@ -700,6 +809,10 @@ export default {
         this.listLocataire.map(function (x){
           return x.item_locataire = x.locat_nom + ' ' + x.locat_prenom
         });  
+
+        this.listToutLocataires.map(function (x){
+          return x.item_data = x.locat_nom + ' ' + x.locat_prenom + ' (' +x.locat_id +')';
+        });
 
         EventBus.$on('SAVE_BAIL', (event) => {
 

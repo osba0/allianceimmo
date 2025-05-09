@@ -153,7 +153,7 @@ class ProprietairesController extends Controller
                 'data' => json_encode($data)
             ]);
 
-            // Lorsqu'un nouveau locataire est créé
+            // Lorsqu'un nouveau propriétaire est créé
             NotificationService::creerNotification(
                 'creation',
                 'Nouveau Propiétaire',

@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 use App\Services\NotificationService;
+use Illuminate\Support\Str;
 
 use DB;
 use File;

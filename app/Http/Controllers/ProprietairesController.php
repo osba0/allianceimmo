@@ -129,6 +129,8 @@ class ProprietairesController extends Controller
             $q->proprio_kyc=json_encode($files);
             $q->agence_id = $user->agence_id;
             $q->filiale_id = $user->filiale_id;
+            $q->token = Str::random(60);
+            $q->pin = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT); // 🔒 PIN à 4 chiffres
 
 
             $q->save();

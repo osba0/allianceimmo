@@ -43,8 +43,8 @@
                     </td>
                     <td class="font-weight-bold text-dark">{{lo.prix_loyer}} FCFA</td>
                     <td class="font-weight-bold text-dark">
-                        <span class="badge" :class="lo.is_loue ? 'badge-danger font-bold' : 'badge-success font-bold'">
-                          {{ lo.is_loue ? 'Loué' : 'Disponible' }}
+                        <span class="badge" :class="lo.is_loue==1 ? 'badge-danger font-bold' : 'badge-success font-bold'">
+                          {{ lo.is_loue==1 ? 'Loué' : 'Disponible' }}
                         </span>
                     </td>
                     <td clss="align-middle">

@@ -26,7 +26,7 @@ class OperationService
     {
         $operation = new Operations();
         $operation->oper_id = 'OPER-'.Str::upper(Str::random(8));
-        $operation->oper_sens = strtolower($sens) === 'debit' ? 'debit' : 'credit';
+        $operation->oper_sens = strtolower($sens) === 'debit' ? 'DEBIT' : 'CREDIT';
         $operation->oper_type = $type;
         $operation->oper_type_autre = $options['type_autre'] ?? '';
         $operation->oper_montant = $montant;

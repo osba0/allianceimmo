@@ -67,13 +67,22 @@ export default {
     },
     closeDropdown() {
       this.open = false;
+    },
+    handleClickOutside(event) {
+      if (!this.$el.contains(event.target)) {
+        this.open = false;
+      }
     }
   },
   mounted() {
+     document.addEventListener('click', this.handleClickOutside);
     this.fetchNotifications();
     setInterval(() => {
       this.fetchNotifications();
     }, 60000); // Toutes les 60 secondes
+  },
+  beforeDestroy() {
+    document.removeEventListener('click', this.handleClickOutside);
   }
 }
 </script>

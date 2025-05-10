@@ -55,7 +55,7 @@
                 <img src="{{ url('/assets/images/logo-login.png') }}" class="logo_nav"/>
                 <div class="pl-2 text-center">
                     <span class="logo-abreviation d-none h2 mb-0 text-center font-weight-bold">ABI</span>
-                    <span class="brand-text h3 font-weight-bold text-uppercase">{{ config('app.name', 'Laravel') }}.net</span>
+                    <span class="brand-text h3 font-weight-bold text-uppercase">{{ config('app.name', 'Laravel') }}</span>
                  </div>
 
             </a>

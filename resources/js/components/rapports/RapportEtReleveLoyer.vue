@@ -3,19 +3,19 @@
     <!-- Onglets -->
     <ul class="nav nav-tabs mb-3 tab-rapport">
       <li class="nav-item">
-        <a class="nav-link" :class="{ active: activeTab === 'locataires' }" @click="activeTab = 'locataires'">Locataires</a>
+        <a class="nav-link cursor-pointer" :class="{ active: activeTab === 'locataires' }" @click="activeTab = 'locataires'">Locataires</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" :class="{ active: activeTab === 'proprietaires' }" @click="activeTab = 'proprietaires'">Propriétaires</a>
+        <a class="nav-link cursor-pointer" :class="{ active: activeTab === 'proprietaires' }" @click="activeTab = 'proprietaires'">Propriétaires</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" :class="{ active: activeTab === 'agence' }" @click="activeTab = 'agence'">Agence</a>
+        <a class="nav-link cursor-pointer" :class="{ active: activeTab === 'agence' }" @click="activeTab = 'agence'">Agence</a>
       </li>
     </ul>
 
     <!-- Contenu -->
     <div v-if="activeTab === 'locataires'">
-        <h4 class="text-center headerRapport">Rapport des Locataires</h4>
+        <h5 class="text-center text-uppercase headerRapport">Rapport des Locataires</h5>
         <div class="d-flex align-items-center justify-content-between">
             <div class="flex-1 pr-5">
             <!-- Filtres pour les dates -->
@@ -42,30 +42,30 @@
               </div>
 
               <div>
-                 <table class="table table-bordered text-center mb-3 mt-3">
+                 <table class="table table-bordered text-center mb-3 mt-3" style="font-size: 13px">
                   <thead>
                     <tr>
                       <th>🧾 Nombre de ligne</th>
                       <th>👥 Locataires distincts</th>
                       <th>❌ Total impayé</th>
                       <th>🎯 Total encaissé</th>
+                      <th>📊 Graphe</th>
 
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td><label class="badge badge-info">{{ totalLignes }}</label></td>
+                      <td><label class="badge badge-sm badge-info">{{ totalLignes }}</label></td>
                       <td><label class="badge badge-primary">{{ totalLocataires }}</label></td>
                       <td><label class="badge badge-danger">{{ formatMontant(montantImpayes) }}</label></td>
                       <td><label class="badge badge-success">{{ totalGeneral }}</label></td>
+                      <td><button class="btn btn-primary btn-sm" @click="openGraphPanel = true">Voir le graphe</button></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
-          <div v-if="pieChartData">
-             <Pie :data="pieChartData" :options="pieChartOptions" style="max-width: 300px; margin: auto" />
-          </div>
+
         </div>
 
         <div>
@@ -105,7 +105,7 @@
     </div>
 
     <div v-if="activeTab === 'proprietaires'">
-      <h4 class="text-center headerRapport">DETAILS ENCAISSEMENTS DES LOYERS</h4>
+      <h5 class="text-center headerRapport">DETAILS ENCAISSEMENTS DES LOYERS</h5>
 
         <!-- Filtres pour les dates -->
         <div class="d-flex justify-content-between align-items-end gap-15 mb-3">
@@ -165,7 +165,7 @@
     </div>
 
     <div v-if="activeTab === 'agence'">
-       <h2 class="text-center headerRapport">Rapport Global de l'Agence</h2>
+       <h5 class="text-center text-uppercase headerRapport">Rapport Global de l'Agence</h5>
 
        <div class="d-flex align-items-start justify-content-between">
         <div class="flex-1 pr-5 pt-2">
@@ -187,7 +187,7 @@
               <!--button class="btn btn-md btn-success" @click="generationRapportLocataire"><i class="fa fa-eye"></i> Voir le Rapport</button-->
             </div>
           </div>
-           <table class="table table-bordered mb-4 text-center">
+           <table class="table table-bordered mb-4 text-center" style="font-size: 13px">
               <thead>
                 <tr>
                   <th>💰 Total encaissé</th>
@@ -196,6 +196,7 @@
                   <th>📈 Taux de recouvrement</th>
                   <th>📄 Baux actifs</th>
                   <th>👥 Locataires actifs</th>
+                  <th>📊 Graphe</th>
                 </tr>
               </thead>
               <tbody>
@@ -206,14 +207,13 @@
                   <td><label class="badge badge-primary">{{ metaAgence.taux_recouvrement }}%</label></td>
                   <td><label class="badge badge-info">{{ metaAgence.total_baux }}</label></td>
                   <td><label class="badge badge-info">{{ metaAgence.total_locataires }}</label></td>
+                  <td><button class="btn btn-primary btn-sm" @click="openGraphPanel = true">Voir le graphe</button></td>
                 </tr>
               </tbody>
             </table>
         </div>
 
-        <div class="mb-5">
-          <Pie :data="pieChartDataAgence" :options="pieChartOptionsAgence" style="max-width: 400px; margin:auto" />
-          </div>
+
        </div>
 
         <table class="table table-hover table-striped">
@@ -272,6 +272,22 @@
         </button>
       </template>
      </modalFile>
+
+     <div class="side-panel" :class="{ 'open': openGraphPanel }">
+          <div class="side-panel-header d-flex justify-content-between align-items-center p-2 border-bottom">
+            <h5 class="mb-0">Graphe</h5>
+            <button class="btn btn-sm btn-danger" @click="openGraphPanel = false">×</button>
+          </div>
+
+          <div class="side-panel-body p-3">
+            <div v-if="pieChartData && activeTab === 'locataires'">
+                <Pie :data="pieChartData" :options="pieChartOptions" style="max-width: 300px; margin: auto" />
+            </div>
+            <div class="mb-5" v-if="pieChartDataAgence && activeTab === 'agence'">
+              <Pie :data="pieChartDataAgence" :options="pieChartOptionsAgence" style="max-width: 400px; margin:auto" />
+            </div>
+          </div>
+        </div>
   </div>
 </template>
 
@@ -366,6 +382,7 @@ export default {
       totalGeneral: 0,
       montantPaye: 0,
       montantImpayes: 0,
+      openGraphPanel: false,
       // Agence
       agenceData: [],
       metaAgence: {},
@@ -716,6 +733,9 @@ export default {
 </script>
 
 <style scoped>
+.tab-rapport{
+  margin-top: -67px;
+}
 .nav-link.active {
   font-weight: bold;
   color: #007bff;

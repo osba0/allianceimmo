@@ -170,6 +170,31 @@ ul.rounded-tabs li span:before {
   font-weight: bold;
   text-transform: uppercase;
 }
+.side-panel {
+  position: fixed;
+  top: 25%;
+  right: -400px;
+  width: 400px;
+  height: 400px;
+  background: white;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+  transition: right 0.3s ease;
+  z-index: 1050;
+}
+
+.side-panel.fullHeight{
+   top: 0;
+   height: 100%;
+}
+.side-panel.open {
+  right: 0;
+}
+
+.v-select span{
+  white-space: nowrap;
+  font-size: 12px;
+}
+
 
 .error-message {
   color: red;
@@ -179,7 +204,7 @@ ul.rounded-tabs li span:before {
   gap: 15px;
 }
 .tab-rapport.nav-tabs .nav-link{
-  font-size: 30px !important;
+  font-size: 20px !important;
   font-family: 'Sofia Sans Extra Condensed', sans-serif !important;
 }
 .align-right{

@@ -32,7 +32,7 @@
                     <th>Montant</th>
                     <th>Type</th>
                     <th>Moyen paiement</th>
-                    <th>Ajouté apr</th>
+                    <th>User</th>
                     <th>Date</th>
                     <th class="text-right">Action</th>
                 </tr>

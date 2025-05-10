@@ -49,7 +49,7 @@
                                 <thead class="bg-white">
                                     <tr>
                                         <th>Sens</th> 
-                                        <th>Compte</th> 
+                                        <!--th>Compte</th-->
                                         <th>Type</th> 
                                         <th>Montant Total</th> 
                                         <th>Date</th> 
@@ -70,7 +70,7 @@
                                                 {{ $operation->oper_sens }}
                                             </label>
                                         </td>
-                                        <td class="align-middle">{{ $operation->oper_sens=='CREDIT'? $operation->bail_proprio : $operation->charge_id_proprio}}</td>
+                                        <!--td class="align-middle">{{ $operation->oper_sens=='CREDIT'? $operation->bail_proprio : $operation->charge_id_proprio}}</td-->
                                         <td class="align-middle">{{ $operation->getType($operation->oper_type) }}</td>
                                         <td class="align-middle">{{ number_format($operation->oper_montant, 0, ',', ' ')  }}</td>
                                         <td class="align-middle">{{ $operation->created_at }}</td>

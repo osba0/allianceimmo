@@ -31,8 +31,8 @@ class HomeController extends Controller
         // Count of available 'Local' records
         $biensDisponibles = Local::where('local_disponible', true)->count();
 
-        $dernieresOperations = Operations::latest()->leftJoin('bails', 'operations.oper_id_bail', '=', 'bails.bail_id')->leftJoin('charges_frais', 'operations.oper_id_charge', '=', 'charges_frais.charge_id')
-        ->select('operations.*', 'bails.bail_locataire', 'bails.bail_local','bails.bail_proprio', 'charges_frais.charge_id_proprio', 'charges_frais.charge_id_bien', 'charges_frais.charge_id_local')->groupBy('operations.oper_id')->take(5)->get();
+        $dernieresOperations = Operations::latest()->leftJoin('bails', 'operations.oper_id_bail', '=', 'bails.bail_id')->leftJoin('charges_frais', 'operations.oper_id_charge', '=', 'charges_frais.charge_id')->leftJoin('versements_proprietaires', 'operations.oper_id_versement_proprio', '=', 'versements_proprietaires.versement_id')
+        ->select('operations.*','versements_proprietaires.versement_proprio_id', 'bails.bail_locataire', 'bails.bail_local','bails.bail_proprio', 'charges_frais.charge_id_proprio', 'charges_frais.charge_id_bien', 'charges_frais.charge_id_local')->groupBy('operations.oper_id')->take(5)->get();
 
         $data = [
             'nbreProprietaires' => $nbreProprietaires,

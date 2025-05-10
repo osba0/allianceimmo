@@ -170,8 +170,8 @@ class OperationsController extends Controller
 
         $paginate = request('paginate');  
 
-        $oper = $oper = Operations::leftJoin('bails', 'operations.oper_id_bail', '=', 'bails.bail_id')->leftJoin('charges_frais', 'operations.oper_id_charge', '=', 'charges_frais.charge_id')/*->leftJoin('versements_locataires', 'operations.local_id', '=', 'versements_locataires.locataire_id')*/
-        ->select('operations.*'/*,'versements_locataires.*',*/, 'bails.bail_locataire', 'bails.bail_local','bails.bail_proprio', 'charges_frais.charge_id_proprio', 'charges_frais.charge_id_bien', 'charges_frais.charge_id_local')->groupBy('operations.oper_id');
+        $oper = $oper = Operations::leftJoin('bails', 'operations.oper_id_bail', '=', 'bails.bail_id')->leftJoin('charges_frais', 'operations.oper_id_charge', '=', 'charges_frais.charge_id')->leftJoin('versements_proprietaires', 'operations.oper_id_versement_proprio', '=', 'versements_proprietaires.versement_id')
+        ->select('operations.*','versements_proprietaires.versement_proprio_id', 'bails.bail_locataire', 'bails.bail_local','bails.bail_proprio', 'charges_frais.charge_id_proprio', 'charges_frais.charge_id_bien', 'charges_frais.charge_id_local')->groupBy('operations.oper_id');
         if(isset($paginate)){
             $oper = $oper->orderby("operations.created_at", "desc")->paginate($paginate);
         }else{

@@ -33,6 +33,12 @@ class OperationsResource extends JsonResource
             $idproprio = $this->charge_id_proprio;
         }
 
+        if(!is_null($this->versement_proprio_id)){
+            $idproprio = $this->versement_proprio_id;
+        }
+
+
+
         $proprio = Proprietaires::where("proprio_id", $idproprio)->first();
 
          return [

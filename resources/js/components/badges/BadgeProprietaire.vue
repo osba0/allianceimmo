@@ -8,11 +8,13 @@
           <span class="ml-1" style="font-weight: bold; font-size: 18px; text-transform: uppercase;">Alliance Bazics Immo</span>
       </div>
       <img class="photo" :src="photo" alt="Photo" />
+
       <div class="infos-badge">
         <h3><strong>{{ proprietaire.nom }} {{ proprietaire.prenom }}</strong></h3>
         <p><strong>IDENTIFIANT :</strong> {{ proprietaire.id }}</p>
         <p><strong>Tél :</strong> {{ proprietaire.telephone }}</p>
         <p><strong>Email :</strong> {{ proprietaire.email }}</p>
+
       </div>
     </div>
 
@@ -21,7 +23,9 @@
       <div class="accroche"></div>
       <p class="scan-text">📲 Scannez pour consulter les encaissements</p>
       <!--img class="qr" :src="qrCode" alt="QR Code" /-->
-      <div class="contentQRCODE d-flex align-items-center justify-content-center"><qr-code :text="qrCode" :size="size"></qr-code></div>
+      <div class="contentQRCODE d-flex align-items-center justify-content-center"><qr-code :text="qrCode" :size="size"></qr-code>
+     </div>
+      <p class="text-center"><span>Pin: {{ proprietaire.pin }}</span></p>
       <p class="footer-badge">Alliance Immo | www.allianceimmo.net</p>
     </div>
   </div>

@@ -66,7 +66,8 @@ class ProprietairesResource extends JsonResource
             "locatairesActifs"          => $locatairesActifs,
             "revenus_locatifs"          => $this->revenus_locatifs,
             "nbreBienLoue"              => $this->nbreBienLoue,
-            "locauxloue"                => $locauxLoue
+            "locauxloue"                => $locauxLoue,
+            "pin"                       => $this->pin,
 
         ];
     }

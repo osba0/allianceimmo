@@ -548,7 +548,8 @@
                                     prenom: proprietaireSelected.prenom || '',
                                     id: proprietaireSelected.identifiant || '',
                                     telephone: proprietaireSelected.ind1  +' '+proprietaireSelected.tel1,
-                                    email: proprietaireSelected.email || ''
+                                    email: proprietaireSelected.email || '',
+                                    pin: proprietaireSelected.pin || '',
                                   }"
                                 />
                             </template>

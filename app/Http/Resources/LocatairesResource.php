@@ -53,7 +53,8 @@ class LocatairesResource extends JsonResource
             "date_expiration_natif"   => $this->locat_date_expiration,
             "date_expiration"         => Carbon::parse($this->locat_date_expiration)->format('d/m/Y'),
             "date_creation"           => Carbon::parse($this->created_at)->format('d/m/Y H:i:s'),
-            "date_modif"              => Carbon::parse($this->updated_at)->format('d/m/Y H:i:s')
+            "date_modif"              => Carbon::parse($this->updated_at)->format('d/m/Y H:i:s'),
+            "pin"                   => $this->pin,
         ];
     }
 }

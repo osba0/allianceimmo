@@ -21,6 +21,7 @@
       <div class="accroche"></div>
       <p class="scan-text">📲 Scannez pour consulter les paiements</p>
       <div class="contentQRCODE d-flex align-items-center justify-content-center"><qr-code :text="qrCode" :size="size"></qr-code></div>
+      <p class="text-center"><span>Pin: {{ locataire.pin }}</span></p>
       <p class="footer-badge">Alliance Immo | www.allianceimmo.net</p>
     </div>
   </div>

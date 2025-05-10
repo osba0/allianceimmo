@@ -306,7 +306,7 @@ export default {
           pers_nom: { required },
           pers_prenom: { required },
           role: { required },
-          agence: { required },
+          selectedAgenceId: { required },
           pers_tel_1: {
               required,
               customTelValidation(value) {

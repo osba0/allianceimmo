@@ -81,7 +81,7 @@
                                 </tbody>
                             </table>
                             <div class="text-align text-align d-flex justify-content-center">
-                                <a class="btn-sm btn btn-primary" href="{{route('operation')}}">Voir tout <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                                <a class="btn-sm btn btn-primary" href="{{route('operationList')}}">Voir tout <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                             </div>
                         </div>
                     </div>

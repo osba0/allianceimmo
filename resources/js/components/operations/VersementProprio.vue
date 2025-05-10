@@ -53,8 +53,9 @@
                     <td class="align-middle">{{ helper_separator_amount(v.montant) }}</td>
                     <td class="align-middle text-uppercase">{{ v.type }}</td>
                     <td class="align-middle text-uppercase"> {{ v.moyen_paiement }}</td>
+                     <td class="align-middle">{{ v.user }}</td>
                     <td class="align-middle">{{ v.date }}</td>
-                    <td class="align-middle">{{ v.user }}</td>
+
                     <td class="text-right align-middle">
                         <button  title="Fichier" v-if="v.fichier.length > 0" class="btn btn-info mr-2 cursor-pointer" data-toggle="modal" data-target="#modalFichier" v-on:click="showDocument('assets/versements/'+v.fichier[0])">
                                 <i class="fa fa-file-pdf"></i>

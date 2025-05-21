@@ -4,7 +4,7 @@
     <button class="btn btn-transparent position-relative" @click="toggleDropdown">
       <span class="text-info h3 mb-0"><i class="fas fa-bell"></i></span>
       <transition name="badge">
-        <span v-if="unread > 0" class="badge badge-danger position-absolute" style="top: -2px; right: -0px;">
+        <span v-if="unread > 0" class="badge badge-danger position-absolute" style="top: 3px; right: 5px;">
           {{ unread }}
         </span>
       </transition>

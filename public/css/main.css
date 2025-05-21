@@ -27,7 +27,9 @@
   height: 80px;
   border-radius: 6px;
 }
-
+.nav-sidebar .nav-item > .nav-link {
+  margin-bottom: 0;
+}
 .skeleton-line {
   height: 10px;
   margin-bottom: 8px;
@@ -61,6 +63,11 @@
   font-size: 25px;
   color: #888;
   font-family: sans-serif;
+}
+
+.btn-menu i{
+  color:#ffff;
+  font-size: 25px;
 }
 
 @keyframes dots {
@@ -148,7 +155,7 @@ ul.rounded-tabs li span:before {
   left: -40px;
 }
 .layout-fixed .wrapper .sidebar {
-  height: calc(100vh - (12rem + 1px)) !important;
+  height: calc(100vh - (75px)) !important;
 }
 .main-header{
   border-bottom: 0 !important;
@@ -164,7 +171,9 @@ ul.rounded-tabs li span:before {
 .flex-1{
   flex: 1;
 }
-
+.nav-link {
+  padding: .4rem 1rem;
+}
 .title-page{
   font-size: 16px;
   font-weight: bold;
@@ -229,7 +238,7 @@ ul.rounded-tabs li span:before {
   border-radius: 8px;
 }
 .sidebar-dark-primary {
-  background-color: #2c2e3e !important;
+  background-color: #2e2e30  !important/*#2c2e3e !important*/;
 }
 .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active, .sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {
   background-color: #4471a78f !important;
@@ -238,6 +247,7 @@ ul.rounded-tabs li span:before {
 .brand-text{
 	font-family: 'Sofia Sans Extra Condensed', sans-serif !important;
   white-space: break-spaces;
+  color: #c2c7d0 !important;
 }
 .sidebar-collapse .logo-abreviation{
 	display:block !important;
@@ -245,6 +255,16 @@ ul.rounded-tabs li span:before {
 }
 .sidebar-collapse .brand-text {
 	display:none !important;
+}
+.content .container-fluide .col-md-12 > .card {
+
+  background-color: #fff0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none !important;
+}
+.content .container-fluide .col-md-12 > .card > .card-body{
+  padding: 0;
 }
 .nowrap{
     white-space: nowrap;
@@ -263,7 +283,8 @@ ul.rounded-tabs li span:before {
 }
 .logo_nav{
   border-radius: 5%;
-  max-width: 70%;
+  max-width: 50%;
+  height: 40px;
 }
 /* The container */
 .containerCheckbox {
@@ -351,10 +372,12 @@ ul.rounded-tabs li span:before {
   position: relative;
 }
 .navbar-white {
-  background: linear-gradient(120deg, #fff 50%, #2c2e3e 50%) !important;
+  opacity: 0.977;
+  background: #2e2e30 !important/*linear-gradient(120deg, #fff 50%, #2c2e3e 50%) !important;*/
 }
 .main-header{
   box-shadow: 1px 2px 8px #aeaaaa;
+  height: 50px;
 }
 .badgeLabel{
   height: auto;
@@ -495,7 +518,8 @@ body .content-wrapper {
   background: #eee;
   padding: 1.75rem 1.312rem;
   padding-bottom: 60px;
-  margin-top: 45px; /*Header top is fixed*/
+  margin-top: 50px; /*Header top is fixed*/
+  padding-top: 8px;
 }
 .white-space{
   white-space: nowrap;
@@ -608,6 +632,7 @@ table.table-striped td, .table.table-striped  th {
   border-top: 0 !important;
 }
 .brand-link{
+  height: 50px;
     /*background: url('/assets/images/bg-logo-inverse.png') 102% 100% no-repeat;
     background-size: 75px auto;*/
 }

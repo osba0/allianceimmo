@@ -16,7 +16,7 @@ class EnvoyerMailsEnAttente extends Command
     {
         \Log::info('Sent mail...');
         $mails = MailEnAttente::where('etat', 'en_attente')->limit(20)->get();
-
+        $totalMailEnvoye = 0;
         foreach ($mails as $mail) {
             try {
                 Mail::to($mail->email_destinataire)
@@ -34,6 +34,7 @@ class EnvoyerMailsEnAttente extends Command
                     'etat' => 'envoye',
                     'envoye_le' => now()
                 ]);
+                $totalMailEnvoye++;
             } catch (\Exception $e) {
                 \Log::info('Erreur envoi mail ID '.$mail->id.' : '.$e->getMessage());
                 print_r('Erreur envoi mail ID '.$mail->id.' : '.$e->getMessage());
@@ -41,5 +42,7 @@ class EnvoyerMailsEnAttente extends Command
                 $mail->update(['message_erreur' => $e->getMessage(), 'etat' => 'en_attente' ]);
             }
         }
+
+        $this->info("✅ $totalMailEnvoye mail(s) envoyé(s) avec succès.");
     }
 }

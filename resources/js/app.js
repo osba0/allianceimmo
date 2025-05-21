@@ -29,6 +29,7 @@ import RapportEtReleveLoyer from './components/rapports/RapportEtReleveLoyer';
 import NotificationDropdown from './components/notification/NotificationDropdown.vue';
 import Notifications from './components/notification/Notifications.vue';
 import VersementProprio from "./components/operations/VersementProprio";
+import TachesAutomisees from "./components/taches/Index";
 
 import moment from 'moment';
 
@@ -627,6 +628,7 @@ const app = new Vue({
         RapportEtReleveLoyer,
         NotificationDropdown,
         Notifications,
-        VersementProprio
+        VersementProprio,
+        TachesAutomisees
     }
 });

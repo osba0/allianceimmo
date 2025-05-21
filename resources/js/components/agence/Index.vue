@@ -40,7 +40,7 @@
                 </template>
                 <tr v-for="agence in agences.data" :key="agence.identifiant">
                     <td class="align-middle"><h5 class="mb-0"><label class="badge badge-primary mb-0">{{agence.identifiant}}</label></h5></td>
-                    <td><label class="mb-0 text-primary font-weight-bold d-block">{{agence.nom_agence}}</label></td>
+                    <td class="align-middle"><label class="mb-0 text-primary font-weight-bold d-block">{{agence.nom_agence}}</label></td>
                     <td class="align-middle">{{agence.ninea}}</td>
                     <td class="align-middle">{{agence.email}}</td>
                     <td class="align-middle">{{agence.inde1}} {{agence.tel1}}</td>
@@ -85,8 +85,8 @@
                 <div class="loader-line" :class="[isLoading?'d-block':'d-none']"></div>
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-uppercase" v-show="!editmode"><strong><span class="text-primary"><u>Nouvelle</u></span> Filiale</strong></h5>
-                    <h5 class="modal-title" v-show="editmode"><strong><span class="text-primary"><u>Editer</u></span> Filiale</strong></h5>
+                    <h5 class="modal-title text-uppercase" v-show="!editmode"><strong><span class="text-primary"><u>Nouvelle</u></span> Agence</strong></h5>
+                    <h5 class="modal-title" v-show="editmode"><strong><span class="text-primary"><u>Editer</u></span> Agence</strong></h5>
                     <button type="button" class="close" ref="closePopup" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -99,7 +99,7 @@
                                 <div class="form-group">
                                     <label>Nom de l'agence <span class="required">*</span></label>
                                      <input v-model="form.nom" type="text"
-                                        class="form-control">
+                                        class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.nom.required }">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -113,9 +113,9 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label>Acitivité</label>
-                                 <select class="form-control form-control-sm" v-model="form.ninea">
+                                 <select class="form-control form-control-sm" v-model="form.activite">
                                     <option value=""></option>
-
+                                    <option value="Gestion immobiliére">Gestion immobiliére</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -124,11 +124,11 @@
                                     class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.ninea.required }">
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-2">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Email <span class="required">*</span></label>
-                                    <input v-model="form.etage" type="email"
+                                    <input v-model="form.email" type="email"
                                     class="form-control"  :class="{ 'border-danger': isSubmitted && !$v.form.email.required }"/>
 
                                 </div>
@@ -187,10 +187,22 @@
                             </div>
                         </div>
                          <div class="row">
+                            <div class="col-md-6">
+                                <label>Couleur Primaire <span class="text-danger">*</span></label>
+                                <input v-model="form.colorPrimary" type="color"
+                                    class="form-control px-0 ml-2" :class="{ 'border-danger': isSubmitted && !$v.form.colorPrimary.required }">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Couleur Secondaire</label>
+                                <input v-model="form.colorSecondary" type="color"
+                                    class="form-control px-0 ml-2" :class="{ 'border-danger': isSubmitted && !$v.form.colorSecondary.required }">
+                            </div>
+                        </div>
+                         <div class="row mt-2">
                             <div class="col-md-12">
                                <div class="form-group">
-                                    <label>Photos</label>
-                                    <input name="file" multiple type="file" ref="attachmentsPhotos"
+                                    <label>Logo</label>
+                                    <input name="file" type="file" ref="attachmentsPhotos"
                                         class="form-control border-0 pl-0" v-on:change="handleFileUpload()">
                                 </div>
                                 <div v-if="editmode">
@@ -244,18 +256,22 @@ export default {
             editmode: false,
             agences : {},
             form: {
-                proprio: '',
+                ninea: '',
+                slogan: '',
                 id : '',
                 nom: '',
                 adresse: '',
                 ville: '',
                 pays: '',
-                superficie:'',
-                description: '',
-                annee_construction: '',
-                numero:'',
-                etage:'',
-                photo_piece: null
+                logo: null,
+                favicon: null,
+                activite: '',
+                indicatif1: '',
+                indicatif2: '',
+                tel1: '',
+                tel2: '',
+                colorPrimary: '',
+                colorSecondary: ''
             },
             attachmentsPhotos: [],
             info: {},
@@ -274,7 +290,11 @@ export default {
             pays:    { required },
             proprio: { required },
             numero:  { required },
-            etage:   { validSelectionEtage: minValue(0) }
+            activite: { required },
+            tel1: { required },
+            tel2: { required },
+            colorPrimary: { required },
+            colorSecondary: { required }
         }
     },
     watch: {
@@ -294,16 +314,21 @@ export default {
             }
 
             const data = new FormData();
-            data.append('proprio', this.form.proprio);
-            data.append('adresse', this.form.adresse);
-            data.append('etage', this.form.etage);
             data.append('nom', this.form.nom);
+            data.append('slogan', this.form.slogan);
+            data.append('adresse', this.form.adresse);
+            data.append('ind1', this.form.indicatif1);
+            data.append('ind2', this.form.indicatif2);
             data.append('numero', this.form.numero);
             data.append('ville', this.form.ville);
             data.append('pays', this.form.pays);
-            data.append('superficie', this.form.superficie);
-            data.append('description', this.form.description);
-            data.append('annee_construction', this.form.annee_construction);
+            data.append('tel1', this.form.tel1);
+            data.append('tel2', this.form.tel2);
+            data.append('activite', this.form.activite);
+            data.append('colorPrimary', this.form.colorPrimary);
+            data.append('colorSecondary', this.form.colorSecondary);
+
+
             data.append('file[]', this.attachmentsPhotos);
 
             for (let i = 0; i < this.attachmentsPhotos.length; i++) {
@@ -321,7 +346,7 @@ export default {
             this.isLoading = true;
 
      
-            axios.post("/bien/"+action, data,  {
+            axios.post("/entite/"+action, data,  {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 } 
@@ -334,7 +359,7 @@ export default {
 
                     Vue.swal.fire(
                       'succés!',
-                      'Bien crée avec succés!',
+                      'Agence crée avec succés!',
                       'success'
                     );
 

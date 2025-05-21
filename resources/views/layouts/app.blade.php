@@ -41,6 +41,7 @@
     <div class="wrapper" id="app">
          <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
+
             <!-- Brand Logo -->
             <!--a href="/" class="brand-link py-2 d-flex">
                 <img src="/assets/images/logo_ab_immo_rounded_1.png" class="logo_nav"/>
@@ -50,15 +51,24 @@
                  </div>
 
             </a-->
+            <div class="brand-link p-0 justify-content-left d-flex align-items-center">
+                <button class="btn btn-transparent btn-menu">
+                    <i class="nav-icon fas fa-bars"></i>
+                </button>
+                <div style="flex: 1" class="text-center justify-content-between px-1">
+                     <a href="/" class="brand-link- text-center py-2">
+                        <img src="{{ url('/assets/images/logo-login.png') }}" class="logo_nav"/>
 
-            <a href="/" class="brand-link text-center py-2">
-                <img src="{{ url('/assets/images/logo-login.png') }}" class="logo_nav"/>
-                <div class="pl-2 text-center">
-                    <span class="logo-abreviation d-none h2 mb-0 text-center font-weight-bold">ABI</span>
-                    <span class="brand-text h5 font-weight-bold text-uppercase">{{ config('app.name', 'Laravel') }}</span>
-                 </div>
+                        <div class="pl-2 text-center  d-none">
+                            <span class="logo-abreviation d-none h2 mb-0 text-center font-weight-bold">ABI</span>
+                            <span class="brand-text h5 font-weight-bold text-uppercase">{{ config('app.name', 'Laravel') }}</span>
+                         </div>
 
-            </a>
+                    </a>
+                    <span class="border py-1 px-2 ml-2" style="color:#c2c7d0; font-size: 13px">V-3.1.4</span>
+                </div>
+            </div>
+
             
             <!-- Sidebar -->
             <div class="sidebar">
@@ -227,6 +237,15 @@
                         </a>
                     </li>
                     @endif
+                    @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.CommandeAutomatise'))
+                    <li class="nav-item">
+
+                         <a href="{{ route('automate')}}" class="nav-link {{Request::route()->getName()=='automate'? 'active':''}}">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>Tâches Automatisées</p>
+                        </a>
+                    </li>
+                    @endif
                     <li class="nav-item">
                         <a href="{{ route('notif')}}" class="nav-link {{Request::route()->getName()=='notif'? 'active':''}}">
                             <i class="nav-icon fas fa-bell"></i>
@@ -244,7 +263,7 @@
         <nav class="main-header navbar fixed-top navbar-expand navbar-white navbar-light">
          
         <div class="d-flex align-items-center justify-content-center">
-            <img src="{{ url('/assets/images/logo_ab_immo_rounded_1.png') }}" height="50" class="mr-2">
+            <img src="{{ url('/assets/images/logo_ab_immo_rounded_1.png') }}" height="40" class="mr-2">
             <span class="brand-text h3 mb-0">ALLIANCE BAZICS IMMO</span>
             @if(auth()->user()->hasRole('root') || auth()->user()->can('AfficherSolde.Oui'))
             <solde-top-barre></solde-top-barre>

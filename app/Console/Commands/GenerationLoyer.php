@@ -57,7 +57,7 @@ class GenerationLoyer extends Command
         //$bails_en_cours = Bail::leftJoin('paiement_location', 'bails.bail_id', '=', 'paiement_location.paiement_bail_id')->select("bails.bail_date_debut, bails.bail_montant_ht")->where("bail_etat", true)->groupBy('bails.bail_id')->get();
 
         $bails_en_cours = Bail::where("bail_etat", true)->get()->toArray();
-
+        $totalLoyersGen = 0;
 
         foreach($bails_en_cours as $bail){
             $fromDate = Carbon::parse($bail["bail_date_debut"]);
@@ -68,11 +68,13 @@ class GenerationLoyer extends Command
             if($months > 0){
                 $i=0;
                 while($i<$months){
-                    print_r($fromDateFormat);
+                    //print_r($fromDateFormat);
                     if(!$this->checkMonthExist($bail["bail_id"], $fromDateFormat)){
                         // inserer un nouveau loyer
                         $paiement_id = Helper::IDGenerator(new PaiementsLoyer, 'paiement_id',config('constants.ID_LENGTH'), config('constants.PREFIX_PAIEMENT_LOYER'));
                         DB::insert('insert into paiements_loyers (paiement_id, paiement_bail_id, paiement_montant, paiement_mois_location, paiement_echeance, paiement_etat, paiement_cloture, paiement_user, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [$paiement_id, $bail["bail_id"], $bail["bail_montant_ht"],$fromDateFormat, '', false, false,'SYSTEM', Carbon::now(), Carbon::now()]);
+
+                         $totalLoyersGen++;
                     }
                     $fromDate = $fromDate->addMonth();
                     $fromDateFormat = $fromDate->format('Y-m');
@@ -80,9 +82,13 @@ class GenerationLoyer extends Command
                 }
 
             }
-            print_r($months);
+
+              //print_r($months);
+
 
         }
+        $this->info("✅ $totalLoyersGen loyers générés avec succès.");
+
 
         //var_dump($bails_en_cours);
     }

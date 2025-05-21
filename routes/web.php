@@ -21,6 +21,7 @@ use App\Http\Controllers\GlobalController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\VersementsController;
+use App\Http\Controllers\TachesAutomatisesController;
 use App\Http\Controllers\Rapports\ProprietairesRapport;
 
 use App\Http\Controllers\PaiementLoyerSysController;
@@ -203,6 +204,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['permissionOrRoot:Menu.Agence']], function () {
         Route::get('/entite/index', [AgenceController::class, 'index'])->name('entites');
         Route::get('/entite/listing', [AgenceController::class, 'listing']);
+        Route::get('/entite/create', [AgenceController::class, 'create']);
 
     });
 
@@ -242,6 +244,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/index', [NotificationController::class, 'allNotif'])->name('notif');
 
     });
+
+     // Execution des Commandes manuellement
+    Route::get('/commands/index', [TachesAutomatisesController::class, 'index'])->name('automate');
+    Route::post('/commands/generate-loyers', [TachesAutomatisesController::class, 'runCommand']);
+    Route::post('/commands/check-mandats', [TachesAutomatisesController::class, 'runCommand']);
+    Route::post('/commands/send-mails', [TachesAutomatisesController::class, 'runCommand']);
 
 
 });

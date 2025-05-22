@@ -520,8 +520,8 @@ body .page-link{
   color: #4d81bb;
 }
 body .content-wrapper {
-  background: url('/assets/images/key.png') 100% 100% no-repeat #eee;
-  background-size: 150px 150px;
+  background: url('/assets/images/key.png') 99% 99% no-repeat #eee;
+  background-size: 20%;
   padding: 1.75rem 1.312rem;
   padding-bottom: 60px;
   margin-top: 50px; /*Header top is fixed*/

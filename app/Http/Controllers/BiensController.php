@@ -61,6 +61,8 @@ class BiensController extends Controller
             $q->bien_pays=request('pays');
             $q->bien_description=request('description');
             $q->bien_superficie=request('superficie');
+            $q->latitude = request('latitude');
+            $q->longitude = request('longitude');
             $q->bien_annee_construction=request('annee_construction');
             $q->bien_photos=json_encode($files);
 
@@ -130,6 +132,8 @@ class BiensController extends Controller
             "bien_description"       => request('description'),
             "bien_superficie"        => request('superficie'),
             "bien_annee_construction"=> request('annee_construction'),
+            "latitude"               => request('latitude'),
+            "longitude"              => request('longitude'),
             "bien_photos"            => json_encode($files)
         ]);
         
@@ -222,5 +226,11 @@ class BiensController extends Controller
         }
 
         return response($rep);
+    }
+
+    public function allWithLocation() {
+        return response()->json(
+            Biens::whereNotNull('latitude')->whereNotNull('longitude')->get()
+        );
     }
 }

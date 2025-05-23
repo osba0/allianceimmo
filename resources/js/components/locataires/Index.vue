@@ -65,7 +65,7 @@
                     </td>
                     <td class="text-right align-middle">
                         <div class="d-flex justify-content-end">
-                            <button class="btn btn-success mr-2" data-toggle="modal" data-target="#badgeLocataire" @click="showBadge(locataire)"><i class="fa fa-id-badge" aria-hidden="true"></i> Badge</button>
+                            <button class="btn  btn-sm  btn-success mr-2" data-toggle="modal" data-target="#badgeLocataire" @click="showBadge(locataire)"><i class="fa fa-id-badge" aria-hidden="true"></i> Badge</button>
                             <button class="btn btn-primary" @click="view(locataire)" data-toggle="modal" data-target="#moreInfo" v-on:click="newModal"><i class="fa fa-eye"></i></button>
                             <button class="btn btn-info mx-2"  v-if="hasPermission('Locataire.Modifier')" data-toggle="modal" data-target="#addNew"  v-on:click="edit(locataire)"><i class="fa fa-edit"></i></button>
                             <button class="btn btn-danger"  v-if="hasPermission('Locataire.Supprimer')" @click="deleteLocataire(locataire)"><i class="fa fa-trash"></i></button>

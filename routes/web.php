@@ -89,6 +89,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/bien/modify/{id}', [BiensController::class, 'edit']);
         Route::post('/bien/remphoto', [BiensController::class, 'removePhoto']);
         Route::delete('/bien/delete/{id}', [BiensController::class, 'destroy']);
+        Route::get('/bien/with-location', [BiensController::class, 'allWithLocation']);
 
         // Local
         Route::post('/local/create', [LocalController::class, 'store']);

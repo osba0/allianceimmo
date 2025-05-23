@@ -76,7 +76,7 @@
                         </td>
                         <td class="text-right align-middle">
                             <div class="d-inline-flex">
-                                <button class="btn btn-success mr-2" data-toggle="modal" data-target="#badgeProprietaire" @click="showBadge(pro)"><i class="fa fa-id-badge" aria-hidden="true"></i> Badge</button>
+                                <button class="btn  btn-sm  btn-success mr-2" data-toggle="modal" data-target="#badgeProprietaire" @click="showBadge(pro)"><i class="fa fa-id-badge" aria-hidden="true"></i> Badge</button>
                                 <button type="button" title="Représentants" class="btn btn-sm border-2 border-info font-weight-bold position-relative mr-2 hover-info" @click="setUpRepresentant(pro)"><i class="fa fa-users"></i> <span class="badge badge-info badge-light position-absolute total-right-corner">{{ pro.nbreRespre }}</span>
                                 </button>
                                 <button title="Plus de détails" class="btn btn-sm border-2 btn-primary ml-1" @click="view(pro)" data-toggle="modal" data-target="#moreInfo" v-on:click="newModal"><i class="fa fa-eye"></i></button>

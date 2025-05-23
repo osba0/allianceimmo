@@ -36,8 +36,10 @@ class BiensResource extends JsonResource
             "proprio_tel"        => $this->proprio_tel_1,
             "proprio_ind"        => $this->proprio_indicatif_1,
             "photo"              =>  (isset($this->bien_photos) && !is_null($this->bien_photos) && $this->bien_photos!='')? is_array($this->bien_photos)?$this->bien_photos: json_decode($this->bien_photos) : json_decode("[]"),
-            "date_creation"  => Carbon::parse($this->created_at)->format('d/m/Y H:i:s'),
-            "date_modif"     => Carbon::parse($this->updated_at)->format('d/m/Y H:i:s')
+            "date_creation"     => Carbon::parse($this->created_at)->format('d/m/Y H:i:s'),
+            "date_modif"        => Carbon::parse($this->updated_at)->format('d/m/Y H:i:s'),
+            "latitude"          => $this->latitude,
+            "longitude"          => $this->longitude,
         ];
     }
 }

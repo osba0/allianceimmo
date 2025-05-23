@@ -19,27 +19,46 @@
                     <!--Pie/-->
                     <Bar />
                 </div>
-                <div class="box box2">
-                    <h2>Nbre Prioprétaire(s)</h2>
-                    <div class="boxState">
-                        <div class="totalStatistic">{{$nbreProprietaires}}</div>
-                        <div class="iconState"><i class="nav-icon fas fa-user-tie"></i></div>
+                <div class="box box2 newLayout">
+                    <div>
+                        <h2>Nbre Prioprétaire</h2>
+                        <div class="boxState">
+                            <div class="totalStatistic">{{$nbreProprietaires}}</div>
+                            <!--div class="iconState"><i class="nav-icon fas fa-user-tie"></i></div-->
+                        </div>
+                    </div>
+                    <div>
+                        <h2>Nbre Bien</h2>
+                        <div class="boxState">
+                            <div class="totalStatistic">{{$nbreBiens}}</div>
+                            <!--div class="iconState"><i class="nav-icon fas fa-user-tie"></i></div-->
+                        </div>
                     </div>
                 </div>
-                <div class="box box3">
-                    <h2>Nbre Locataire(s)</h2>
-                    <div class="boxState">
-                        <div class="totalStatistic">{{$nbreLocataires}}</div>
-                        <div class="iconState"><i class="nav-icon fas fa-user"></i></div>
+                <div class="box box3 newLayout">
+                    <div>
+                        <h2>Nbre Locataire</h2>
+                        <div class="boxState">
+                            <div class="totalStatistic">{{$nbreLocataires}}</div>
+                            <!--div class="iconState"><i class="nav-icon fas fa-user"></i></div-->
 
+                        </div>
+                    </div>
+                    <div>
+                        <h2>Nbre local à louer</h2>
+                        <div class="boxState">
+                            <div class="totalStatistic">{{$biensDisponibles}}</div>
+                            <!--div class="iconState"><i class="nav-icon fas fa-home"></i></div-->
+                        </div>
                     </div>
                 </div>
                  <div class="box box2bis">
-                    <h2>Nbre Bien(s) géré(s)</h2>
+                    <h2>Revenu total généré</h2>
                     <div class="boxState">
-                        <div class="totalStatistic">{{$nbreBiens}}</div>
-                        <div class="iconState"><i class="nav-icon fas fa-building"></i></div>
+                        <div class="totalStatistic">{{ number_format($revenuTotal, 2, ',', ' ') }}</div>
+                        <div class="iconState"><i class="nav-icon fas fa-dollar-sign"></i></div>
                     </div>
+
                 </div>
 
                 <div class="box box5">
@@ -85,14 +104,11 @@
                             </div>
                         </div>
                     </div>
-                     <div class="box box4">
-                    <h2>Revenu total généré</h2>
-                    <div class="boxState">
-                        <div class="totalStatistic">{{ number_format($revenuTotal, 2, ',', ' ') }}</div>
-                        <div class="iconState"><i class="nav-icon fas fa-dollar-sign"></i></div>
+                     <div class="box box4" style="height: 350px">
+                        <h2>Cartographie des biens gérés</h2>
+                    <bien-carte></bien-carte>
                     </div>
-                </div>
-                <div class="box box4bis">
+                <div class="box box4bis d-none">
                     <h2>Nombre de biens disponibles à la location</h2>
                     <div class="boxState">
                         <div class="totalStatistic">{{$biensDisponibles}}</div>

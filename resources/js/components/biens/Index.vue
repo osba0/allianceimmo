@@ -20,6 +20,7 @@
                         </div>
                     </div>
                 </div>
+                 <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#bienMap" v-on:click="showCarteFct"><i class="fa fa-map"></i> Voir carte</button>
                 <button  v-if="hasPermission('Bien.Ajouter')"  type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Ajouter un Immeuble</button>
             </div>
              
@@ -100,7 +101,7 @@
                         </button>
                     </div> 
 
-                    <form @submit.prevent="createProprio()">
+                    <form @submit.prevent="createBien()">
                         <div class="modal-body">
                             <!--horizontal-stepper :steps="demoSteps" @completed-step="completeStep"
                                         @active-step="isStepActive" @stepper-finished="alert">                     
@@ -139,8 +140,11 @@
                                 <div class="col-md-6">
                                    <div class="form-group">
                                         <label>Adresse <span class="required">*</span></label>
-                                        <input v-model="form.adresse" type="text"
-                                            class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.adresse.required }">                                        
+                                        <div class="d-flex align-items-center gap-15">
+                                            <input v-model="form.adresse" type="text"
+                                            class="form-control" :class="{ 'border-danger': isSubmitted && !$v.form.adresse.required }">
+                                            <button  type="button" data-toggle="modal" data-target="#bienAddMap" v-on:click="showAddAdressCarte" class='btn btn-sm btn-primary text-nowrap'>📍 Marquer sur la carte</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -222,6 +226,49 @@
             <Info></Info>
             <!-- modal carousel -->
             <modalCarousel></modalCarousel>
+            <!-- Carte des biens-->
+            <div class="modal fade fullscreenModal" id="bienMap"  tabindex="-1" role="dialog" aria-labelledby="myModalBienMap"
+          aria-hidden="true" data-backdrop="static" data-keyboard="false">
+              <div class="modal-dialog modal-xl" role="document">
+                 <div class="modal-content">
+                        <div class="modal-header py-0 px-2 text-left">
+                            <h4 class="modal-title w-100 font-weight-bold">Carte</h4>
+                            <button type="button" v-on:click="closeModalMap()" class="close" data-dismiss="modal" aria-label="Close" ref="closeModalCarte">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body mx-0 p-0">
+                            <CarteBiens ref="carteBiens" :show-carte="showCarte"></CarteBiens>
+                        </div>
+                        <div class="modal-footer  py-0 px-2 d-flex justify-content-center">
+                        <button type="button" v-on:click="closeModalMap()" class="btn btn-sm btn-warning">Fermer</button>
+                      </div>
+                 </div>
+
+              </div>
+            </div>
+            <!--Add marker-->
+            <div class="modal fade fullscreenModal" id="bienAddMap"  tabindex="-1" role="dialog" aria-labelledby="myModalBienMap"
+          aria-hidden="true" data-backdrop="static" data-keyboard="false">
+              <div class="modal-dialog modal-xl" role="document">
+                 <div class="modal-content">
+                        <div class="modal-header py-0 px-2 text-left">
+                            <h4 class="modal-title w-100 font-weight-bold">Ajouter une adresse</h4>
+                            <button type="button" v-on:click="closeModalAddMap()" class="close">&times;</button>
+                            <button type="button" v-on:click="closeModalAddMap()"  class="d-none close" data-dismiss="modal" aria-label="Close" ref="closeModalAddCarte">
+                              <span aria-hidden="true">&times;</span><!--Laisser commenter pour eviter le bug de la position du marker quand on clique sur un autre marker-->
+                            </button>
+                        </div>
+                        <div class="modal-body mx-0 p-0">
+                            <AjoutBienMap @update-coordonnees="updateCoordonnees" @close-map="closeModalAddMap" ref="carteAddBiens" :adresseInput="form.adresse+' '+form.ville" :lat="parseFloat(form.latitude)" :lng="parseFloat(form.longitude)" v-if="showAddCarte"></AjoutBienMap>
+                        </div>
+                        <div class="modal-footer  py-0 px-2 d-flex justify-content-center">
+                        <button type="button" v-on:click="closeModalAddMap()" class="btn btn-sm btn-warning">Fermer</button>
+                      </div>
+                 </div>
+
+              </div>
+            </div>
         </template>
         <template v-else>
             
@@ -242,15 +289,19 @@ import { required, email, minLength, between, minValue  } from 'vuelidate/lib/va
 import HorizontalStepper from 'vue-stepper';
 import Info from './Info.vue';
 import LocalSetup from './Local.vue';
+import CarteBiens from './CarteBiens.vue';
+import AjoutBienMap from './AjoutBienMap.vue';
 
 export default {
     name: "Biens",
     props: ["listProprio"],
-    components: { DatePicker, VueCountryDropdown, modalCarousel, HorizontalStepper, Info, LocalSetup },
+    components: { DatePicker, VueCountryDropdown, modalCarousel, HorizontalStepper, Info, LocalSetup, CarteBiens, AjoutBienMap },
     data () {
         return {
             checking: false,
             editmode: false,
+            showCarte: false,
+            showAddCarte: false,
             biens : {},
             form: {
                 proprio: '',
@@ -264,7 +315,9 @@ export default {
                 annee_construction: '',
                 numero:'',
                 etage:'',
-                photo_piece: null
+                photo_piece: null,
+                latitude: null,
+                longitude: null
             },
             attachmentsPhotos: [],
             info: {},
@@ -295,7 +348,27 @@ export default {
        }
     },
     methods: {
-        createProprio(){
+        updateCoordonnees(coords) {
+            this.form.latitude = coords.lat;
+            this.form.longitude = coords.lng;
+        },
+        showAddAdressCarte(){
+             this.showAddCarte = true;
+            setTimeout(() => {
+                if (this.$refs.carteAddBiens?.map) {
+                  this.$refs.carteAddBiens.map.invalidateSize();
+                }
+              }, 800);
+        },
+        showCarteFct() {
+             this.showCarte = true;
+            setTimeout(() => {
+                if (this.$refs.carteBiens?.map) {
+                  this.$refs.carteBiens.map.invalidateSize();
+                }
+              }, 800);
+        },
+        createBien(){
 
             this.isSubmitted = true;
             // stop here if form is invalid
@@ -317,6 +390,8 @@ export default {
             data.append('description', this.form.description);
             data.append('annee_construction', this.form.annee_construction);
             data.append('file[]', this.attachmentsPhotos);
+            data.append('latitude', this.form.latitude);
+            data.append('longitude', this.form.longitude);
 
             for (let i = 0; i < this.attachmentsPhotos.length; i++) {
                 data.append('files' + i, this.attachmentsPhotos[i]);
@@ -346,7 +421,7 @@ export default {
 
                     Vue.swal.fire(
                       'succés!',
-                      'Bien crée avec succés!',
+                      this.editmode?'Bien modifié avec succés!':'Bien crée avec succés!',
                       'success'
                     );
 
@@ -398,7 +473,9 @@ export default {
             this.form.etage = '';
             this.form.numero = '';
             this.attachmentsPhotos= [];
-            this.$refs.attachmentsPhotos.value = null
+            this.$refs.attachmentsPhotos.value = null,
+            this.form.latitude = null;
+            this.form.longitude = null;
         },
         handleFileUpload(){
             this.attachmentsPhotos = [];
@@ -420,6 +497,8 @@ export default {
             this.form.etage = current.etage;
             this.form.numero = current.numero;
             this.editKyc = current.photo;
+            this.form.latitude = current.latitude;
+            this.form.longitude = current.longitude;
         },
         setKyc(prop){
              // get photo
@@ -523,6 +602,14 @@ export default {
           this.proprioSelected = proprio;
           this.proprioID = proprio.proprio_id;
           this.getBien();
+        },
+         closeModalMap(){
+            this.$refs.closeModalCarte.click();
+            this.showCarte = false
+        },
+        closeModalAddMap(){
+            this.$refs.closeModalAddCarte.click();
+            this.showAddCarte = false
         }
        
 

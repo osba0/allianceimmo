@@ -22,7 +22,9 @@ class Biens extends Model
         'bien_description',
         'bien_superficie',
         'bien_annee_construction',
-        'bien_photos'
+        'bien_photos',
+        'latitude',
+        'longitude'
     ];
 
     public function proprietaire()

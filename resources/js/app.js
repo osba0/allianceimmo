@@ -30,6 +30,7 @@ import NotificationDropdown from './components/notification/NotificationDropdown
 import Notifications from './components/notification/Notifications.vue';
 import VersementProprio from "./components/operations/VersementProprio";
 import TachesAutomisees from "./components/taches/Index";
+import BienCarte from "./components/dashboard/BienCarte";
 
 import moment from 'moment';
 
@@ -629,6 +630,7 @@ const app = new Vue({
         NotificationDropdown,
         Notifications,
         VersementProprio,
-        TachesAutomisees
+        TachesAutomisees,
+        BienCarte
     }
 });

@@ -97,6 +97,20 @@
     background-position: -200% 0;
   }
 }
+.newLayout {
+  display: flex;
+  gap: 10px;
+}
+.newLayout > div{
+  width: 50%;
+}
+.newLayout > div .totalStatistic{
+  background: #958e702b;
+  width: 100%;
+  text-align: center;
+  font-size: 40px;
+  border-radius: 8px;
+}
 img{
   max-width: 100%;
 }
@@ -597,7 +611,7 @@ body .content-wrapper {
 }
 .box5{
   grid-column: span 2;
-  grid-row: span 2;
+  grid-row: span 1;
 }
 .box h2{
   font-size: 18px;

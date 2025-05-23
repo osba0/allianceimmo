@@ -118,6 +118,15 @@
                     </li>
                     @endif
 
+                     @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.Bien'))
+                     <li class="nav-item">
+                        <a href="/bien/carte" class="nav-link  {{Request::route()->getName()=='cartographie'? 'active':''}}">
+                            <i class="nav-icon fas fa-map"></i>
+                            <p>Cartographie des biens</p>
+                        </a>
+                    </li>
+                    @endif
+
                     @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.Locataire'))
                      <li class="nav-item">
                         <a href="/locat/list" class="nav-link {{Request::route()->getName()=='locataire'? 'active':''}}">

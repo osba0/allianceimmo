@@ -8,6 +8,9 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
+import customIconImageOrange from '/assets/images/pointeur-orange.png';
+import customIconImageVerte from '/assets/images/pointeur-vert.png'
+
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -38,13 +41,39 @@ export default {
     this.biens.forEach((bien) => {
       if (bien.latitude && bien.longitude) {
         const position = [bien.latitude, bien.longitude];
-        const marker = L.marker(position).addTo(this.map);
+        const customIcon = L.icon({
+          iconUrl: bien.has_local_disponible==0 ? customIconImageOrange:customIconImageVerte,
+          iconSize: [25, 41],
+          iconAnchor: [20, 40],
+          popupAnchor: [0, -40]
+        });
 
-        marker.bindPopup(`
-          <strong>${bien.bien_nom || 'Bien'}</strong><br/>
-          ${bien.bien_adresse || ''}<br/>
-          Ville : ${bien.bien_ville || ''}
-        `);
+        let imagesHtml = '';
+
+        try {
+          const photos = JSON.parse(bien.bien_photos || '[]');
+          photos.forEach(photo => {
+            imagesHtml += `<img src="/assets/biens/${photo}" style="margin-bottom: 2px;" />`;
+          });
+        } catch (e) {
+          console.warn("Erreur de parsing des photos pour le bien", bien.bien_id, e);
+        }
+
+        const popupContent = `
+          <div>
+            ${imagesHtml}
+            Propriétaire: <strong><u>${bien.proprio_nom} ${bien.proprio_prenom}</u></strong><br/>
+            Nom du bien: <strong>${bien.bien_nom || ''}</strong><br/>
+            Adresse: ${bien.bien_adresse || ''}<br/>
+            Ville : ${bien.bien_ville || ''}
+          </div>
+        `;
+        const marker = L.marker(position, { icon: customIcon }).addTo(this.map);
+
+
+
+
+        marker.bindPopup(popupContent);
 
         bounds.extend(position); // 👉 ajoute la position aux limites
       }

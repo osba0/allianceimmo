@@ -90,6 +90,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/bien/remphoto', [BiensController::class, 'removePhoto']);
         Route::delete('/bien/delete/{id}', [BiensController::class, 'destroy']);
         Route::get('/bien/with-location', [BiensController::class, 'allWithLocation']);
+        Route::get('/bien/carte', [BiensController::class, 'cartographie'])->name('cartographie');
 
         // Local
         Route::post('/local/create', [LocalController::class, 'store']);

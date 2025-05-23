@@ -106,7 +106,7 @@
                     </div>
                      <div class="box box4" style="height: 350px">
                         <h2>Cartographie des biens gérés</h2>
-                    <bien-carte></bien-carte>
+                        <bien-carte></bien-carte>
                     </div>
                 <div class="box box4bis d-none">
                     <h2>Nombre de biens disponibles à la location</h2>

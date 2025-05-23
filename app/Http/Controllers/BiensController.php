@@ -33,6 +33,13 @@ class BiensController extends Controller
         return view('biens/index', $data);
     }
 
+    public function cartographie()
+    {
+        return view('biens/cartographie');
+    }
+
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -228,9 +235,22 @@ class BiensController extends Controller
         return response($rep);
     }
 
-    public function allWithLocation() {
-        return response()->json(
-            Biens::whereNotNull('latitude')->whereNotNull('longitude')->get()
-        );
+   public function allWithLocation()
+    {
+        $biens = DB::table('biens')
+            ->leftJoin('locals', 'biens.bien_id', '=', 'locals.bien_id')
+            ->leftJoin('proprietaires', 'biens.bien_proprio', '=', 'proprietaires.proprio_id')
+            ->whereNotNull('biens.latitude')
+            ->whereNotNull('biens.longitude')
+            ->select(
+                'biens.*',
+                'proprio_nom',
+                'proprio_prenom',
+                DB::raw('MAX(CASE WHEN locals.local_disponible = 1 THEN 1 ELSE 0 END) as has_local_disponible')
+            )
+            ->groupBy('biens.bien_id')
+            ->get();
+
+        return response()->json($biens);
     }
 }

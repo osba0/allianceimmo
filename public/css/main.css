@@ -302,7 +302,7 @@ ul.rounded-tabs li span:before {
 }
 .logo_nav{
   border-radius: 5%;
-  max-width: 50%;
+  max-width: 100%;
   height: 40px;
 }
 /* The container */
@@ -834,6 +834,15 @@ textarea.form-control{
     width: calc(100% - 74px);
     left: 74px;
 }
+.sidebar-collapse .versionNav{
+  display:none;
+}
+.sidebar-collapse .title-wrapper span em {
+ display:none;
+}
+.main-sidebar:hover  .title-wrapper span em {
+ display:inline !important;
+}
 .modal-header{
     padding-top: 0.3em;
     padding-bottom: 0.3em
@@ -1052,6 +1061,28 @@ textarea.form-control{
   100% {
     -webkit-transform: rotate(135deg);
     transform: rotate(135deg);
+  }
+}
+
+@media (max-width: 767px) {
+  #soldeTopBar, #nameCompany, #profilContent{
+    display: none !important;
+  }
+  .main-header{
+    justify-content: space-between !important;
+  }
+  .boxes {
+    display: flex !important;
+    gap: 20px;
+    flex-direction: column;
+  }
+  .topTable{
+    flex-direction: column;
+    gap: 15px;
+  }
+  .topTable > div{
+    flex-direction: column;
+    gap: 15px;
   }
 }
 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="!viewRepresentant">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="topTable d-flex justify-content-between align-items-center mb-3">
                 <div class="d-flex justify-content-between align-items-center gap-15">
                     <div class="d-flex align-items-center">
                         <label class="text-nowrap mr-2 mb-0">Nbre de ligne par Page</label>

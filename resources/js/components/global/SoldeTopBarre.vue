@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center" id="soldeTopBar">
         <span class="badge badge-primary ml-3 mr-2">SOLDE</span> 
         <template v-if="visible">
              <button  @click="showHide()" title="Masquer le solde" class="text-primary h3 mb-0 ml-1 mr-2 bg-transparent border-0"><i class="fas fa-eye-slash"></i></button>

@@ -52,10 +52,7 @@
 
             </a-->
             <div class="brand-link p-0 justify-content-left d-flex align-items-center">
-                <button class="btn btn-transparent btn-menu">
-                    <i class="nav-icon fas fa-bars"></i>
-                </button>
-                <div style="flex: 1" class="text-center justify-content-between px-1">
+                <div  class="d-flex align-items-center justify-content-between px-1 w-100">
                      <a href="/" class="brand-link- text-center py-2">
                         <img src="{{ url('/assets/images/logo-login.png') }}" class="logo_nav"/>
 
@@ -65,7 +62,7 @@
                          </div>
 
                     </a>
-                    <span class="border py-1 px-2 ml-2" style="color:#c2c7d0; font-size: 13px">V-3.1.4</span>
+                    <span class="versionNav border py-1 px-2 ml-2" style="color:#c2c7d0; font-size: 13px">V-3.1.4</span>
                 </div>
             </div>
 
@@ -96,8 +93,10 @@
                     <li>
                         <div class="menu-group">
                             <span  class="title-wrapper">
-                                <span class="{{ in_array(Request::route()->getName(), ['proprio', 'biens', 'locataire', 'gerance', 'bail', 'rapport', 'personnel'])? 'active':''}}">Administration</span>
+                                <span class="{{ in_array(Request::route()->getName(), ['proprio', 'biens', 'locataire', 'gerance', 'bail', 'rapport', 'personnel'])? 'active':''}}">A<em>dministration</em></span>
+
                             </span>
+
                         </div>
                     </li>
                     @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.Proprietaire'))
@@ -167,7 +166,7 @@
                      <li>
                         <div class="menu-group">
                             <span  class="title-wrapper">
-                                <span class="{{ in_array(Request::route()->getName(), ['operationList', 'operation', 'charges'])? 'active':''}}">Opérations</span>
+                                <span class="{{ in_array(Request::route()->getName(), ['operationList', 'operation', 'charges'])? 'active':''}}">O<em>pérations</em></span>
                             </span>
                         </div>
                     </li>
@@ -210,7 +209,7 @@
                      <li>
                         <div class="menu-group">
                             <span  class="title-wrapper">
-                                <span class="{{ in_array(Request::route()->getName(), ['preference', 'compte'])? 'active':''}}">Configurations</span>
+                                <span class="{{ in_array(Request::route()->getName(), ['preference', 'compte'])? 'active':''}}">C<em>onfigurations</em></span>
                             </span>
                         </div>
                     </li>
@@ -271,9 +270,11 @@
         </aside>
         <nav class="main-header navbar fixed-top navbar-expand navbar-white navbar-light">
          
-        <div class="d-flex align-items-center justify-content-center">
+        <div class="d-flex align-items-center justify-content-center ">
+            <a class="nav-link mr-2" style="background: #7b7575; color: white;" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            <span class="brand-text h3 mb-0 d-none">Tableau de bord</span>
             <img src="{{ url('/assets/images/logo_ab_immo_rounded_1.png') }}" height="40" class="mr-2">
-            <span class="brand-text h3 mb-0">ALLIANCE BAZICS IMMO</span>
+            <span id="nameCompany" class="brand-text h3 mb-0">ALLIANCE BAZICS IMMO</span>
             @if(auth()->user()->hasRole('root') || auth()->user()->can('AfficherSolde.Oui'))
             <solde-top-barre></solde-top-barre>
             @endif
@@ -309,10 +310,11 @@
             <div class="mr-3 d-none">
                 <a href="#" class="text-info h3 mb-0"><i class="fas fa-bell"></i></a>
             </div>
-
-            <span class="badge badge-primary">Profil</span> 
-            <span class="mx-1 text-white">:</span>
-            <span class="badge badge-info mr-2">{{ auth()->user()->roles->pluck('name')[0]  }}</span>
+            <div id="profilContent">
+                <span class="badge badge-primary">Profil</span>
+                <span class="mx-1 text-white">:</span>
+                <span class="badge badge-info mr-2">{{ auth()->user()->roles->pluck('name')[0]  }}</span>
+            </div>
             <div class="image"><img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" height="40" alt="User Image" class="img-circle elevation-2"></div>
             <div class="dropdown mr-3">
               <button class="border-0 bg-transparent btn btn-default dropdown-toggle text-white" type="button" data-toggle="dropdown" aria-expanded="false">

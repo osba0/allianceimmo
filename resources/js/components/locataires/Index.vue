@@ -108,7 +108,7 @@
                                 id: locataireSelected.identifiant,
                                 telephone: locataireSelected.ind1  +' '+locataireSelected.tel1,
                                 email: locataireSelected.email,
-                                pin: proprietaireSelected.pin || '',
+                                pin: locataireSelected.pin || '',
                               }"
                             />
                         </template>

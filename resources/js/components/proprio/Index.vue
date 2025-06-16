@@ -33,7 +33,7 @@
                         <th class="text-center">Bien loué</th>
                         <th>Locataire Actif</th>
                         <th class="text-right">Revenus Locatif</th>
-                        <th>Photo piéce</th>
+                        <!--th>Photo piéce</th-->
                         <th class="text-right">Action</th>
                     </tr>
                     <tr>
@@ -69,11 +69,11 @@
                         <td class="align-middle text-right">
                             {{ helper_separator_amount(pro.revenus_locatifs) }}
                         </td>
-                        <td class="align-middle">
+                        <!--td class="align-middle">
                             <span v-for="photo in pro.kyc" class="mr-2 cursor-pointer">
                                 <img :src="'/assets/kyc/'+photo" height="30" data-toggle="modal" data-target="#carouselPhoto" @click="setKyc(pro)"/>
                             </span>
-                        </td>
+                        </td-->
                         <td class="text-right align-middle">
                             <div class="d-inline-flex">
                                 <button class="btn  btn-sm  btn-success mr-2" data-toggle="modal" data-target="#badgeProprietaire" @click="showBadge(pro)"><i class="fa fa-id-badge" aria-hidden="true"></i> Badge</button>

@@ -24,6 +24,8 @@ use App\Http\Controllers\VersementsController;
 use App\Http\Controllers\TachesAutomatisesController;
 use App\Http\Controllers\Rapports\ProprietairesRapport;
 
+use App\Http\Controllers\EncaissementsController;
+
 use App\Http\Controllers\PaiementLoyerSysController;
 
 use App\Http\Controllers\Template\QuittanceLoyerTemplateController;
@@ -155,6 +157,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/operations/versements/create', [VersementsController::class, 'ajoutVersement']);
         Route::post('/operations/versements/edit', [VersementsController::class, 'edit']);
         Route::delete('/operations/versements/deleteversement/{id}', [VersementsController::class, 'destroy']);
+
+        // operation caisse
+        Route::get('/operations/encaissements', [EncaissementsController::class, 'index'])->name('encaissements');
+        Route::get('/operations/encaissements/all', [EncaissementsController::class, 'all']);
+        Route::get('/operations/encaissements/validation/{id_operation}', [EncaissementsController::class, 'validation']);
 
 
     });

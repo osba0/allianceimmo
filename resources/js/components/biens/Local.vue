@@ -18,7 +18,7 @@
                     <th class="text-nowrap">Type Local</th>
                     <th class="text-nowrap" ttle="Type Local">Type de Local</th>
                     <th class="text-nowrap" title="Prix du Loyer Hors Charge">Prix Loyer</th>
-                    <th>Disponibilité</th>
+                    <th>Occupation</th>
                     <th>Détails</th>
                     <th>Photo</th>
                     <th class="text-right">Action</th>

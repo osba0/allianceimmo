@@ -22,10 +22,6 @@ $locals = Local::leftJoin('biens', 'biens.bien_id', '=', 'locals.bien_id')
     ->groupBy('locals.local_id')
     ->get()->first()->toArray();
 
-function generateReceiptId() {
-    return 'REC-' . strtoupper(bin2hex(random_bytes(6)));
-}
-?>
 <!DOCTYPE html>
 <html>
 <head>

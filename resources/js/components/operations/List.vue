@@ -13,13 +13,14 @@
             <!--button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus-square"></i> Ajout Charge&Frais</button-->
         </div>
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-hover table-striped">
               <thead class="bg-white">
                 <tr>
                     <th>Sens</th>
                     <th>Compte</th>
                     <th>Type</th>
                     <th>Montant Total</th>
+                     <th>Status</th>
                     <th>Note</th>
                     <th>Date</th>
                     <th>User</th>
@@ -32,7 +33,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="operation in operations.data" :key="operation.identifiant" :class="[operation.sens=='CREDIT'? 'table-success': 'table-danger']">
+                <tr v-for="operation in operations.data" :key="operation.identifiant" :class="[operation.sens=='CREDIT'? 'table-success-----': 'table-danger-----']">
                     <td class="align-middle">
                         <label class="badge badge-success w-100 py-2" v-if="operation.sens=='CREDIT'">{{ operation.sens }}</label>
                         <label class="badge badge-danger w-100 py-2" v-else>{{ operation.sens }}</label>
@@ -43,11 +44,13 @@
                     
                     <td class="align-middle">{{ operation.type }}</td>
                     <td class="align-middle">{{ helper_separator_amount(operation.montant) }}</td>
+                     <td class="align-middle">{{ operation.oper_statut }}</td>
                     <td class="align-middle">{{ operation.note }}</td>
                     <td class="align-middle">{{ operation.date_creation }}</td>
                     <td class="align-middle">
                         {{ operation.user }}
                     </td>
+
                     <td class="text-right align-middle">
                         <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
                     </td>

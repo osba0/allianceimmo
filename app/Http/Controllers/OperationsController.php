@@ -339,7 +339,7 @@ class OperationsController extends Controller
                 $montant_recu += (int) $paiement->paiementMontant;
                 if(!$paiement->validate){
                     $calul_montant += (int) $paiement->paiementMontant; // Au debut possibilite de rentrer plusieurs paiement sur l'interface
-                    $paiement->validate = true;
+                    $paiement->validate = true; // A decommenter pour l'encaissement
                 }
             }
 
@@ -353,7 +353,7 @@ class OperationsController extends Controller
             $up = PaiementsLoyer::where('paiement_id', request('id_loyer'))
                       ->update([
                         "paiement_recu" => $paiement_list,
-                        "paiement_etat" => ($montant_recu >= $request->montant_loyer ? PaiementsLoyer::PAYE:PaiementsLoyer::PAIEMENT_PARTIEL),
+                        "paiement_etat" => ($montant_recu >= $request->montant_loyer ? PaiementsLoyer::PAYE:PaiementsLoyer::PAIEMENT_PARTIEL), // verifier lors de l'encaissement
                         "paiements_url_quittance" => $urlQuittance
 
                   ]);
@@ -370,20 +370,26 @@ class OperationsController extends Controller
 
 
 
-            // 🏦 Enregistrer l'opération comptable
+            // 🏦 Enregistrer l'opération comptable avec status en attente d'encaissement
 
 
             $q = new Operations;
 
             $oper_id = Helper::IDGenerator(new Operations, 'oper_id',config('constants.ID_LENGTH'), config('constants.PREFIX_OPERATION'));
 
+            $lastKey = array_key_last($paiement_list);
+
             $q->oper_id=$oper_id;
             $q->oper_sens=config('constants.CREDIT');
             $q->oper_type=Operations::PAIEMENT_LOYER;
             $q->oper_note=($montant_recu >= $request->montant_loyer ? PaiementsLoyer::getEtatPaiement()[PaiementsLoyer::PAYE]: PaiementsLoyer::getEtatPaiement()[PaiementsLoyer::PAIEMENT_PARTIEL])/*.$has_avoir*/;
-            $q->oper_montant=$calul_montant;
+            $q->oper_montant= $request->montant_payer+ $mntPreleve;//$calul_montant;
             $q->oper_id_bail=request('id_bail');
             $q->oper_user=$user->username;
+            $q->oper_statut = 'valide'; // en_attente encaissement a voir
+            $q->oper_reserve_1 = $mntPreleve; // enregistrer le montant prevelevé sur le solde
+            $q->oper_reserve_2 = $paiement_list[$lastKey]->reference; // enregistrer la reference du recu
+            $q->oper_reserve_3 = $request->id_loyer; // enregistrer la reference du paiement loyer
 
 
             $q->save();
@@ -491,6 +497,7 @@ class OperationsController extends Controller
         $paiementList[$lastKey]->justificatif = $fichierJustificatif;
         $paiementList[$lastKey]->paiementMontant +=   (float) $soldePrevele;
         $paiementList[$lastKey]->paiementType .= ($soldePrevele == 0 ?'':' / Solde utilisé: '.$soldePrevele);
+        $paiementList[$lastKey]->soldeUtilise = ($soldePrevele == 0 ?'': $soldePrevele);
         $paiementList[$lastKey]->reference = $ref;
 
         // Chemin complet du fichier
@@ -538,7 +545,7 @@ class OperationsController extends Controller
             'contenu_html' => '',
             'contenu_text' => '',
             'fichier_joint' => $filePath, // Exemple : 'recu/RECU123456.pdf' si un fichier existe
-            'etat' => 'en_attente',
+            'etat' => 'en_attente', // attente_paiement au cas ou le caissier doit encaisser et apres encaissement mettre en attente,
             'template' => 'recu',
             'data' => json_encode($data)
         ]);
@@ -826,7 +833,7 @@ class OperationsController extends Controller
             $montant_recu += (int) $paiement->paiementMontant;
             if(!$paiement->validate){
                 $calul_montant += (int) $paiement->paiementMontant;
-                $paiement->validate = true;
+                //$paiement->validate = true;
             }
         }
 
@@ -856,6 +863,7 @@ class OperationsController extends Controller
       
             $q->oper_id=$oper_id;
             $q->oper_sens=config('constants.CREDIT');
+            $q->oper_statut='valide'; // A enlever pour le module caissier car par default c'est en attente
             $q->oper_type=Operations::PAIEMENT_LOYER;
             $q->oper_note=($montant_recu >= $request->montant_loyer ? PaiementsLoyer::getEtatPaiement()[PaiementsLoyer::PAYE]: PaiementsLoyer::getEtatPaiement()[PaiementsLoyer::PAIEMENT_PARTIEL]).$has_avoir;
             $q->oper_montant=$calul_montant;
@@ -926,6 +934,7 @@ class OperationsController extends Controller
             $q->oper_sens=config('constants.DEBIT');
             $q->oper_type=request('type');
             $q->oper_note=request('note');
+            $q->oper_statut='valide'; // A enlever pour le module caissier car par default c'est en attente
             $q->oper_montant=request('montant');
             $q->oper_id_charge=$charge_id;
             $q->oper_user=$user->username;
@@ -960,7 +969,7 @@ class OperationsController extends Controller
            NotificationService::creerNotification(
             'creation', // Type d’action
             '💸 Charge enregistrée', // Titre de la notification
-            "Une nouvelle charge a été enregistrée pour le propriétaire.", // Message
+            "Une nouvelle charge a été enregistrée. Montant: ".request('montant').' FCFA ('.Operations::getType(request('type')).')', // Message
             [
                 'proprio_id' => request('proprio'),
                 'proprio_nom' => request('proprio_nom'),

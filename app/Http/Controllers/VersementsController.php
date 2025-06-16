@@ -108,6 +108,7 @@ class VersementsController extends Controller
             $operation->oper_sens=config('constants.CREDIT');
             $operation->oper_type=Operations::VERSEMENT_PROPRIO;
             $operation->oper_note=request('note');
+            $operation->oper_statut='valide'; // A enlever pour le module caissier car par default c'est en attente
             $operation->oper_montant=request('montant');
             $operation->oper_id_versement_proprio=$versement_id;
             $operation->oper_user=$user->username;

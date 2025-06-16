@@ -47,4 +47,17 @@ class PaiementsLoyer extends Model
             static::PAYE             => 'Payé'
         ];
     }
+
+
+    public function getPaiementsNonValidesAttribute()
+    {
+        $paiements = $this->paiement_recu;
+
+        if (!is_array($paiements)) return [];
+
+        return collect($paiements)->filter(function ($paiement) {
+            return isset($paiement['validate']) && $paiement['validate'] === false;
+        })->values()->all();
+    }
+
 }

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="d-flex justify-content-between mb-3">
                 <div class="d-flex justify-content-between align-items-center gap-15">
                     <div class="d-flex align-items-center">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouvelle Charge / Frais</button>
+            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addNew" v-on:click="newModal" ><i class="fa fa-plus"></i> Nouvelle Charge / Frais</button>
         </div>
         <div class="table-responsive">
             <table class="table table-hover table-striped">
@@ -63,7 +63,7 @@
                         <button  title="Fichier" v-if="charge.fichier.length > 0" class="btn btn-info mr-2 cursor-pointer" data-toggle="modal" data-target="#modalFichier" v-on:click="showDocument('assets/factures/'+charge.fichier[0])">
                                 <i class="fa fa-file-pdf"></i>
                         </button>
-                        <button  v-if="charge.note != '' && charge.note != 'undefined'" class="btn btn-primary mr-2 cursor-pointer" v-on:click="showInfo(charge.note)">
+                        <button  v-if="charge.note != '0' && charge.note != '' && charge.note != 'undefined'" class="btn btn-primary mr-2 cursor-pointer" v-on:click="showInfo(charge.note)">
                             <i class="fa fa-info"></i>
                         </button>
                         <button class="btn btn-danger" v-on:click="deleteDecharge(charge)">
@@ -150,9 +150,9 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="pt-2">Note</label>
+                                <label class="pt-2">Note <span class="text-danger">*</span></label>
                                 <div class="d-flex align-items-center">
-                                    <textarea v-model="form.note" class="form-control"></textarea>
+                                    <textarea v-model="form.note" class="form-control"  :class="{ 'border-danger': isSubmitted && !$v.form.note.required }"></textarea>
                                 </div>
                             </div>
                         </div> 
@@ -169,7 +169,7 @@
                     </div>
                     
                     <div class="modal-footer justify-content-center">
-                        <button v-show="editmode" type="submit" class="btn btn-success">Enregister</button>
+                        <button v-show="editmode" type="submit" class="btn btn-success" :disabled="isLoad ? true: false">Enregister</button>
                         <button v-show="editmode" type="button" class="btn btn-warning"  data-dismiss="modal" @click="reset()">Annuler</button>
                         <button v-show="!editmode" type="submit" class="btn btn-success">Créer</button>
                         <button  v-show="!editmode" type="button" class="btn btn-info btn" @click="reset()">Réinitialiser</button>
@@ -211,6 +211,7 @@ export default {
         return {
             editmode: false,
             isLoading: false,
+            isLoad: false,
             isSubmitted: false,
             charges : {},
             paiements: [],
@@ -225,7 +226,8 @@ export default {
                 decharge: null,
                 date: null,
                 type: '',
-                type_autre: ''
+                type_autre: '',
+                note: ''
                
             },
             biens: [],
@@ -240,7 +242,8 @@ export default {
         form : {
             proprio: { required },
             montant: { required },
-            bien: { required }
+            bien: { required },
+            note: { required }
 
         },
         
@@ -293,6 +296,7 @@ export default {
             this.form.type = '';
             this.form.note = '';
             this.form.type_autre = '';
+            this.form.local = '';
         },
         editCharge(oper){
 
@@ -312,6 +316,7 @@ export default {
             if (this.$v.form.$invalid) {
                 return;
             }          
+            this.isLoad = true;
 
             const data = new FormData();
             data.append('proprio', this.form.proprio.proprio_id);
@@ -350,6 +355,7 @@ export default {
             }).then(response => {
               
                 if(response.data.code==0){
+
                     this.isLoading = false;
                     this.$refs.closePopup.click();
                     this.reset();
@@ -370,6 +376,7 @@ export default {
                     )
                 }
                 this.isSubmitted = false;
+                this.isLoad = false;
 
             });
         },

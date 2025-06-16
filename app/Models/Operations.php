@@ -30,7 +30,10 @@ class Operations extends Model
         'oper_id_bail',
         'oper_note',
         'oper_user',
-        'oper_id_versement_proprio'
+        'oper_id_versement_proprio',
+        'oper_statut',
+        'oper_motif_rejet',
+        'oper_date_validation'
     ];
 
     public static function getListCharges(){

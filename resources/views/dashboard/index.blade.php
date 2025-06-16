@@ -23,14 +23,14 @@
                     <div>
                         <h2>Nbre Prioprétaire</h2>
                         <div class="boxState">
-                            <div class="totalStatistic">{{$nbreProprietaires}}</div>
+                            <a href="{{ route('proprio')}}"  class="totalStatistic">{{$nbreProprietaires}}</a>
                             <!--div class="iconState"><i class="nav-icon fas fa-user-tie"></i></div-->
                         </div>
                     </div>
                     <div>
                         <h2>Nbre Bien</h2>
                         <div class="boxState">
-                            <div class="totalStatistic">{{$nbreBiens}}</div>
+                            <a href="{{ route('biens')}}" class="totalStatistic">{{$nbreBiens}}</a>
                             <!--div class="iconState"><i class="nav-icon fas fa-user-tie"></i></div-->
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                     <div>
                         <h2>Nbre Locataire</h2>
                         <div class="boxState">
-                            <div class="totalStatistic">{{$nbreLocataires}}</div>
+                            <a href="{{ route('locataire')}}"  class="totalStatistic">{{$nbreLocataires}}</a>
                             <!--div class="iconState"><i class="nav-icon fas fa-user"></i></div-->
 
                         </div>
@@ -62,7 +62,14 @@
                 </div>
 
                 <div class="box box5">
-                    <h2>5 derniéres opération(s)</h2>
+                    <div class="d-flex justify-content-between mb-2">
+                        <h2>5 derniéres opération(s)</h2>
+                        <div>
+                            <a href="{{ route('operation') }}" class="btn btn-sm btn-success"><i class="fa fa-plus"></i> Paiement</a>
+                            <a href="{{ route('charges') }}" class="btn btn-sm btn-danger"><i class="fa fa-plus"></i> Charge</a>
+                        </div>
+                    </div>
+
                         <div class="table-responsive lastOperation">
                             <table class="table table-hover">
                                 <thead class="bg-white">

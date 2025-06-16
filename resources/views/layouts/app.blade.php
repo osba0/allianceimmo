@@ -202,7 +202,15 @@
                      <li class="nav-item">
                         <a href="{{ route('versements') }}" class="nav-link {{Request::route()->getName()=='versements'? 'active':''}}">
                             <i class="nav-icon fas fa-hand-holding-usd"></i>
-                            <p>Versements</p>
+                            <p>Dépot</p>
+                        </a>
+                    </li>
+                    @endif
+                     @if(auth()->user()->hasRole('root') || auth()->user()->can('Menu.OperationCaisse'))
+                     <li class="nav-item d-none">
+                        <a href="{{ route('encaissements') }}" class="nav-link {{Request::route()->getName()=='encaissements'? 'active':''}}">
+                            <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                            <p>Encaissements</p>
                         </a>
                     </li>
                     @endif

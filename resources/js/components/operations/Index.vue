@@ -10,7 +10,7 @@
                     <option value="20">20</option>
                 </select>
             </div>
-            <div class="custom-select">
+            <div class="custom-select" style="background: transparent !important;">
                 <input
                   type="text"
                   v-model="searchQuery"
@@ -299,6 +299,7 @@
                                             <th>Montant</th>
                                             <th>Mode de paiement</th>
                                             <th>Statut</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody id="payments-table">
@@ -306,7 +307,8 @@
                                             <td>{{paiment.paiementDate}}</td>
                                             <td>{{paiment.paiementMontant}} FCFA</td>
                                             <td>{{paiment.paiementType}} </td>
-                                            <td class="status received"><button type="button" class="btn btn-sm btn-danger ml-2 text-nowrap" style="width: auto;" @click="showQuittance(paiment.url_recu)"><i class="fa fa-file-pdf"></i> Voir le reçu</button></td>
+                                            <td>{{paiment.validate?'Valide':'En attente'}} </td>
+                                            <td class="status received"><button v-if="paiment.validate" type="button" class="btn btn-sm btn-danger ml-2 text-nowrap" style="width: auto;" @click="showQuittance(paiment.url_recu)"><i class="fa fa-file-pdf"></i> Voir le reçu</button></td>
                                         </tr>
                                         <tr v-if="paiements.length == 0"><td colspan="4">Aucun paiement!</td></tr>
 

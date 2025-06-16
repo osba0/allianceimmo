@@ -31,6 +31,7 @@ import Notifications from './components/notification/Notifications.vue';
 import VersementProprio from "./components/operations/VersementProprio";
 import TachesAutomisees from "./components/taches/Index";
 import BienCarte from "./components/dashboard/BienCarte";
+import Encaissements from "./components/encaissements/Index";
 
 import moment from 'moment';
 
@@ -631,6 +632,7 @@ const app = new Vue({
         Notifications,
         VersementProprio,
         TachesAutomisees,
-        BienCarte
+        BienCarte,
+        Encaissements
     }
 });

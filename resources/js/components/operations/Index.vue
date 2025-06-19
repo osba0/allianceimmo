@@ -146,9 +146,21 @@
 
                                     <div class="form-group">
                                         <label>Choisir le local loué</label>
-                                        <select class="form-control" v-model="manualLoyerForm.local" :class="{ 'border-danger': manualIsSubmitted && !$v.manualLoyerForm.local.required }">
-                                            <option>Choisir un local</option>
-                                            <option v-for="local in localActif.data" :key="local.identifiant" @click="setInfosLocation(local)" :value="local.local_id" >{{ local.local_type_local}} ({{ local.local_type_location}}), {{ local.bien_adresse}} N°{{ local.bien_numero }} - {{ local.bien_ville }} ({{ local.bien_pays }})</option>
+                                       <select
+                                          class="form-control"
+                                          v-model="manualLoyerForm.local"
+                                          :class="{ 'border-danger': manualIsSubmitted && !$v.manualLoyerForm.local.required }"
+                                          @change="handleLocalChange"
+                                        >
+                                          <option disabled value="">Choisir un local</option>
+                                          <option
+                                            v-for="local in localActif.data"
+                                            :key="local.identifiant"
+                                            :value="local.local_id"
+                                          >
+                                            {{ local.local_type_local }} ({{ local.local_type_location }}),
+                                            {{ local.bien_adresse }} N°{{ local.bien_numero }} - {{ local.bien_ville }} ({{ local.bien_pays }})
+                                          </option>
                                         </select>
                                     </div>
 
@@ -895,6 +907,14 @@ export default {
 
 
         },
+        handleLocalChange() {
+            const selected = this.localActif.data.find(
+              local => local.local_id === this.manualLoyerForm.local
+            );
+            if (selected) {
+              this.setInfosLocation(selected);
+            }
+          },
         setInfosLocation(local){
 
             console.log("prix local", local.local_prix_loyer)

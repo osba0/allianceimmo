@@ -158,7 +158,7 @@
                              <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Montant loyer</label>
-                                    <div class='px-2 py-1'><strong>{{manualLoyerForm.montantLoyer? helper_separator_amount(manualLoyerForm.montantLoyer):manualLoyerForm.montantLoyer }}</strong></div>
+                                    <div class='px-2 py-1'><strong>{{manualLoyerForm.montantLoyer ? helper_separator_amount(manualLoyerForm.montantLoyer):manualLoyerForm.montantLoyer }}</strong></div>
                                 </div>
                             </div>
                              <div class="col-md-6">
@@ -896,6 +896,8 @@ export default {
 
         },
         setInfosLocation(local){
+
+            console.log("prix local", local.local_prix_loyer)
 
             for (let obj of this.findBailByLocal) {
                 if (obj.hasOwnProperty(local.local_id)) {

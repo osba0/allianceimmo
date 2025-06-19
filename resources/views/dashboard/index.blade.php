@@ -52,12 +52,22 @@
                         </div>
                     </div>
                 </div>
-                 <div class="box box2bis">
-                    <h2>Revenu total généré</h2>
-                    <div class="boxState">
-                        <div class="totalStatistic">{{ number_format($revenuTotal, 2, ',', ' ') }}</div>
-                        <div class="iconState"><i class="nav-icon fas fa-dollar-sign"></i></div>
+                 <div class="box box2bis newLayout">
+                     <div>
+                        <h2>Encaissement du jour</h2>
+                        <div class="boxState">
+                            <a href="{{ route('locataire')}}"  class="totalStatistic">{{$nbreLocataires}}</a>
+                            <!--div class="iconState"><i class="nav-icon fas fa-user"></i></div-->
+
+                        </div>
                     </div>
+                    <div>
+                        <h2>Revenu total généré</h2>
+                        <div class="boxState">
+                            <div class="totalStatistic">{{ number_format($revenuTotal, 2, ',', ' ') }}</div>
+                        </div>
+                    </div>
+
 
                 </div>
 

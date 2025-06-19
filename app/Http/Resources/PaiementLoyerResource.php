@@ -21,8 +21,18 @@ class PaiementLoyerResource extends JsonResource
     public function toArray($request)
     {
         $locataire = Locataires::where("locat_id", $this->bail_locataire)->first();
-        $locals = Local::leftJoin('biens', 'biens.bien_id', '=', 'locals.bien_id')->select('locals.*', 'bien_nom', 'bien_adresse')->whereIn("local_id", json_decode($this->bail_local))->groupBy('locals.local_id')->get()->toArray(); 
 
+$localIDs = json_decode($this->bail_local, true);
+$locals = [];
+
+if (is_array($localIDs) && count($localIDs)) {
+    $locals = Local::leftJoin('biens', 'biens.bien_id', '=', 'locals.bien_id')
+        ->select('locals.*', 'bien_nom', 'bien_adresse')
+        ->whereIn("local_id", $localIDs)
+        ->groupBy('locals.local_id')
+        ->get()
+        ->toArray();
+}
        
        
 

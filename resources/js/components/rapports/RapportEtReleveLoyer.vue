@@ -600,10 +600,10 @@ export default {
     },
     getStatutPaiement(etatPaiement) {
       var etat = '';
-      switch(etatPaiement){
-        case 3: etat='✅ Payé'; break;
-        case 2: etat='⚠️ Partiel'; break;
-        case 0: etat='❌ Impayé'; break;
+      switch(etatPaiement.toString()){
+        case '3': etat='✅ Payé'; break;
+        case '2': etat='⚠️ Partiel'; break;
+        case '0': etat='❌ Impayé'; break;
         default: etat=etat.toString()+'inconnu';
       }
 

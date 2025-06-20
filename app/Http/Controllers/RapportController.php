@@ -135,7 +135,7 @@ class RapportController extends Controller
                 'locataires.locat_prenom',
                 'locataires.locat_id'
             )
-            ->orderBy('paiements_loyers.updated_at', 'desc'); //paiement_mois_location
+            ->orderBy('paiements_loyers.paiement_mois_location', 'desc'); //paiement_mois_location
 
         // Filtres
         if ($request->filled('locataireID')) {
@@ -143,7 +143,7 @@ class RapportController extends Controller
         }
 
         if ($request->filled('debut') && $request->filled('fin')) {
-            $baseQuery->whereBetween('paiements_loyers.updated_at', [$request->debut, $request->fin]); //paiement_mois_location
+            $baseQuery->whereBetween('paiements_loyers.paiement_mois_location', [$request->debut, $request->fin]); //paiement_mois_location
         }
 
         // Clonage pour total global avant pagination

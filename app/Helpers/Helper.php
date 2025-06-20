@@ -8,6 +8,23 @@ class Helper
 {
     public static function IDGenerator($model, $trow, $length, $prefix)
     {
+        $max = $model::where($trow, 'LIKE', "$prefix-%")
+            ->select($trow)
+            ->get()
+            ->map(function ($item) use ($prefix, $trow) {
+                $code = $item->$trow;
+                $numberPart = preg_replace('/[^0-9]/', '', substr($code, strlen($prefix)));
+                return intval($numberPart);
+            })
+            ->max();
+
+        $nextNumber = $max ? $max + 1 : 1;
+
+        $zero = str_pad('', $length - strlen($nextNumber), '0');
+        return $prefix . '-' . $zero . $nextNumber;
+    }
+    public static function IDGeneratorOld($model, $trow, $length, $prefix)
+    {
          $data = $model::orderBy('id', 'desc')->first();
 
             if (!$data) {

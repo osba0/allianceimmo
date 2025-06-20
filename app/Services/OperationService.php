@@ -31,6 +31,7 @@ class OperationService
         $operation->oper_id = $oper_id; //'OPER-'.Str::upper(Str::random(8));
         $operation->oper_sens = strtolower($sens) === 'debit' ? 'DEBIT' : 'CREDIT';
         $operation->oper_type = $type;
+        $operation->oper_statut = 'valide'; // temporaire a gerer dans encaissement
         $operation->oper_type_autre = $options['type_autre'] ?? '';
         $operation->oper_montant = $montant;
         $operation->oper_id_bail = $idBail;

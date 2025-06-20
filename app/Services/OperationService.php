@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Str;
 use App\Models\Operations;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\Helper;
 
 class OperationService
 {
@@ -25,7 +26,9 @@ class OperationService
     public static function enregistrer(string $sens, string $type, float $montant, string $idBail = null, string $idCharge = null, string $note = '', string $userId = null, array $options = []): Operations
     {
         $operation = new Operations();
-        $operation->oper_id = 'OPER-'.Str::upper(Str::random(8));
+
+        $oper_id = Helper::IDGenerator(new Operations, 'oper_id',config('constants.ID_LENGTH'), config('constants.PREFIX_OPERATION'));
+        $operation->oper_id = $oper_id; //'OPER-'.Str::upper(Str::random(8));
         $operation->oper_sens = strtolower($sens) === 'debit' ? 'DEBIT' : 'CREDIT';
         $operation->oper_type = $type;
         $operation->oper_type_autre = $options['type_autre'] ?? '';

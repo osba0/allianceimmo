@@ -56,7 +56,7 @@
                      <div>
                         <h2>Encaissement du jour</h2>
                         <div class="boxState">
-                            <a href="{{ route('locataire')}}"  class="totalStatistic">{{$nbreLocataires}}</a>
+                            <a href="{{ route('locataire')}}"  class="totalStatistic">-</a>
                             <!--div class="iconState"><i class="nav-icon fas fa-user"></i></div-->
 
                         </div>

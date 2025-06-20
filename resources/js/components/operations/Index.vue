@@ -170,7 +170,7 @@
                              <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Montant loyer</label>
-                                    <div class='px-2 border' style="background: #80808029;"><strong>{{manualLoyerForm.montantLoyer ? helper_separator_amount(manualLoyerForm.montantLoyer):manualLoyerForm.montantLoyer }}</strong></div>
+                                    <div class='px-2 border' style="background: #80808029; height: 28.8px"><strong>{{manualLoyerForm.montantLoyer ? helper_separator_amount(manualLoyerForm.montantLoyer):manualLoyerForm.montantLoyer }}</strong></div>
                                 </div>
                             </div>
                              <div class="col-md-6">

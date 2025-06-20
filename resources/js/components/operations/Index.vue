@@ -62,7 +62,7 @@
                             </div>
                             <div class="nameFormat">
                                 <span class="namePerson">{{oper.locat_nom}} {{oper.locat_prenom}}</span>
-                                <span class="contactPerson">john@creative-tim.com</span>
+                                <span class="contactPerson">{{oper.locat_email}}</span>
                             </div>
                         </div>
                     </td>

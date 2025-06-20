@@ -51,6 +51,7 @@ if (is_array($localIDs) && count($localIDs)) {
             "locat_nom"    => optional($locataire)->locat_nom,
             "locat_prenom" => optional($locataire)->locat_prenom,
             "locat_avoir"  => optional($locataire)->locat_avoir,
+            "locat_email"    => optional($locataire)->locat_email,
             "locaux"                  => $locals,
             "bail_montant_ht"         => $this->bail_montant_ht,
             "proprio_id"              => $this->bail_proprio,

@@ -126,7 +126,7 @@ class RapportController extends Controller
             ->select(
                 'paiements_loyers.paiement_id',
                 'paiements_loyers.paiement_recu',
-                'paiements_loyers.paiement_mois_location',
+                'paiements_loyers.paiement_mois_location', //paiement_mois_location
                 'paiements_loyers.paiement_montant',
                 'paiements_loyers.paiement_etat',
                 'bails.bail_montant_ht',
@@ -135,7 +135,7 @@ class RapportController extends Controller
                 'locataires.locat_prenom',
                 'locataires.locat_id'
             )
-            ->orderBy('paiements_loyers.paiement_mois_location', 'desc');
+            ->orderBy('paiements_loyers.updated_at', 'desc'); //paiement_mois_location
 
         // Filtres
         if ($request->filled('locataireID')) {
@@ -143,7 +143,7 @@ class RapportController extends Controller
         }
 
         if ($request->filled('debut') && $request->filled('fin')) {
-            $baseQuery->whereBetween('paiements_loyers.paiement_mois_location', [$request->debut, $request->fin]);
+            $baseQuery->whereBetween('paiements_loyers.updated_at', [$request->debut, $request->fin]); //paiement_mois_location
         }
 
         // Clonage pour total global avant pagination
@@ -154,11 +154,30 @@ class RapportController extends Controller
             return $carry + collect($recu)->sum('paiementMontant');
         }, 0);
 
-        $montantImpayes = $totalQuery
+       /*
+        $montantImpayes = (clone $totalQuery)
         ->where('paiement_etat', 0)
-        ->sum('paiement_montant');
+        ->sum('paiement_montant'); */
 
-        $totalLocataires = $paiementsBruts->pluck('locat_id')->unique()->count();
+        // 1. Récupération de tous les paiements concernés
+        $paiements = (clone $totalQuery)->get();
+
+        // 2. Calcul du montant impayé réel (inclut les loyers totalement et partiellement impayés)
+        $montantImpayesTotal = $paiements->reduce(function ($carry, $paiement) {
+            $recu = json_decode($paiement->paiement_recu, true) ?? [];
+
+            // Somme des montants validés uniquement
+            $totalRecu = collect($recu)
+                ->filter(fn($p) => $p['validate'] ?? false)
+                ->sum('paiementMontant');
+
+            // Le manque à gagner réel pour ce paiement
+            $manque = max($paiement->paiement_montant - $totalRecu, 0);
+
+            return $carry + $manque;
+        }, 0);
+
+        $totalLocataires = $paiementsBruts->pluck('locataires.locat_id')->unique()->count();
         $totalLignes = $paiementsBruts->count();
 
         // Pagination ou non
@@ -178,7 +197,7 @@ class RapportController extends Controller
                 'total_general' => $totalGeneral,
                 'total_locataires' => $totalLocataires,
                 'total_lignes' => $totalLignes,
-                'total_impayes' => $montantImpayes
+                'total_impayes' => $montantImpayesTotal
             ]
         ]);
     }
@@ -201,7 +220,7 @@ class RapportController extends Controller
             'locataires.locat_prenom'
         )
         //->where('paiements_loyers.paiement_etat', 3) // uniquement les paiements validés
-        ->orderBy('paiements_loyers.paiement_mois_location', 'desc');
+        ->orderBy('paiements_loyers.updated_at', 'desc');
 
         if ($request->filled('locataireID')) {
             $query->where('locataires.locat_id', $request->locataireID);
@@ -596,7 +615,7 @@ class RapportController extends Controller
         }
 
         if ($request->filled('debut') && $request->filled('fin')) {
-            $baseQuery->whereBetween('paiements_loyers.paiement_mois_location', [$request->debut, $request->fin]);
+            $baseQuery->whereBetween('paiements_loyers.updated_at', [$request->debut, $request->fin]); //paiement_mois_location
         }
 
         // Clonage pour total global avant pagination
@@ -607,9 +626,27 @@ class RapportController extends Controller
             return $carry + collect($recu)->sum('paiementMontant');
         }, 0);
 
-        $montantImpayes = $totalQuery
+        /*$montantImpayes = $totalQuery
         ->where('paiement_etat', 0)
-        ->sum('paiement_montant');
+        ->sum('paiement_montant');*/
+
+        // 1. Récupération de tous les paiements concernés
+        $paiements = (clone $totalQuery)->get();
+
+        // 2. Calcul du montant impayé réel (inclut les loyers totalement et partiellement impayés)
+        $montantImpayesTotal = $paiements->reduce(function ($carry, $paiement) {
+            $recu = json_decode($paiement->paiement_recu, true) ?? [];
+
+            // Somme des montants validés uniquement
+            $totalRecu = collect($recu)
+                ->filter(fn($p) => $p['validate'] ?? false)
+                ->sum('paiementMontant');
+
+            // Le manque à gagner réel pour ce paiement
+            $manque = max($paiement->paiement_montant - $totalRecu, 0);
+
+            return $carry + $manque;
+        }, 0);
 
         $totalLocataires = $paiementsBruts->pluck('locat_id')->unique()->count();
         $totalLignes = $paiementsBruts->count();
@@ -649,7 +686,7 @@ class RapportController extends Controller
                 'debut' => $request->debut,
                 'fin' => $request->fin,
                 'total_paye' => $totalPaye,
-                'total_impayes' => $montantImpayes,
+                'total_impayes' => $montantImpayesTotal, //$montantImpayes,
             ]
         ];
 
@@ -722,7 +759,7 @@ class RapportController extends Controller
             );
 
         if ($request->filled('debut') && $request->filled('fin')) {
-            $baseQuery->whereBetween('paiements_loyers.paiement_mois_location', [$request->debut, $request->fin]);
+            $baseQuery->whereBetween('paiements_loyers.updated_at ', [$request->debut, $request->fin]); //paiement_mois_location
         }
 
         // Clonage pour total global avant pagination

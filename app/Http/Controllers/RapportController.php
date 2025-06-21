@@ -143,8 +143,14 @@ class RapportController extends Controller
         }
 
         if ($request->filled('debut') && $request->filled('fin')) {
-            var_dump("expression"); die();
-            $baseQuery->whereBetween('paiements_loyers.updated_at', [$request->debut, $request->fin]); //paiement_mois_location
+
+            $debut = Carbon::parse($request->debut)->startOfDay();
+$fin = Carbon::parse($request->fin)->endOfDay();
+
+$baseQuery->whereBetween('paiements_loyers.updated_at', [$debut, $fin]);
+
+           // $baseQuery->whereBetween('paiements_loyers.updated_at', [$request->debut, $request->fin]); //paiement_mois_location
+            // dd($request->debut, $request->fin, $baseQuery->toSql());
         }
 
         // Clonage pour total global avant pagination

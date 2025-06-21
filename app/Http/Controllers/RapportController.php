@@ -143,7 +143,8 @@ class RapportController extends Controller
         }
 
         if ($request->filled('debut') && $request->filled('fin')) {
-            $baseQuery->whereBetween('paiements_loyers.paiement_mois_location', [$request->debut, $request->fin]); //paiement_mois_location
+            var_dump("expression"); die();
+            $baseQuery->whereBetween('paiements_loyers.updated_at', [$request->debut, $request->fin]); //paiement_mois_location
         }
 
         // Clonage pour total global avant pagination

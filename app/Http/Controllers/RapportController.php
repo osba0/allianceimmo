@@ -145,9 +145,9 @@ class RapportController extends Controller
         if ($request->filled('debut') && $request->filled('fin')) {
 
             $debut = Carbon::parse($request->debut)->startOfDay();
-$fin = Carbon::parse($request->fin)->endOfDay();
+            $fin = Carbon::parse($request->fin)->endOfDay();
 
-$baseQuery->whereBetween('paiements_loyers.updated_at', [$debut, $fin]);
+            $baseQuery->whereBetween('paiements_loyers.updated_at', [$debut, $fin]);
 
            // $baseQuery->whereBetween('paiements_loyers.updated_at', [$request->debut, $request->fin]); //paiement_mois_location
             // dd($request->debut, $request->fin, $baseQuery->toSql());
@@ -622,7 +622,12 @@ $baseQuery->whereBetween('paiements_loyers.updated_at', [$debut, $fin]);
         }
 
         if ($request->filled('debut') && $request->filled('fin')) {
-            $baseQuery->whereBetween('paiements_loyers.updated_at', [$request->debut, $request->fin]); //paiement_mois_location
+
+            $debut = Carbon::parse($request->debut)->startOfDay();
+            $fin = Carbon::parse($request->fin)->endOfDay();
+
+            $baseQuery->whereBetween('paiements_loyers.updated_at', [$debut, $fin]);
+            //$baseQuery->whereBetween('paiements_loyers.updated_at', [$request->debut, $request->fin]); //paiement_mois_location
         }
 
         // Clonage pour total global avant pagination
@@ -766,7 +771,11 @@ $baseQuery->whereBetween('paiements_loyers.updated_at', [$debut, $fin]);
             );
 
         if ($request->filled('debut') && $request->filled('fin')) {
-            $baseQuery->whereBetween('paiements_loyers.updated_at ', [$request->debut, $request->fin]); //paiement_mois_location
+            $debut = Carbon::parse($request->debut)->startOfDay();
+            $fin = Carbon::parse($request->fin)->endOfDay();
+
+            $baseQuery->whereBetween('paiements_loyers.updated_at', [$debut, $fin]);
+            //$baseQuery->whereBetween('paiements_loyers.updated_at ', [$request->debut, $request->fin]); //paiement_mois_location
         }
 
         // Clonage pour total global avant pagination
